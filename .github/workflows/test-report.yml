@@ -1,0 +1,42 @@
+name: PR Test Report
+
+on:
+    pull_request:
+        types: [opened, synchronize, labeled]
+        branches:
+          - master
+
+jobs:
+    test:
+        if: contains(github.event.pull_request.labels.*.name, 'run-ci')
+
+        runs-on: ubuntu-latest
+
+        steps:
+            # Checkout repository
+          - name: Checkout repository
+            uses: actions/checkout@v4
+
+            # Set up .NET 8.0
+          - name: Setup .NET
+            uses: actions/setup-dotnet@v4
+            with:
+                dotnet-version: '8.0.0'
+
+            # Restore all of the dependencies
+          - name: Restore dependencies
+            run: dotnet restore
+
+            # Run the tests
+          - name: Run tests
+            run: dotnet test --logger "trx;LogFileName=test_results.trx" --results-directory ./TestResults
+
+            # Comment the results on the PR as a table
+          - name: Publish Test Report
+            uses: dorny/test-reporter@v1
+            if: always()
+            with:
+                name: xUnit Tests
+                path: ./TestResults/*.trx
+                reporter: dotnet-trx
+                fail-on-error: false
