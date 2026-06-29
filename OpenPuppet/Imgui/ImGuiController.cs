@@ -329,13 +329,11 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
             io.MouseDown[1] = false;
             io.MouseDown[2] = false;
 
+            float sX = 0, sY = 0;
+
             io.MousePos = new Vector2(mouseState.Position.X + _view.Position.X, mouseState.Position.Y + _view.Position.Y);
 
             Vector2 absoluteMousePos = new Vector2(-float.MaxValue, -float.MaxValue);
-
-            var wheel = mouseState.GetScrollWheels()[0];
-            io.MouseWheel = wheel.Y;
-            io.MouseWheelH = wheel.X;
 
             foreach (var item in ImPlatform.windows)
             {
@@ -344,7 +342,18 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
                 io.MouseDown[0] |= state.IsButtonPressed(MouseButton.Left);
                 io.MouseDown[1] |= state.IsButtonPressed(MouseButton.Right);
                 io.MouseDown[2] |= state.IsButtonPressed(MouseButton.Middle);
+
+                var wheel = state.GetScrollWheels()[0];
+
+                if (wheel.Y != 0 || wheel.X != 0)
+                {
+                    sY = wheel.Y;
+                    sX = wheel.X;
+                }
             }
+
+            io.MouseWheel = sY;
+            io.MouseWheelH = sX;
 
             foreach (var c in _pressedChars)
             {
