@@ -18,14 +18,14 @@ jobs:
 
                     let labels = [];
 
-                    if (title.startsWith("[bug]") || body.contains("bug")) {
+                    if (title.startsWith("[bug]") || body.includes("bug")) {
                         labels.push("bug");
                         labels.push("needs-triage");
                     } else if(title.startsWith("[task]")) {
                         labels.push("task");
-                    } else if(title.contains("feature") || body.contains("enhancement")) {
+                    } else if(title.includes("feature") || body.includes("enhancement")) {
                         labels.push("enhancement");
-                    } else if(title.contains("question") || body.contains("help")) {
+                    } else if(title.includes("question") || body.includes("help")) {
                         labels.push("question");
                     }
 
