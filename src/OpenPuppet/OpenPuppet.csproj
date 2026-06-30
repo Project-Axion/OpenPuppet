@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\OpenPuppet.Plugins\OpenPuppet.Plugins.csproj" />
     <ProjectReference Include="..\OpenPuppet.DataTypes\OpenPuppet.DataTypes.csproj" />
+    <ProjectReference Include="..\Plugins\OpenPuppet.Core.SVG\OpenPuppet.Core.SVG.csproj" />
     <None Update="shaders\vector.fragment.glsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
