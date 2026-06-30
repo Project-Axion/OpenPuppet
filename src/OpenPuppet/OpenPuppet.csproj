@@ -5,6 +5,7 @@
     <TargetFramework>net9.0</TargetFramework>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
    <DefineConstants>GL</DefineConstants>
+   <BaseOutputPath>..\..\bin</BaseOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,7 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\OpenPuppet.Plugins\OpenPuppet.Plugins.csproj" />
     <ProjectReference Include="..\OpenPuppet.DataTypes\OpenPuppet.DataTypes.csproj" />
-    <ProjectReference Include="..\Plugins\OpenPuppet.Core.SVG\OpenPuppet.Core.SVG.csproj" />
+    <ProjectReference Include="..\OpenPuppet.Plugins\OpenPuppet.Plugins.csproj" />
     <None Update="shaders\vector.fragment.glsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -27,5 +28,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="call postbuild.bat &quot;$(Configuration)&quot;" />
+  </Target>
 
 </Project>
