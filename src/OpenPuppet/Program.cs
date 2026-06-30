@@ -1,11 +1,13 @@
-using System;
-using System.Numerics;
-using System.Runtime.InteropServices;
 using ImGuiNET;
+using OpenPuppet.rendering.VertexTypes;
+using OpenPuppet.vector;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
+using System;
+using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace OpenPuppet
 {
@@ -18,6 +20,7 @@ namespace OpenPuppet
                 Title = "OpenPuppet",
                 PreferredDepthBufferBits = 24,
                 PreferredStencilBufferBits = 8,
+                VSync = false,
                 API = new GraphicsAPI(ContextAPI.OpenGL, new APIVersion(3, 3))
             };
 
@@ -27,6 +30,7 @@ namespace OpenPuppet
 
             uint vbo = 0;
             uint vao = 0;
+            uint ebo = 0;
             uint shader = 0;
 
             const string VertexShaderCode = @"
@@ -53,32 +57,58 @@ void main() {
 
             ImGuiController cont = null;
 
+            int idxcount = 0;
+
             window.Load += () =>
             {
                 gl = window.CreateOpenGL();
                 inputContext = window.CreateInput();
                 cont = new ImGuiController(gl, window, inputContext);
 
-                Span<Vertex> vertexData =
-                [
-                    new Vertex(new Vector3(-0.5f, -0.5f, 0), 255, 0, 0, 255),
-        new Vertex(new Vector3(0, 0.5f, 0), 0, 255, 0, 255),
-        new Vertex(new Vector3(0.5f, -0.5f, 0), 0, 0, 255, 255)
-                ];
+                var path = new VectorPathComponent([
+                    new ArcCommand(
+                        origin: new Vector2(0.5f, 0.0f),
+                        rx: 0.5,
+                        ry: 0.5,
+                        xRot: 0,
+                        largeArc: true,
+                        sweep: true,
+                        destination: new Vector2(0.5f, 1.0f)
+                    ),
+
+                    new ArcCommand(
+                        origin: new Vector2(0.5f, 1.0f),
+                        rx: 0.5,
+                        ry: 0.5,
+                        xRot: 0,
+                        largeArc: true,
+                        sweep: true,
+                        destination: new Vector2(0.5f, 0.0f)
+                    )
+                ]);
+
+                var mesh = VectorMesher.GenerateMesh<ColorVertex>(path);
+                idxcount = mesh.Indices.Length;
+
+                Span<ColorVertex> vertexData = mesh.Verticies;
 
                 vbo = gl.GenBuffer();
                 gl.BindBuffer(BufferTargetARB.ArrayBuffer, vbo);
-                gl.BufferData<Vertex>(BufferTargetARB.ArrayBuffer, vertexData, BufferUsageARB.StaticDraw);
+                gl.BufferData<ColorVertex>(BufferTargetARB.ArrayBuffer, vertexData, BufferUsageARB.StaticDraw);
 
                 vao = gl.GenVertexArray();
                 gl.BindVertexArray(vao);
                 unsafe
                 {
-                    gl.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, Vertex.Size, (void*)0);
-                    gl.VertexAttribPointer(1, 4, VertexAttribPointerType.UnsignedByte, true, Vertex.Size, (void*)12);
+                    gl.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, ColorVertex.Size, (void*)0);
+                    gl.VertexAttribPointer(1, 4, VertexAttribPointerType.Float, true, ColorVertex.Size, (void*)12);
                 }
                 gl.EnableVertexAttribArray(0);
                 gl.EnableVertexAttribArray(1);
+
+                ebo = gl.GenBuffer();
+                gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, ebo);
+                gl.BufferData<int>(BufferTargetARB.ElementArrayBuffer, mesh.Indices, BufferUsageARB.StaticDraw);
 
                 uint vs = gl.CreateShader(ShaderType.VertexShader);
                 gl.ShaderSource(vs, VertexShaderCode);
@@ -113,11 +143,15 @@ void main() {
 
                 gl.BindVertexArray(vao);
                 gl.UseProgram(shader);
-                gl.DrawArrays(PrimitiveType.Triangles, 0, 3);
+                unsafe
+                {
+                    gl.DrawElements(GLEnum.Triangles, (uint)idxcount, GLEnum.UnsignedInt, (void*)0);
+                }
+                
 
-                ImGui.DockSpaceOverViewport();
+                //ImGui.DockSpaceOverViewport();
 
-                ImGui.ShowDemoWindow();
+                //ImGui.ShowDemoWindow();
 
                 cont.Render(window);
             };
@@ -136,11 +170,5 @@ void main() {
 
             window.Run();
         }
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    internal record struct Vertex(Vector3 Position, byte R, byte G, byte B, byte A)
-    {
-        public static uint Size = 3 * 4 + 4;
     }
 }
