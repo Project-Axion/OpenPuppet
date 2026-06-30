@@ -27,7 +27,7 @@ namespace OpenPuppet.vector
                 }
 
                 // Upbridge
-                if (item.Count > last.Count && last.Count > 0 && item.Count % 2 == 0)
+                if (item.Count > last.Count && last.Count > 0 && item.Count % 2 == 0 && last.Count % 2 == 0)
                 {
                     var ypos = prototype.Positions[item[0]].Y;
 
@@ -51,7 +51,7 @@ namespace OpenPuppet.vector
                 }
 
                 // Downbridge
-                if (item.Count < last.Count && item.Count > 0 && item.Count % 2 == 0)
+                if (item.Count < last.Count && item.Count > 0 && item.Count % 2 == 0 && last.Count % 2 == 0)
                 {
                     var ypos = prototype.Positions[last[0]].Y;
 
