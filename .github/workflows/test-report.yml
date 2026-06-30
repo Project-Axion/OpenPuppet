@@ -12,6 +12,11 @@ jobs:
 
         runs-on: ubuntu-latest
 
+        permissions:
+          contents: read
+          checks: write
+          pull-requests: write
+
         steps:
             # Checkout repository
           - name: Checkout repository
@@ -21,7 +26,7 @@ jobs:
           - name: Setup .NET
             uses: actions/setup-dotnet@v4
             with:
-                dotnet-version: '8.0.0'
+                dotnet-version: '8.0.x'
 
             # Restore all of the dependencies
           - name: Restore dependencies
