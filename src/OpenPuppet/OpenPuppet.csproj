@@ -16,4 +16,13 @@
     <PackageReference Include="Twizzle.ImGui.NET" Version="1.89.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="shaders\vector.fragment.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="shaders\vector.vertex.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

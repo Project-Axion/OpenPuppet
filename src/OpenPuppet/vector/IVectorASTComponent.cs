@@ -21,30 +21,59 @@ namespace OpenPuppet.vector
     {
         public List<IVectorASTCommand> Commands { get; } = commands;
 
+        List<Vector3> SampleCommandsAt(double y)
+        {
+            var pts = new List<Vector3>();
+            foreach (var cmd in Commands)
+                pts.AddRange(cmd.Flatten(y));
+            return pts.OrderBy(p => p.X).ToList();
+        }
+
+        double BisectTopologyChange(double y0, double y1, int countAt0, int iterations = 24)
+        {
+            for (int i = 0; i < iterations; i++)
+            {
+                double mid = (y0 + y1) * 0.5;
+                int c = SampleCommandsAt(mid).Count;
+                if (c == countAt0) y0 = mid;
+                else y1 = mid;
+            }
+            return (y0 + y1) * 0.5;
+        }
+
         public VectorMeshPrototype Flatten(uint density)
         {
             double step = 1d / density;
-
             List<Vector3> positions = new();
             List<List<int>> flatMap = new();
 
-            for (uint i = 0; i <= density; i++)
+            void AddScanline(List<Vector3> sample)
+            {
+                var map = Enumerable.Range(positions.Count, sample.Count).ToList();
+                positions.AddRange(sample);
+                flatMap.Add(map);
+            }
+
+            double prevY = 0d;
+            List<Vector3> prevSample = SampleCommandsAt(prevY);
+            AddScanline(prevSample);
+
+            for (uint i = 1; i <= density; i++)
             {
                 double y = i == density ? 1d : i * step;
+                List<Vector3> currSample = SampleCommandsAt(y);
 
-                List<int> map = new();
+                if (currSample.Count != prevSample.Count)
+                {
+                    double tY = BisectTopologyChange(prevY, y, prevSample.Count);
 
-                List<Vector3> lpositions = new();
+                    AddScanline(SampleCommandsAt(tY - 1e-9));
+                    AddScanline(SampleCommandsAt(tY + 1e-9));
+                }
 
-                foreach (var item in Commands)
-                    lpositions.AddRange(item.Flatten(y));
-
-                lpositions = lpositions.OrderBy(x => x.X).ToList();
-
-                map.AddRange(Enumerable.Range(positions.Count, lpositions.Count));
-
-                positions.AddRange(lpositions);
-                flatMap.Add(map);
+                AddScanline(currSample);
+                prevY = y;
+                prevSample = currSample;
             }
 
             return new(positions, flatMap);

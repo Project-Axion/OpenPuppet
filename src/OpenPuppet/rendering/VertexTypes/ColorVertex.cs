@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Silk.NET.OpenGL;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -12,6 +13,11 @@ namespace OpenPuppet.rendering.VertexTypes
     internal unsafe record struct ColorVertex(Vector3 Position, Vector4 color) : IVertex<ColorVertex>
     {
         public static uint Size { get; set; } = (uint)sizeof(Vector3) + (uint)sizeof(Vector4);
+        public static VertexPropLayer[] PropLayers { get; set; } =
+        [
+            new(3, VertexAttribPointerType.Float, false),
+            new(4, VertexAttribPointerType.Float, true)
+        ];
 
         public static List<ColorVertex> FromVec3(List<Vector3> vecs)
         {
