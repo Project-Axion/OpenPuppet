@@ -16,4 +16,9 @@
     <PackageReference Include="Twizzle.ImGui.NET" Version="1.89.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\OpenPuppet.Plugins\OpenPuppet.Plugins.csproj" />
+    <ProjectReference Include="..\OpenPuppet.DataTypes\OpenPuppet.DataTypes.csproj" />
+  </ItemGroup>
+
 </Project>
