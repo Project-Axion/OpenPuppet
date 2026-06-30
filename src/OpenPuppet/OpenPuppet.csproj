@@ -17,6 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\OpenPuppet.Plugins\OpenPuppet.Plugins.csproj" />
+    <ProjectReference Include="..\OpenPuppet.DataTypes\OpenPuppet.DataTypes.csproj" />
     <None Update="shaders\vector.fragment.glsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
