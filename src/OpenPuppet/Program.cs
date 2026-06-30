@@ -140,11 +140,7 @@ namespace OpenPuppet
             shader.UniformMat4(gl, "proj", PlaybackCamera.Projection);
             shader.UniformMat4(gl, "view", PlaybackCamera.View);
 
-            unsafe
-            {
-                gl.DrawElements(GLEnum.Triangles, testmdl.IndexCount, GLEnum.UnsignedInt, (void*)0);
-            }
-
+            gl.DrawElements(GLEnum.Triangles, testmdl.IndexCount, GLEnum.UnsignedInt, (void*)0);
 
             //ImGui.DockSpaceOverViewport();
 
