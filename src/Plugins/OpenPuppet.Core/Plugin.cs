@@ -10,6 +10,7 @@ namespace OpenPuppet.Core
 
         public void OnInitialized()
         {
+            Global.MainPlugin = this;
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Hello Core");
 
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering windows");
@@ -24,5 +25,10 @@ namespace OpenPuppet.Core
             ContexMenu.AddMenuItem("View.Properties", () => IUIWindow.Open("openpuppet.core.properties"));
             Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all context menu items successfully");
         }
+    }
+
+    public static class Global
+    {
+        public static Plugin MainPlugin;
     }
 }

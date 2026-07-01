@@ -216,7 +216,7 @@ namespace OpenPuppet
                 PoppedWindows.Clear();
             }
 
-            ImGui.ShowDemoWindow();
+            //ImGui.ShowDemoWindow();
 
             cont.Render(window);
         }

@@ -15,7 +15,7 @@ namespace OpenPuppet.Core
 
         public void OnLoad()
         {
-            //Plugin.Logger.WriteLine(Logger.ILogger.Level.OK, "Successfully created timeline window");
+            Global.MainPlugin.Logger.WriteLine(Logger.ILogger.Level.OK, "Successfully created timeline window");
         }
 
         public void OnUpdate(double deltaTime) {}
