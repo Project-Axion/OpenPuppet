@@ -2,6 +2,7 @@ using ImGuiNET;
 using OpenPuppet.Plugins;
 using OpenPuppet.rendering;
 using OpenPuppet.rendering.VertexTypes;
+using OpenPuppet.SDK;
 using OpenPuppet.vector;
 using Silk.NET.Input;
 using Silk.NET.Maths;
@@ -9,6 +10,7 @@ using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -23,6 +25,8 @@ namespace OpenPuppet
     class Program
     {
         public static Camera PlaybackCamera = null;
+
+        static List<IUIWindow> PoppedWindows = new();
 
         static WindowOptions windowOptions = WindowOptions.Default with
         {
@@ -133,7 +137,13 @@ namespace OpenPuppet
 
             LoadPlugins();
         }
-        static void Update(double deltaSeconds) => cont.Update((float)deltaSeconds);
+        static void Update(double deltaSeconds)
+        {
+            cont.Update((float)deltaSeconds);
+
+            foreach (var item in IUIWindow.ActiveWindows)
+                item.OnUpdate(deltaSeconds);
+        }
         static unsafe void Render(double deltaSeconds) 
         {
             gl.ClearColor(0f, 0f, 0f, 1f);
@@ -148,6 +158,50 @@ namespace OpenPuppet
             gl.DrawElements(GLEnum.Triangles, testmdl.IndexCount, GLEnum.UnsignedInt, (void*)0);
 
             ImGui.DockSpaceOverViewport();
+
+            if(ImGui.BeginMainMenuBar())
+            {
+                void RenderMenuNode(IContexMenuNode node)
+                {
+                    if (node is ContextMenuList list)
+                    {
+                        if (ImGui.BeginMenu(list.Name))
+                        {
+                            foreach (var item in list.Nodes) RenderMenuNode(item);
+                            ImGui.EndMenu();
+                        }
+                    }
+                    else if (node is ContextMenuItem item)
+                        if (ImGui.MenuItem(item.Name)) item.OnClick();
+                }
+
+                foreach (var item in ContexMenu.Root.Nodes) RenderMenuNode(item);
+
+                ImGui.EndMainMenuBar();
+            }
+
+            foreach (var item in IUIWindow.ActiveWindows)
+            {
+                bool open = true;
+
+                ImGui.Begin(item.Title + "##" + item.IstanceIndex,ref open);
+
+                item.OnRender(deltaSeconds);
+
+                ImGui.End();
+
+                if (!open) PoppedWindows.Add(item);
+            }
+
+            if (PoppedWindows.Count > 0)
+            {
+                foreach (var item in PoppedWindows)
+                {
+                    item.OnClose();
+                    IUIWindow.ActiveWindows.Remove(item);
+                }
+                PoppedWindows.Clear();
+            }
 
             ImGui.ShowDemoWindow();
 
