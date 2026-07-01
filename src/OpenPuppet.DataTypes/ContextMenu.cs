@@ -29,6 +29,26 @@ namespace OpenPuppet.SDK
             }
         }
 
+        static void ProcessDummyItem(string path, ContextMenuList currentNode)
+        {
+            var parts = path.Split('.');
+            if (parts.Length == 1)
+            {
+                currentNode.Nodes.Add(new ContextDummyItem { Name = parts[0].ToSentenceCase() });
+            }
+            else
+            {
+                var nextNode = currentNode.Nodes.OfType<ContextMenuList>().FirstOrDefault(n => n.Name == parts[0].ToSentenceCase());
+                if (nextNode == null)
+                {
+                    nextNode = new ContextMenuList { Name = parts[0].ToSentenceCase() };
+                    currentNode.Nodes.Add(nextNode);
+                }
+                ProcessDummyItem(string.Join('.', parts.Skip(1)), nextNode);
+            }
+        }
+
+        public static void AddMenuDummy(string path) => ProcessDummyItem(path, Root);
         public static void AddMenuItem(string path, Action onClick) => ProcessItem(path, onClick, Root);
     }
 
@@ -47,5 +67,10 @@ namespace OpenPuppet.SDK
     {
         public string Name { get; set; }
         public Action OnClick { get; set; }
+    }
+
+    public class ContextDummyItem : IContextMenuNode
+    {
+        public string Name { get; set; }
     }
 }

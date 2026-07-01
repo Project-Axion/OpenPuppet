@@ -20,6 +20,8 @@ namespace OpenPuppet.Core
             Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all windows successfully");
 
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering context menu items");
+            ContextMenu.AddMenuDummy("File");
+            ContextMenu.AddMenuDummy("View");
             ContextMenu.AddMenuItem("View.Timeline", () => IUIWindow.Open("openpuppet.core.timeline"));
             ContextMenu.AddMenuItem("View.Editor", () => IUIWindow.Open("openpuppet.core.editor"));
             ContextMenu.AddMenuItem("View.Properties", () => IUIWindow.Open("openpuppet.core.properties"));
