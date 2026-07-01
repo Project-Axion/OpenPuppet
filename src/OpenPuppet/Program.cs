@@ -162,6 +162,11 @@ namespace OpenPuppet
         {
             shader.Dispose(gl);
             testmdl.Dispose(gl);
+
+            for (int i = 0; i < PluginManager.LoadedPlugins.Count; i++)
+            {
+                PluginManager.LoadedPlugins[i].Logger.Dispose();
+            }
         }
 
         static void LoadPlugins()

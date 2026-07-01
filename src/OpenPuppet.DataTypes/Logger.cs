@@ -34,17 +34,15 @@ namespace OpenPuppet.SDK
                     Directory.CreateDirectory(Path.Combine(LogPath!, Plugins.PluginsPath.SafePluginName(pluginName)));
                 }
 
-                Random r = new Random();
-
                 string path = Path.Combine(
                     LogPath!,
                     Plugins.PluginsPath.SafePluginName(pluginName),
-                    DateTime.Now.ToString("dd'-'MM'-'yyyy") + $"-{r.Next()}.txt"
+                    DateTime.Now.ToString("dd'-'MM'-'yyyy'.txt'")
                 );
 
                 Console.WriteLine(path);
 
-                File.WriteAllText(path, null);
+                if(!File.Exists(path)) File.WriteAllText(path, null);
                 return path;
             }
 
@@ -78,21 +76,24 @@ namespace OpenPuppet.SDK
         {
             public string PluginName { get; internal set; } = string.Empty;
             public string LogFile { get; internal set; } = string.Empty;
-            internal FileStream FileStream { get; set; }
+            //internal FileStream FileStream { get; set; }
             internal StreamWriter FileWriter { get; set; }
 
             public PluginLogger(string name, string path)
             {
                 PluginName = name;
                 LogFile = path;
-                FileStream = File.OpenWrite(path);
-                FileWriter = new StreamWriter(FileStream);
+                //FileStream = new FileStream(path, FileMode.Append, FileAccess.Write);
+                FileWriter = new StreamWriter(path, true);
 
-                FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+                Assembly pluginAssembly = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
+                FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(pluginAssembly.Location);
 
                 FileWriter.WriteLine("==================== OpenPuppet.SDK Log ====================");
-                FileWriter.WriteLine($"\tPlugin name:\t{name}");
-                FileWriter.WriteLine($"\tPlugin version:\t{fvi.FileVersion}");
+                FileWriter.WriteLine($"\tPlugin name:\t\t{name}");
+                FileWriter.WriteLine($"\tPlugin version:\t\t{fvi.FileVersion}");
+                FileWriter.WriteLine($"\tAssembly name:\t\t{pluginAssembly.GetName().Name}");
+                FileWriter.WriteLine($"\tProduct version:\t{fvi.ProductVersion}");
 
                 FileWriter.Flush();
             }
@@ -109,7 +110,7 @@ namespace OpenPuppet.SDK
 
             public void WriteLine(string message)
             {
-                string msg = $"[{PluginName}] ({DateTime.Now:HH':'mm':'ss dd'-'MM'-'yyyy}) {message}";
+                string msg = $"[{PluginName}] ({DateTime.Now:dd'-'MM'-'yyyy HH':'mm':'ss}) {message}";
                 FileWriter.WriteLine(msg);
                 Console.WriteLine(msg);
 
@@ -121,15 +122,30 @@ namespace OpenPuppet.SDK
                 WriteLine($"{level}: {message}");
             }
 
+            public void Close(bool dispose = false)
+            {
+                FileWriter.WriteLine("==================== OpenPuppet.SDK End ====================");
+                FileWriter.WriteLine();
+                FileWriter.Flush();
+
+                if(dispose) Dispose();
+            }
+
             public void Dispose()
             {
                 GC.SuppressFinalize(this);
 
+                WriteLine("Plugin unloading");
+
+                Close();
+
+                FileWriter.Flush();
+
                 FileWriter.Close();
-                FileStream.Close();
+                //FileStream.Close();
 
                 FileWriter.Dispose();
-                FileStream.Dispose();
+                //FileStream.Dispose();
             }
         }
     }
