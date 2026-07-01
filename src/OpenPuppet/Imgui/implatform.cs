@@ -121,6 +121,11 @@ namespace silkgltriangle.Imgui
             window.gl = window.window.CreateOpenGL();
             window.inputContext = window.window.CreateInput();
 
+            var kb = window.inputContext.Keyboards[0];
+            kb.KeyChar += platformController.OnKeyChar;
+            kb.KeyUp += ImGuiController.OnKeyUp;
+            kb.KeyDown += ImGuiController.OnKeyDown;
+
             var native = window.window.Native;
             var kind = native.Kind;
             nint rawHandle = IntPtr.Zero;

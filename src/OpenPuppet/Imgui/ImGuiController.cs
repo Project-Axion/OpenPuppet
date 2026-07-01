@@ -198,7 +198,7 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
         /// <param name="keyboard">The keyboard context generating the event.</param>
         /// <param name="keycode">The native keycode of the pressed key.</param>
         /// <param name="scancode">The native scancode of the pressed key.</param>
-        private static void OnKeyDown(IKeyboard keyboard, Key keycode, int scancode) =>
+        public static void OnKeyDown(IKeyboard keyboard, Key keycode, int scancode) =>
             OnKeyEvent(keyboard, keycode, scancode, down: true);
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
         /// <param name="keyboard">The keyboard context generating the event.</param>
         /// <param name="keycode">The native keycode of the released key.</param>
         /// <param name="scancode">The native scancode of the released key.</param>
-        private static void OnKeyUp(IKeyboard keyboard, Key keycode, int scancode) =>
+        public static void OnKeyUp(IKeyboard keyboard, Key keycode, int scancode) =>
             OnKeyEvent(keyboard, keycode, scancode, down: false);
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
         /// <param name="keycode">The native keycode of the key generating the event.</param>
         /// <param name="scancode">The native scancode of the key generating the event.</param>
         /// <param name="down">True if the event is a key down event, otherwise False</param>
-        private static void OnKeyEvent(IKeyboard keyboard, Key keycode, int scancode, bool down)
+        public static void OnKeyEvent(IKeyboard keyboard, Key keycode, int scancode, bool down)
         {
             var io = ImGuiNET.ImGui.GetIO();
             var imGuiKey = TranslateInputKeyToImGuiKey(keycode);
@@ -225,7 +225,7 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
             io.SetKeyEventNativeData(imGuiKey, (int) keycode, scancode);
         }
 
-        private void OnKeyChar(IKeyboard arg1, char arg2)
+        public void OnKeyChar(IKeyboard arg1, char arg2)
         {
             _pressedChars.Add(arg2);
         }

@@ -147,9 +147,9 @@ namespace OpenPuppet
 
             gl.DrawElements(GLEnum.Triangles, testmdl.IndexCount, GLEnum.UnsignedInt, (void*)0);
 
-            //ImGui.DockSpaceOverViewport();
+            ImGui.DockSpaceOverViewport();
 
-            //ImGui.ShowDemoWindow();
+            ImGui.ShowDemoWindow();
 
             cont.Render(window);
         }
