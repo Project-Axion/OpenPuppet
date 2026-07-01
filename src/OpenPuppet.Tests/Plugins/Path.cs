@@ -1,3 +1,6 @@
+using OpenPuppet.Plugins;
+using System.Xml.Linq;
+
 namespace OpenPuppet.Tests.Plugins
 {
     public class Path
@@ -7,7 +10,7 @@ namespace OpenPuppet.Tests.Plugins
         {
             Assert.NotEqual(
                 "a-b-c-d",
-                OpenPuppet.Plugins.PluginsPath.SafePluginName(
+                PluginsPath.SafePluginName(
                     @"a B
 `¦¬!" + '"' + @"@£$%^&*()_+-=[]{};:'@#~,./<>?\| C d"
                 )
@@ -17,9 +20,9 @@ namespace OpenPuppet.Tests.Plugins
         [Fact]
         public void TestPluginPath()
         {
-            Assert.EndsWith(
-                "a-b-c-d",
-                OpenPuppet.Plugins.PluginsPath.GetPluginPath(
+            Assert.Equal(
+                System.IO.Path.Combine(PluginsPath.PluginPath!, PluginsPath.SafePluginName("a-b-c-d")),
+                PluginsPath.GetPluginPath(
                     @"a B
 `¦¬!" + '"' + @"@£$%^&*()_+-=[]{};:'@#~,./<>?\| C d"
                 )
