@@ -68,4 +68,9 @@ namespace OpenPuppet.SDK
         public string Name { get; set; }
         public Action OnClick { get; set; }
     }
+
+    public class ContextDummyItem : IContextMenuNode
+    {
+        public string Name { get; set; }
+    }
 }
