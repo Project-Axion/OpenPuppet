@@ -9,7 +9,7 @@ namespace OpenPuppet.Core.SVG
 {
     public class Plugin : IPlugin
     {
-        public string PluginID { get; } = "OpenPuppet.Core.SVG";
+        public string PluginID { get; } = "OpenPuppet.SVG";
 
         public void OnInitialized()
         {

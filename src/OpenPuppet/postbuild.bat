@@ -14,9 +14,11 @@ if not exist "%plugins%" (
 FOR /D %%D IN ("%sources%\*") DO (
 	echo Building plugin %%~nxD...
 
-	:: Build the plugin's project (assumes one .csproj per plugin folder)
+	:: Build the plugin's project. --no-restore skips the (often slow)
+	:: restore step; MSBuild's own incremental engine still skips
+	:: recompiling source files that haven't changed.
 	for %%P in ("%%D\*.csproj") do (
-		dotnet build "%%P" -c %config% --nologo -v quiet
+		dotnet build "%%P" -c %config% --no-restore --nologo -v quiet
 	)
 
 	:: Ensure destination folder exists

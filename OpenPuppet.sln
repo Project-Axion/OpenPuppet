@@ -7,11 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPuppet", "src\OpenPuppe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPuppet.Tests", "src\OpenPuppet.Tests\OpenPuppet.Tests.csproj", "{E2D6A937-6D8B-43B4-9EA8-6292872C2224}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPuppet.DataTypes", "src\OpenPuppet.DataTypes\OpenPuppet.DataTypes.csproj", "{E4A8B804-ECED-4140-8B30-66B7842FD863}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPuppet.SDK", "src\OpenPuppet.DataTypes\OpenPuppet.SDK.csproj", "{E4A8B804-ECED-4140-8B30-66B7842FD863}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPuppet.Core.SVG", "src\Plugins\OpenPuppet.Core.SVG\OpenPuppet.Core.SVG.csproj", "{703377E5-EA26-4842-B8AD-9F233AC15F02}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPuppet.SVG", "src\Plugins\OpenPuppet.SVG\OpenPuppet.SVG.csproj", "{F8F83C68-494B-6C0F-59A9-2875CFAB98DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,16 +31,16 @@ Global
 		{E4A8B804-ECED-4140-8B30-66B7842FD863}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4A8B804-ECED-4140-8B30-66B7842FD863}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4A8B804-ECED-4140-8B30-66B7842FD863}.Release|Any CPU.Build.0 = Release|Any CPU
-		{703377E5-EA26-4842-B8AD-9F233AC15F02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{703377E5-EA26-4842-B8AD-9F233AC15F02}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{703377E5-EA26-4842-B8AD-9F233AC15F02}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{703377E5-EA26-4842-B8AD-9F233AC15F02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8F83C68-494B-6C0F-59A9-2875CFAB98DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8F83C68-494B-6C0F-59A9-2875CFAB98DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8F83C68-494B-6C0F-59A9-2875CFAB98DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8F83C68-494B-6C0F-59A9-2875CFAB98DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{703377E5-EA26-4842-B8AD-9F233AC15F02} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{F8F83C68-494B-6C0F-59A9-2875CFAB98DA} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8242C2F9-5D81-4332-8968-F5B543049B2E}
