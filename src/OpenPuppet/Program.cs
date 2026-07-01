@@ -135,6 +135,8 @@ namespace OpenPuppet
 
             PlaybackCamera = new((Vector2)window.FramebufferSize);
 
+            RenderSurface.Init(gl);
+
             LoadPlugins();
         }
         static void Update(double deltaSeconds)
@@ -147,15 +149,22 @@ namespace OpenPuppet
         static unsafe void Render(double deltaSeconds) 
         {
             gl.ClearColor(0f, 0f, 0f, 1f);
-            gl.Clear(ClearBufferMask.ColorBufferBit);
 
             testmdl.Bind(gl);
             shader.Use(gl);
 
-            shader.UniformMat4(gl, "proj", PlaybackCamera.Projection);
-            shader.UniformMat4(gl, "view", PlaybackCamera.View);
+            foreach (var item in RenderSurface.Surfaces)
+            {
+                item.Bind();
+                gl.Clear(ClearBufferMask.ColorBufferBit);
 
-            gl.DrawElements(GLEnum.Triangles, testmdl.IndexCount, GLEnum.UnsignedInt, (void*)0);
+                shader.UniformMat4(gl, "proj", item.Camera.Projection);
+                shader.UniformMat4(gl, "view", item.Camera.View);
+
+                gl.DrawElements(GLEnum.Triangles, testmdl.IndexCount, GLEnum.UnsignedInt, (void*)0);
+            }
+
+            gl.BindFramebuffer(FramebufferTarget.Framebuffer,0);
 
             ImGui.DockSpaceOverViewport();
 
@@ -184,11 +193,15 @@ namespace OpenPuppet
             {
                 bool open = true;
 
+                item.OnPreRender(deltaSeconds);
+
                 ImGui.Begin(item.Title + "##" + item.IstanceIndex,ref open);
 
                 item.OnRender(deltaSeconds);
 
                 ImGui.End();
+
+                item.OnPostRender(deltaSeconds);
 
                 if (!open) PoppedWindows.Add(item);
             }
@@ -218,9 +231,7 @@ namespace OpenPuppet
             testmdl.Dispose(gl);
 
             for (int i = 0; i < PluginManager.LoadedPlugins.Count; i++)
-            {
                 PluginManager.LoadedPlugins[i].Logger.Dispose();
-            }
         }
 
         static void LoadPlugins()

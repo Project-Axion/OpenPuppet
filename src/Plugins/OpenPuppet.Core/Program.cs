@@ -13,8 +13,10 @@ namespace OpenPuppet.Core
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Hello Core");
 
             IUIWindow.Register("openpuppet.core.timeline", typeof(Timeline));
+            IUIWindow.Register("openpuppet.core.editor", typeof(Editor));
 
             ContexMenu.AddMenuItem("View.Timeline", () => IUIWindow.Open("openpuppet.core.timeline"));
+            ContexMenu.AddMenuItem("View.Editor", () => IUIWindow.Open("openpuppet.core.editor"));
 
         }
     }

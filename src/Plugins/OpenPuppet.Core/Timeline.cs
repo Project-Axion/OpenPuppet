@@ -17,10 +17,14 @@ namespace OpenPuppet.Core
 
         public void OnUpdate(double deltaTime) {}
 
+        public void OnPreRender(double deltaTime) { }
+
         public void OnRender(double deltaTime) 
         {
             ImGui.Text("the windowing stuff works");
         }
+
+        public void OnPostRender(double deltaTime) { }
 
         public void OnClose() {}
     }

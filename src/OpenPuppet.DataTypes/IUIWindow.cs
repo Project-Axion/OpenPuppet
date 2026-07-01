@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,7 +19,9 @@ namespace OpenPuppet.SDK
         void OnClose();
 
         void OnUpdate(double deltaTime);
+        void OnPreRender(double deltaTime);
         void OnRender(double deltaTime);
+        void OnPostRender(double deltaTime);
 
         public static void Register(string registry,Type t)
         {
