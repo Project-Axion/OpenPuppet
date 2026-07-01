@@ -8,17 +8,14 @@ using System.Threading.Tasks;
 
 namespace OpenPuppet.Core
 {
-    public class Timeline : IUIWindow
+    public class Properties : IUIWindow
     {
         public uint IstanceIndex { get; set; }
-        public string Title { get; set; } = "Timeline";
+        public string Title { get; set; } = "Properties";
 
-        public void OnLoad()
-        {
-            Global.MainPlugin.Logger.WriteLine(Logger.ILogger.Level.OK, "Successfully created timeline window");
-        }
+        public void OnLoad() { }
 
-        public void OnUpdate(double deltaTime) {}
+        public void OnUpdate(double deltaTime) { }
 
         public void OnPreRender(double deltaTime) { }
 
@@ -29,6 +26,6 @@ namespace OpenPuppet.Core
 
         public void OnPostRender(double deltaTime) { }
 
-        public void OnClose() {}
+        public void OnClose() { }
     }
 }
