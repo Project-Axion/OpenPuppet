@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OpenPuppet.SDK
 {
-    public static class ContexMenu
+    public static class ContextMenu
     {
         public static ContextMenuList Root { get; } = new();
 
@@ -32,18 +32,18 @@ namespace OpenPuppet.SDK
         public static void AddMenuItem(string path, Action onClick) => ProcessItem(path, onClick, Root);
     }
 
-    public interface IContexMenuNode
+    public interface IContextMenuNode
     {
         public string Name { get; set; }
     }
 
-    public class ContextMenuList : IContexMenuNode
+    public class ContextMenuList : IContextMenuNode
     {
         public string Name { get; set; }
-        public List<IContexMenuNode> Nodes { get; set; } = new();
+        public List<IContextMenuNode> Nodes { get; set; } = new();
     }
 
-    public class ContextMenuItem : IContexMenuNode
+    public class ContextMenuItem : IContextMenuNode
     {
         public string Name { get; set; }
         public Action OnClick { get; set; }

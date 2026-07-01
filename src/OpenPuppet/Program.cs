@@ -173,7 +173,7 @@ namespace OpenPuppet
 
             if(ImGui.BeginMainMenuBar())
             {
-                void RenderMenuNode(IContexMenuNode node)
+                void RenderMenuNode(IContextMenuNode node)
                 {
                     if (node is ContextMenuList list)
                     {
@@ -187,7 +187,7 @@ namespace OpenPuppet
                         if (ImGui.MenuItem(item.Name)) item.OnClick();
                 }
 
-                foreach (var item in ContexMenu.Root.Nodes) RenderMenuNode(item);
+                foreach (var item in ContextMenu.Root.Nodes) RenderMenuNode(item);
 
                 ImGui.EndMainMenuBar();
             }

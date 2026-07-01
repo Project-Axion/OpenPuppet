@@ -18,7 +18,8 @@ FOR /D %%D IN ("%sources%\*") DO (
 	:: restore step; MSBuild's own incremental engine still skips
 	:: recompiling source files that haven't changed.
 	for %%P in ("%%D\*.csproj") do (
-		dotnet build "%%P" -c %config% --no-restore --nologo -v quiet
+		dotnet clean "%%P" -c %config%
+		dotnet build "%%P" -c %config% --no-restore --nologo -v quiet --no-incremental
 	)
 
 	:: Ensure destination folder exists

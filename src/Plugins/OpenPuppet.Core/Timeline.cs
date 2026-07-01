@@ -3,6 +3,7 @@ using OpenPuppet.SDK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,6 +26,11 @@ namespace OpenPuppet.Core
         public void OnRender(double deltaTime)
         {
             ImGui.Text("the windowing stuff works");
+            Vector2 vec = ImGui.GetCursorPos();
+            ImGui.Columns(3, null, false);
+            ImGui.Separator();
+            ImGui.NextColumn();
+            ImGui.Button("Play");
         }
 
         public void OnPostRender(double deltaTime) { }

@@ -16,7 +16,11 @@ namespace OpenPuppet.SVG
 
         public void OnInitialized()
         {
-            Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Hello Plugin");
+            Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Hello SVG Plugin");
+
+            Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering context menu items");
+            ContextMenu.AddMenuItem("File.Import.SVG", () => { });
+            Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all context menu items successfully");
         }
     }
 }
