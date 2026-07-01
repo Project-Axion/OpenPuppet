@@ -11,6 +11,11 @@ namespace OpenPuppet.Core
         public void OnInitialized()
         {
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Hello Core");
+
+            IUIWindow.Register("openpuppet.core.timeline", typeof(Timeline));
+
+            ContexMenu.AddMenuItem("View.Timeline", () => IUIWindow.Open("openpuppet.core.timeline"));
+
         }
     }
 }

@@ -1,0 +1,51 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace OpenPuppet.SDK
+{
+    public static class ContexMenu
+    {
+        public static ContextMenuList Root { get; } = new();
+
+        static void ProcessItem(string path, Action onClick, ContextMenuList currentNode)
+        {
+            var parts = path.Split('.');
+            if (parts.Length == 1)
+            {
+                currentNode.Nodes.Add(new ContextMenuItem { Name = parts[0].ToSentenceCase(), OnClick = onClick });
+            }
+            else
+            {
+                var nextNode = currentNode.Nodes.OfType<ContextMenuList>().FirstOrDefault(n => n.Name == parts[0].ToSentenceCase());
+                if (nextNode == null)
+                {
+                    nextNode = new ContextMenuList { Name = parts[0].ToSentenceCase() };
+                    currentNode.Nodes.Add(nextNode);
+                }
+                ProcessItem(string.Join('.', parts.Skip(1)), onClick, nextNode);
+            }
+        }
+
+        public static void AddMenuItem(string path, Action onClick) => ProcessItem(path, onClick, Root);
+    }
+
+    public interface IContexMenuNode
+    {
+        public string Name { get; set; }
+    }
+
+    public class ContextMenuList : IContexMenuNode
+    {
+        public string Name { get; set; }
+        public List<IContexMenuNode> Nodes { get; set; } = new();
+    }
+
+    public class ContextMenuItem : IContexMenuNode
+    {
+        public string Name { get; set; }
+        public Action OnClick { get; set; }
+    }
+}
