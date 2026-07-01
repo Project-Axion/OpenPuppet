@@ -13,7 +13,10 @@ namespace OpenPuppet.Core
         public uint IstanceIndex { get; set; }
         public string Title { get; set; } = "Timeline";
 
-        public void OnLoad() {}
+        public void OnLoad()
+        {
+            //Plugin.Logger.WriteLine(Logger.ILogger.Level.OK, "Successfully created timeline window");
+        }
 
         public void OnUpdate(double deltaTime) {}
 
