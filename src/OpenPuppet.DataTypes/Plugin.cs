@@ -10,6 +10,8 @@
         /// </summary>
         public string PluginID { get; }
 
+        public SDK.Logger.PluginLogger Logger { get; }
+
         /// <summary>
         /// OnInitialized
         /// This is called when the plugin is loaded, use this to prepare the plugin
