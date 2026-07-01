@@ -13,6 +13,9 @@ namespace OpenPuppet.Core
             Global.MainPlugin = this;
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Hello Core");
 
+            ContextMenu.AddMenuList("File");
+            ContextMenu.AddMenuList("View");
+
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering windows");
             IUIWindow.Register("openpuppet.core.timeline", typeof(Timeline));
             IUIWindow.Register("openpuppet.core.editor", typeof(Editor));

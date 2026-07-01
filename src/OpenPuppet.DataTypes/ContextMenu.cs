@@ -29,6 +29,26 @@ namespace OpenPuppet.SDK
             }
         }
 
+        static void ProcessList(string path, ContextMenuList currentNode)
+        {
+            var parts = path.Split('.');
+            if (parts.Length == 1)
+            {
+                currentNode.Nodes.Add(new ContextMenuList { Name = parts[0].ToSentenceCase() });
+            }
+            else
+            {
+                var nextNode = currentNode.Nodes.OfType<ContextMenuList>().FirstOrDefault(n => n.Name == parts[0].ToSentenceCase());
+                if (nextNode == null)
+                {
+                    nextNode = new ContextMenuList { Name = parts[0].ToSentenceCase() };
+                    currentNode.Nodes.Add(nextNode);
+                }
+                ProcessList(string.Join('.', parts.Skip(1)), nextNode);
+            }
+        }
+
+        public static void AddMenuList(string path) => ProcessList(path, Root);
         public static void AddMenuItem(string path, Action onClick) => ProcessItem(path, onClick, Root);
     }
 
