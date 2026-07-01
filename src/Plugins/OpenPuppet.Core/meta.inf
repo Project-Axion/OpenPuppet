@@ -1,6 +1,6 @@
 ﻿{
-    "name": "OpenPuppet SVG Plugin",
-    "description": "SVG plugin",
+    "name": "OpenPuppet Core Plugin",
+    "description": "Core plugin",
     "author": "OpenPuppet (Project-Axion)",
     "version": "1.0.0",
     "icon": ""

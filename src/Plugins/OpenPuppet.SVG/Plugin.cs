@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenPuppet.Core.SVG
+namespace OpenPuppet.SVG
 {
     public class Plugin : IPlugin
     {
