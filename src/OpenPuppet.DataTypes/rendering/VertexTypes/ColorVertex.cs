@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace OpenPuppet.rendering.VertexTypes
 {
     [StructLayout(LayoutKind.Sequential)]
-    internal unsafe record struct ColorVertex(Vector3 Position, Vector4 color) : IVertex<ColorVertex>
+    public unsafe record struct ColorVertex(Vector3 Position, Vector4 color) : IVertex<ColorVertex>
     {
         public static uint Size { get; set; } = (uint)sizeof(Vector3) + (uint)sizeof(Vector4);
         public static VertexPropLayer[] PropLayers { get; set; } =

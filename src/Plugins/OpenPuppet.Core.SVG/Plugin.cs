@@ -1,4 +1,4 @@
-﻿using OpenPuppet.DataTypes.Plugin;
+﻿using OpenPuppet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +9,11 @@ namespace OpenPuppet.Core.SVG
 {
     public class Plugin : IPlugin
     {
-        public string PluginID { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string PluginID { get; } = "OpenPuppet.Core.SVG";
 
         public void OnInitialized()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Hello plugin");
         }
     }
 }

@@ -7,7 +7,7 @@ namespace OpenPuppet.Tests.Plugins
         {
             Assert.NotEqual(
                 "a-b-c-d",
-                OpenPuppet.Plugins.Path.SafePluginName(
+                OpenPuppet.Plugins.PluginsPath.SafePluginName(
                     @"a B
 `¦¬!" + '"' + @"@£$%^&*()_+-=[]{};:'@#~,./<>?\| C d"
                 )
@@ -19,7 +19,7 @@ namespace OpenPuppet.Tests.Plugins
         {
             Assert.EndsWith(
                 "a-b-c-d",
-                OpenPuppet.Plugins.Path.GetPluginPath(
+                OpenPuppet.Plugins.PluginsPath.GetPluginPath(
                     @"a B
 `¦¬!" + '"' + @"@£$%^&*()_+-=[]{};:'@#~,./<>?\| C d"
                 )

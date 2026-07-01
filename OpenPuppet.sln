@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPuppet.Tests", "src\Ope
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPuppet.DataTypes", "src\OpenPuppet.DataTypes\OpenPuppet.DataTypes.csproj", "{E4A8B804-ECED-4140-8B30-66B7842FD863}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPuppet.Plugins", "src\OpenPuppet.Plugins\OpenPuppet.Plugins.csproj", "{D1EE7937-72B4-4A1A-9B9B-EF1759027462}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPuppet.Core.SVG", "src\Plugins\OpenPuppet.Core.SVG\OpenPuppet.Core.SVG.csproj", "{703377E5-EA26-4842-B8AD-9F233AC15F02}"
@@ -33,10 +31,6 @@ Global
 		{E4A8B804-ECED-4140-8B30-66B7842FD863}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4A8B804-ECED-4140-8B30-66B7842FD863}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4A8B804-ECED-4140-8B30-66B7842FD863}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D1EE7937-72B4-4A1A-9B9B-EF1759027462}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D1EE7937-72B4-4A1A-9B9B-EF1759027462}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D1EE7937-72B4-4A1A-9B9B-EF1759027462}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D1EE7937-72B4-4A1A-9B9B-EF1759027462}.Release|Any CPU.Build.0 = Release|Any CPU
 		{703377E5-EA26-4842-B8AD-9F233AC15F02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{703377E5-EA26-4842-B8AD-9F233AC15F02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{703377E5-EA26-4842-B8AD-9F233AC15F02}.Release|Any CPU.ActiveCfg = Release|Any CPU

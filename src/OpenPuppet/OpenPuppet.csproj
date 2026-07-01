@@ -1,12 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+	<OutputType Condition="'$(Configuration)' == 'Debug'">Exe</OutputType>
+	<OutputType Condition="'$(Configuration)' != 'Debug'">WinExe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
    <DefineConstants>GL</DefineConstants>
    <BaseOutputPath>..\..\bin</BaseOutputPath>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="bin\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <None Remove="bin\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Silk.NET.Input" Version="2.23.0" />
@@ -18,9 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\OpenPuppet.Plugins\OpenPuppet.Plugins.csproj" />
     <ProjectReference Include="..\OpenPuppet.DataTypes\OpenPuppet.DataTypes.csproj" />
-    <ProjectReference Include="..\OpenPuppet.Plugins\OpenPuppet.Plugins.csproj" />
     <None Update="shaders\vector.fragment.glsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

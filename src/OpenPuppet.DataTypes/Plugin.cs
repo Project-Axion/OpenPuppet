@@ -1,4 +1,4 @@
-﻿namespace OpenPuppet.DataTypes.Plugin
+﻿namespace OpenPuppet
 {
     /// <summary>
     /// Plugin interface
@@ -8,7 +8,7 @@
         /// <summary>
         /// The plugin ID
         /// </summary>
-        public string PluginID { get; set; }
+        public string PluginID { get; }
 
         /// <summary>
         /// OnInitialized

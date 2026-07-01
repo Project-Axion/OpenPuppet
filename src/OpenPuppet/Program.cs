@@ -1,4 +1,5 @@
 using ImGuiNET;
+using OpenPuppet.Plugins;
 using OpenPuppet.rendering;
 using OpenPuppet.rendering.VertexTypes;
 using OpenPuppet.vector;
@@ -9,7 +10,9 @@ using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
 using System;
 using System.IO;
+using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using static Silk.NET.Core.Native.WinString;
 using static System.Net.Mime.MediaTypeNames;
@@ -127,6 +130,8 @@ namespace OpenPuppet
             gl.Viewport(window.FramebufferSize);
 
             PlaybackCamera = new((Vector2)window.FramebufferSize);
+
+            LoadPlugins();
         }
         static void Update(double deltaSeconds) => cont.Update((float)deltaSeconds);
         static unsafe void Render(double deltaSeconds) 
@@ -157,6 +162,30 @@ namespace OpenPuppet
         {
             shader.Dispose(gl);
             testmdl.Dispose(gl);
+        }
+
+        static void LoadPlugins()
+        {
+            foreach (var item in Directory.GetDirectories(PluginsPath.PluginPath!))
+            {
+                var anycpu = Path.Combine(item, $"anycpu.dll");
+                var specific = Path.Combine(item, $"{RuntimeInformation.ProcessArchitecture}.dll");
+
+                if (File.Exists(specific)) LoadAssembly(specific);
+                else if (File.Exists(anycpu)) LoadAssembly(anycpu);
+                else Console.WriteLine($"Warning: could not load {Path.GetFileName(item)}: " +
+                    $"no dll found for archirecture '{RuntimeInformation.ProcessArchitecture}'");
+            }
+        }
+        static void LoadAssembly(string path)
+        {
+            var asm = Assembly.LoadFrom(path);
+            asm.DefinedTypes.Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass).ToList().ForEach(t =>
+            {
+                var plugin = (IPlugin)Activator.CreateInstance(t.AsType())!;
+                PluginManager.LoadedPlugins.Add(plugin);
+                plugin.OnInitialized();
+            });
         }
     }
 }

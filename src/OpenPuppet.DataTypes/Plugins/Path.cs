@@ -1,22 +1,20 @@
-﻿using OpenPuppet.DataTypes.Plugin;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace OpenPuppet.Plugins
 {
-    public static class Path
+    public static class PluginsPath
     {
         internal static string? InstallPath
         {
             get
             {
-                return System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             }
         }
 
@@ -24,7 +22,7 @@ namespace OpenPuppet.Plugins
         { 
             get
             {
-                return InstallPath != null ? System.IO.Path.Combine(InstallPath, "Plugins") : null;
+                return InstallPath != null ? Path.Combine(InstallPath, "Plugins") : null;
             }
         }
 
@@ -36,13 +34,13 @@ namespace OpenPuppet.Plugins
             return name;
         }
 
-        public static string? GetPluginPath(string name)
+        public static string GetPluginPath(string name)
         {
-            if (PluginPath == null) return null;
+            if (PluginPath == null) return null!;
             return System.IO.Path.Combine(PluginPath, SafePluginName(name));
         }
 
-        public static string? GetPluginPath(PluginMetadata metadata)
+        public static string GetPluginPath(PluginMetadata metadata)
         {
             return GetPluginPath(metadata.Name);
         }
