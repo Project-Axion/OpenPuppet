@@ -18,7 +18,7 @@ namespace OpenPuppet.rendering
         Vector2 _res = Vector2.One;
 
         public ref readonly Matrix4x4 Projection => ref _proj;
-        public ref readonly Matrix4x4 View => ref _proj;
+        public ref readonly Matrix4x4 View => ref _view;
 
         public Vector3 Pan { get => _pan; set { _pan = value; UpdateView(); } }
         public float Zoom { get => _zoom; set { _zoom = value; UpdateProj(); } }
@@ -32,13 +32,14 @@ namespace OpenPuppet.rendering
 
         void UpdateProj()
         {
-            var aspect = _res.X / _res.Y;
+            float aspect = _res.X / _res.Y;
+
+            float halfHeight = (CAMERA_UNITS_BASIS / _zoom) / 2;
+            float halfWidth = halfHeight * aspect;
 
             _proj = Matrix4x4.CreateOrthographicOffCenter(
-                -CAMERA_UNITS_BASIS / _zoom * aspect,
-                CAMERA_UNITS_BASIS / _zoom * aspect,
-                -CAMERA_UNITS_BASIS / _zoom,
-                CAMERA_UNITS_BASIS / _zoom,
+                -halfWidth,  halfWidth, 
+                -halfHeight, halfHeight,
                 0.01f,1000f
             );
         }

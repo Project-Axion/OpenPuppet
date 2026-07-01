@@ -156,6 +156,8 @@ namespace OpenPuppet
             foreach (var item in RenderSurface.Surfaces)
             {
                 item.Bind();
+                gl.Viewport(0,0,(uint)item.Camera.Resolution.X, (uint)item.Camera.Resolution.Y);
+
                 gl.Clear(ClearBufferMask.ColorBufferBit);
 
                 shader.UniformMat4(gl, "proj", item.Camera.Projection);
@@ -165,6 +167,7 @@ namespace OpenPuppet
             }
 
             gl.BindFramebuffer(FramebufferTarget.Framebuffer,0);
+            gl.Viewport(window.FramebufferSize);
 
             ImGui.DockSpaceOverViewport();
 
@@ -222,7 +225,6 @@ namespace OpenPuppet
         }
         static void Resize(Vector2D<int> newSize) 
         {
-            gl.Viewport(newSize);
             PlaybackCamera.Resolution = (Vector2)newSize;
         }
         static void Closing() 

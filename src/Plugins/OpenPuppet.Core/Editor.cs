@@ -45,11 +45,11 @@ namespace OpenPuppet.Core
                 if (Vector2.Distance(contentRegion, size) > resizeEpsilon)
                 {
                     size = contentRegion;
-                    surface.Resize(size);
+                    surface.Resize(contentRegion);
                 }
             }
 
-            ImGui.Image(surface.GetImage(), camera.Resolution);
+            ImGui.Image(surface.GetImage(), camera.Resolution, new(0,1), new(1, 0));
         }
 
         public void OnPostRender(double deltaTime) 

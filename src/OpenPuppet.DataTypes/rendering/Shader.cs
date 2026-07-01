@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -38,6 +39,8 @@ namespace OpenPuppet.rendering
 
         public void UniformMat4(GL gl,string uniform,Matrix4x4 mat)
         {
+            Use(gl);
+
             gl.UniformMatrix4(
                 gl.GetUniformLocation(shader, uniform),
                 1, false,
