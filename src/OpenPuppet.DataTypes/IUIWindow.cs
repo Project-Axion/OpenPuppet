@@ -45,6 +45,7 @@ namespace OpenPuppet.SDK
 
         public static void Open(string registry)
         {
+            SDK.logger.WriteLine(Logger.ILogger.Level.Log, $"Opening window with ID {registry}");
             var win = SpawnFromRegistry(registry);
             win.OnLoad();
 

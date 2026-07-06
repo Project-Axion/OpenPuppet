@@ -4,9 +4,9 @@ namespace OpenPuppet.Core
 {
     public class Plugin : IPlugin
     {
-        public string PluginID { get; } = "OpenPuppet.Core";
+        public const string PluginID = "com.openpuppet.core";
 
-        public Logger.PluginLogger Logger { get; internal set; } = SDK.Logger.LogManager.RequestPluginLogger("OpenPuppet.Core");
+        public Logger.PluginLogger Logger { get; internal set; } = SDK.Logger.LogManager.RequestPluginLogger(PluginID);
 
         public void OnInitialized()
         {

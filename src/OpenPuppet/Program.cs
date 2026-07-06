@@ -47,6 +47,8 @@ namespace OpenPuppet
 
         static Model<ColorVertex> testmdl = null;
 
+        public static Logger.PluginLogger logger = Logger.LogManager.RequestPluginLogger("openpuppet");
+
         static void Main(string[] args)
         {
             window.Load += Load;
@@ -211,12 +213,47 @@ namespace OpenPuppet
 
             if (PoppedWindows.Count > 0)
             {
+                int total = PoppedWindows.Count;
                 foreach (var item in PoppedWindows)
                 {
                     item.OnClose();
                     IUIWindow.ActiveWindows.Remove(item);
                 }
                 PoppedWindows.Clear();
+                logger.WriteLine(Logger.ILogger.Level.Log, $"Successfully popped {total} closed windows");
+            }
+
+            if(IUIDialog.ActiveDialog != null)
+            {
+                ImGui.OpenPopup(
+                    IUIDialog.ActiveDialog.Title + "##openpuppet.dialog",
+                    ImGuiPopupFlags.None
+                );
+
+                IUIDialog.ActiveDialog.OnPreRender();
+
+                bool open = true;
+
+                ImGuiViewportPtr viewport = ImGui.GetMainViewport();
+
+                ImGui.SetNextWindowPos(
+                    viewport.GetCenter(),
+                    ImGuiCond.Always,
+                    new Vector2(0.5f, 0.5f)
+                );
+
+                if (ImGui.BeginPopupModal(
+                    IUIDialog.ActiveDialog.Title + "##openpuppet.dialog",
+                    ref open,
+                    ImGuiWindowFlags.AlwaysAutoResize
+                ))
+                {
+                    ImGui.SetWindowFocus();
+                    IUIDialog.ActiveDialog.OnRender();
+                    ImGui.EndPopup();
+                }
+
+                if(!open) IUIDialog.Close();
             }
 
             //ImGui.ShowDemoWindow();
@@ -234,6 +271,9 @@ namespace OpenPuppet
 
             for (int i = 0; i < PluginManager.LoadedPlugins.Count; i++)
                 PluginManager.LoadedPlugins[i].Logger.Dispose();
+
+            SDK.SDK.DestroyLogger();
+            logger.Dispose();
         }
 
         static void LoadPlugins()

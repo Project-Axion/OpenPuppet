@@ -40,8 +40,6 @@ namespace OpenPuppet.SDK
                     DateTime.Now.ToString("dd'-'MM'-'yyyy'.txt'")
                 );
 
-                Console.WriteLine(path);
-
                 if(!File.Exists(path)) File.WriteAllText(path, null);
                 return path;
             }

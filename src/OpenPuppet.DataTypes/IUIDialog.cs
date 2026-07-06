@@ -1,0 +1,63 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace OpenPuppet.SDK
+{
+    public interface IUIDialog
+    {
+        public static Dictionary<string, Type> RegisteredWindows { get; } = new();
+        public static IUIDialog? ActiveDialog { get; internal set; }
+
+        public string Title { get; set; }
+
+        void OnLoad();
+        void OnClose();
+
+        void OnPreRender();
+        void OnRender();
+
+        public static void Register(string registry, Type t)
+        {
+            if (t.IsAssignableTo(typeof(IUIDialog)) && t.IsClass)
+                RegisteredWindows.Add(registry, t);
+            else
+                throw new ArgumentException($"{t.FullName} is not a class that implements the IUIDialog interface.");
+        }
+
+        public static IUIDialog SpawnFromRegistry(string registry)
+        {
+            if (RegisteredWindows.ContainsKey(registry))
+            {
+                var win = (IUIDialog)Activator.CreateInstance(RegisteredWindows[registry])!;
+
+                return win;
+            }
+            else throw new ArgumentException($"No dialog registered under the registry: '{registry}'.");
+        }
+
+        public static bool Open(string registry)
+        {
+            SDK.logger.WriteLine(Logger.ILogger.Level.Log, $"Opening dialog with ID {registry}");
+            var win = SpawnFromRegistry(registry);
+            win.OnLoad();
+
+            if(ActiveDialog != null) SDK.logger.WriteLine(Logger.ILogger.Level.Warn, "A dialog is already open");
+
+            if (ActiveDialog == null)
+            {
+                ActiveDialog = win;
+                return true;
+            }
+            else return false;
+        }
+
+        public static void Close()
+        {
+            ActiveDialog?.OnClose();
+            ActiveDialog = null;
+        }
+    }
+}

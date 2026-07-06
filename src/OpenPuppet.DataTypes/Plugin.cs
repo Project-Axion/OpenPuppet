@@ -8,7 +8,7 @@
         /// <summary>
         /// The plugin ID
         /// </summary>
-        public string PluginID { get; }
+        public const string PluginID = "com.unknown.unknown";
 
         public SDK.Logger.PluginLogger Logger { get; }
 
