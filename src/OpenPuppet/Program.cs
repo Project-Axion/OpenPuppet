@@ -218,6 +218,7 @@ namespace OpenPuppet
                 {
                     item.OnClose();
                     IUIWindow.ActiveWindows.Remove(item);
+                    SDK.Events.WindowEvents.InvokeOnWindowClosed(null, new(item.Title + "##" + item.IstanceIndex));
                 }
                 PoppedWindows.Clear();
                 logger.WriteLine(Logger.ILogger.Level.Log, $"Successfully popped {total} closed windows");
@@ -270,7 +271,7 @@ namespace OpenPuppet
             testmdl.Dispose(gl);
 
             for (int i = 0; i < PluginManager.LoadedPlugins.Count; i++)
-                PluginManager.LoadedPlugins[i].Logger.Dispose();
+                PluginManager.LoadedPlugins[i].OnShutdown();
 
             SDK.SDK.DestroyLogger();
             logger.Dispose();
@@ -288,6 +289,8 @@ namespace OpenPuppet
                 else Console.WriteLine($"Warning: could not load {Path.GetFileName(item)}: " +
                     $"no dll found for archirecture '{RuntimeInformation.ProcessArchitecture}'");
             }
+
+            SDK.Events.PluginEvents.InvokeFinishedLoading(null);
         }
         static void LoadAssembly(string path)
         {

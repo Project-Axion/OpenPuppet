@@ -25,6 +25,8 @@ namespace OpenPuppet.SDK
 
         public static void Register(string registry,Type t)
         {
+            SDK.logger.WriteLine(Logger.ILogger.Level.Log, $"Registering window with ID {registry}");
+
             if (t.IsAssignableTo(typeof(IUIWindow)) && t.IsClass)
                 RegisteredWindows.Add(registry, t);
             else 
@@ -33,10 +35,13 @@ namespace OpenPuppet.SDK
 
         public static IUIWindow SpawnFromRegistry(string registry)
         {
+            SDK.logger.WriteLine(Logger.ILogger.Level.Log, $"Spawning window from registry with ID {registry}");
             if (RegisteredWindows.ContainsKey(registry))
             {
                 var win = (IUIWindow)Activator.CreateInstance(RegisteredWindows[registry])!;
                 win.IstanceIndex = (uint)ActiveWindows.Where(w => w.GetType() == win.GetType()).Count();
+
+                Events.WindowEvents.InvokeOnWindowOpened(null, new(registry + "##" + win.IstanceIndex));
 
                 return win;
             }

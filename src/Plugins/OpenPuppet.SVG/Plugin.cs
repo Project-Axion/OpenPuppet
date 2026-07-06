@@ -27,5 +27,10 @@ namespace OpenPuppet.SVG
             ContextMenu.AddMenuItem("File.Import.SVG", () => IUIDialog.Open("openpuppet.svg.import"));
             Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all context menu items successfully");
         }
+
+        public void OnShutdown()
+        {
+            Logger.Dispose();
+        }
     }
 }

@@ -29,7 +29,7 @@ namespace OpenPuppet.Plugins
         public static string SafePluginName(string name)
         {
             name = name.ToLower().Replace(' ', '-');
-            name = Regex.Replace(name, @"[^a-zA-Z0-9]", "");
+            name = Regex.Replace(name, @"[^a-zA-Z0-9.]", "");
 
             return name;
         }

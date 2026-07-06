@@ -102,6 +102,7 @@ namespace OpenPuppet.SDK
             {
                 FileWriter.Write(message);
                 Console.Write(message);
+                Debug.Write(message);
 
                 FileWriter.Flush();
             }
@@ -111,6 +112,7 @@ namespace OpenPuppet.SDK
                 string msg = $"[{PluginName}] ({DateTime.Now:dd'-'MM'-'yyyy HH':'mm':'ss}) {message}";
                 FileWriter.WriteLine(msg);
                 Console.WriteLine(msg);
+                Debug.WriteLine(msg);
 
                 FileWriter.Flush();
             }

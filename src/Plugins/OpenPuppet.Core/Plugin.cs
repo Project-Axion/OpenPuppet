@@ -28,6 +28,11 @@ namespace OpenPuppet.Core
             ContextMenu.AddMenuItem("View.Properties", () => IUIWindow.Open("openpuppet.core.properties"));
             Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all context menu items successfully");
         }
+
+        public void OnShutdown()
+        {
+            Logger.Dispose();
+        }
     }
 
     public static class Global
