@@ -15,9 +15,6 @@ namespace OpenPuppet.Preferences
 
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Subscribing to window events");
             Windows.SubscribeToEvents();
-
-            Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Attempting to load previous layout");
-            Windows.OpenPreviousWindows();
         }
 
         public void OnShutdown()

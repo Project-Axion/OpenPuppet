@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenPuppet.SDK;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ namespace OpenPuppet.Preferences
     {
         private static List<string> OpenWindows = new();
         private static string WindowsFile = Path.Combine(SDK.SDK.DataPath, "Preferences", "last_windows.json");
+        private static bool IsLoaded = false; // This fixes the event handling running twice
 
         public static void SubscribeToEvents()
         {
@@ -35,31 +37,39 @@ namespace OpenPuppet.Preferences
 
         public static void OnFinishedLoading(object? sender, EventArgs args)
         {
+            if (IsLoaded) return;
+            Global.MainPlugin.Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Attempting to load previous layout");
             OpenPreviousWindows();
+            IsLoaded = true;
         }
 
         public static void OpenPreviousWindows()
         {
             if(!File.Exists(WindowsFile))
             {
-                OpenWindows.Add("openpuppet.core.editor");
-                OpenWindows.Add("openpuppet.core.timeline");
-                OpenWindows.Add("openpuppet.core.properties");
                 SavePreviousWindows();
-                OpenPreviousWindows();
             } else
             {
-                string[]? data = JsonSerializer.Deserialize<string[]>(File.ReadAllText(WindowsFile));
-                if(data == null)
+                try
                 {
-                    Global.MainPlugin.Logger.WriteLine(SDK.Logger.ILogger.Level.Error, "Failed to load last opened windows");
-                } else
-                {
-                    for(int i = 0; i < data.Length; i++)
+                    string[]? data = JsonSerializer.Deserialize<string[]>(File.ReadAllText(WindowsFile));
+                    if (data == null)
                     {
-                        Global.MainPlugin.Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Opening window " + data[i]);
-                        SDK.IUIWindow.Open(data[i].Split("#")[0]);
+                        Global.MainPlugin.Logger.WriteLine(SDK.Logger.ILogger.Level.Error, "Failed to load last opened windows");
+                        SavePreviousWindows();
                     }
+                    else
+                    {
+                        for (int i = 0; i < data.Length; i++)
+                        {
+                            Global.MainPlugin.Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Opening window " + data[i]);
+                            SDK.IUIWindow.Open(data[i].Split("#")[0]);
+                        }
+                    }
+                } catch(Exception ex)
+                {
+                    Global.MainPlugin.Logger.WriteLine(SDK.Logger.ILogger.Level.Error, "Failed to load last opened windows: " + ex.Message);
+                    SavePreviousWindows();
                 }
             }
         }
