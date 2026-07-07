@@ -1,4 +1,5 @@
-﻿using OpenPuppet.SDK;
+﻿using ImGuiNET;
+using OpenPuppet.SDK;
 
 namespace OpenPuppet.Core
 {
@@ -20,18 +21,31 @@ namespace OpenPuppet.Core
             IUIWindow.Register("openpuppet.core.timeline", typeof(Timeline));
             IUIWindow.Register("openpuppet.core.editor", typeof(Editor));
             IUIWindow.Register("openpuppet.core.properties", typeof(Properties));
+            IUIWindow.Register("openpuppet.settings", typeof(SettingsWindow));
             Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all windows successfully");
 
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering context menu items");
             ContextMenu.AddMenuItem("View.Timeline", () => IUIWindow.Open("openpuppet.core.timeline"));
             ContextMenu.AddMenuItem("View.Editor", () => IUIWindow.Open("openpuppet.core.editor"));
             ContextMenu.AddMenuItem("View.Properties", () => IUIWindow.Open("openpuppet.core.properties"));
+            ContextMenu.AddMenuItem("View.Settings", () => IUIWindow.Open("openpuppet.settings"));
             Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all context menu items successfully");
+
+            ISettingsSection.RegisterSection("General",new TestSection());
+            ISettingsSection.RegisterSection("Appearance",new TestSection());
         }
 
         public void OnShutdown()
         {
             Logger.Dispose();
+        }
+    }
+
+    public class TestSection : ISettingsSection
+    {
+        public void OnRender(double deltaTime)
+        {
+            ImGui.Text("hello world");
         }
     }
 

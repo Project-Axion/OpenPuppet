@@ -25,7 +25,6 @@ namespace OpenPuppet.Core
 
         public void OnRender(double deltaTime)
         {
-            ImGui.Text("the windowing stuff works");
             Vector2 vec = ImGui.GetCursorPos();
             ImGui.Columns(3, null, false);
             ImGui.Separator();
