@@ -1,4 +1,5 @@
-﻿using OpenPuppet.SDK;
+﻿using ImGuiNET;
+using OpenPuppet.SDK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace OpenPuppet.Preferences
     {
         private static List<string> OpenWindows = new();
         private static string WindowsFile = Path.Combine(SDK.SDK.DataPath, "Preferences", "last_windows.json");
+        private static string LayoutDir = Path.Combine(SDK.SDK.DataPath, "Preferences", "layouts");
         private static bool IsLoaded = false; // This fixes the event handling running twice
 
         public static void SubscribeToEvents()
@@ -40,6 +42,7 @@ namespace OpenPuppet.Preferences
             if (IsLoaded) return;
             Global.MainPlugin.Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Attempting to load previous layout");
             OpenPreviousWindows();
+            OpenLayout("default");
             IsLoaded = true;
         }
 
@@ -89,6 +92,31 @@ namespace OpenPuppet.Preferences
                     }
                 )
             );
+        }
+
+        public static bool OpenLayout(string id)
+        {
+            if (!File.Exists(Path.Combine(LayoutDir, $"{id}.ini"))) return false;
+
+            try
+            {
+                string file = File.ReadAllText(Path.Combine(LayoutDir, $"{id}.ini"));
+                ImGui.LoadIniSettingsFromMemory(file);
+
+                return true;
+            } catch (Exception ex)
+            {
+                Global.MainPlugin.Logger.WriteLine(SDK.Logger.ILogger.Level.Error, "Failed to load ImGui layout: " + ex.Message);
+                return false;
+            }
+        }
+
+        public static void SaveLayout(string id)
+        {
+            if (!Directory.Exists(LayoutDir))
+                Directory.CreateDirectory(LayoutDir);
+
+            File.WriteAllText(Path.Combine(LayoutDir, $"{id}.ini"), ImGui.SaveIniSettingsToMemory());
         }
     }
 }

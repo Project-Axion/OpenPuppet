@@ -29,12 +29,15 @@ namespace OpenPuppet.SDK
             }
         }
 
-        static void ProcessList(string path, ContextMenuList currentNode)
+        static void ProcessList(string path, ContextMenuList currentNode, bool separator = false)
         {
             var parts = path.Split('.');
             if (parts.Length == 1)
             {
-                currentNode.Nodes.Add(new ContextMenuList { Name = parts[0].ToSentenceCase() });
+                if (separator)
+                    currentNode.Nodes.Add(new ContextMenuSeparatorItem { Name = parts[0].ToSentenceCase() });
+                else
+                    currentNode.Nodes.Add(new ContextMenuList { Name = parts[0].ToSentenceCase() });
             }
             else
             {
@@ -50,6 +53,7 @@ namespace OpenPuppet.SDK
 
         public static void AddMenuList(string path) => ProcessList(path, Root);
         public static void AddMenuItem(string path, Action onClick) => ProcessItem(path, onClick, Root);
+        public static void AddMenuSeparator(string path) => ProcessList(path, Root, true);
     }
 
     public interface IContextMenuNode
@@ -70,6 +74,11 @@ namespace OpenPuppet.SDK
     }
 
     public class ContextDummyItem : IContextMenuNode
+    {
+        public string Name { get; set; }
+    }
+
+    public class ContextMenuSeparatorItem : IContextMenuNode
     {
         public string Name { get; set; }
     }
