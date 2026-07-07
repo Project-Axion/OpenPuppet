@@ -57,6 +57,14 @@ namespace OpenPuppet
             window.FramebufferResize += Resize;
             window.Closing += Closing;
 
+            SDK.Events.IEvent<string>.Subscribe(
+                "main_window.change_name",
+                (object sender, string e) =>
+                {
+                    window.Title = e;
+                }
+            );
+
             window.Run();
         }
 
