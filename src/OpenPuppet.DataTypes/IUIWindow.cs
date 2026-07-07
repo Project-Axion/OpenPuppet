@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -31,6 +32,18 @@ namespace OpenPuppet.SDK
                 RegisteredWindows.Add(registry, t);
             else 
                 throw new ArgumentException($"{t.FullName} is not a class that implements the IUIWindow interface.");
+        }
+
+        public static string RegistryFromType(Type t)
+        {
+            var dat = RegisteredWindows.FirstOrDefault(x => x.Value == t,new("null",null!));
+
+            if (dat.Value != null) return dat.Key;
+
+            string errstring = $"Could not retrive Registry from {t.FullName}";
+
+            SDK.logger.WriteLine(Logger.ILogger.Level.Error, errstring);
+            throw new Exception(errstring);
         }
 
         public static IUIWindow SpawnFromRegistry(string registry)

@@ -19,6 +19,8 @@ namespace OpenPuppet.Preferences
 
         public static void SubscribeToEvents()
         {
+            Global.MainPlugin.Logger.WriteLine("Subscribed to events");
+
             SDK.Events.WindowEvents.OnWindowOpened += OnWindowOpened;
             SDK.Events.WindowEvents.OnWindowClosed += OnWindowClosed;
             SDK.Events.PluginEvents.OnFinishedLoading += OnFinishedLoading;
@@ -27,13 +29,16 @@ namespace OpenPuppet.Preferences
         public static void OnWindowOpened(object? sender, SDK.Events.WindowEvents.WindowOpenedArgs args)
         {
             Global.MainPlugin.Logger.WriteLine("Window opened: " + args.Window);
+
             if(!OpenWindows.Contains(args.Window))
                 OpenWindows.Add(args.Window);
         }
 
         public static void OnWindowClosed(object? sender, SDK.Events.WindowEvents.WindowClosedArgs args)
         {
-            if(OpenWindows.Contains(args.Window))
+            Global.MainPlugin.Logger.WriteLine("Window closed: " + args.Window);
+
+            if (OpenWindows.Contains(args.Window))
                 OpenWindows.Remove(args.Window);
         }
 
