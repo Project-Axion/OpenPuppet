@@ -218,7 +218,7 @@ namespace OpenPuppet
                 {
                     item.OnClose();
                     IUIWindow.ActiveWindows.Remove(item);
-                    SDK.Events.WindowEvents.InvokeOnWindowClosed(null, new(item.Title + "##" + item.IstanceIndex));
+                    SDK.Events.WindowEvents.InvokeOnWindowClosed(null, new(IUIWindow.RegistryFromType(item.GetType()) + "##" + item.IstanceIndex));
                 }
                 PoppedWindows.Clear();
                 logger.WriteLine(Logger.ILogger.Level.Log, $"Successfully popped {total} closed windows");
