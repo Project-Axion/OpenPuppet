@@ -37,5 +37,22 @@ namespace OpenPuppet.SDK.Projects
             if (RegisteredMeshes.ContainsKey(register))
                 RegisteredMeshes.Remove(register);
         }
+
+        public static void RemoveAll()
+        {
+            RegisteredMeshes.Clear();
+        }
+
+        public static void LoadAll(Dictionary<string, object> meshes)
+        {
+            foreach(var mesh in meshes)
+                RegisteredMeshes.Add(mesh.Key, mesh.Value);
+        }
+
+        public static void RemoveAndLoadAll(Dictionary<string, object> meshes)
+        {
+            RemoveAll();
+            LoadAll(meshes);
+        }
     }
 }

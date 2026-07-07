@@ -46,7 +46,7 @@ namespace OpenPuppet.SVG
             if(openDisabled) ImGui.BeginDisabled();
             if(ImGui.Button("Open") && !openDisabled)
             {
-
+                
             }
             if (openDisabled) ImGui.EndDisabled();
         }

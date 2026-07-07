@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace OpenPuppet.SDK.Projects
 {
-    public static class ProjectManager
+    public class ProjectMetadata
     {
-        public static Dictionary<string, ProjectMetadata> RecentProjects { get; } = new();
+
     }
 }
