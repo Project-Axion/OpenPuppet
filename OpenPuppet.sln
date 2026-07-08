@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPuppet", "src\OpenPuppe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPuppet.Tests", "src\OpenPuppet.Tests\OpenPuppet.Tests.csproj", "{E2D6A937-6D8B-43B4-9EA8-6292872C2224}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPuppet.SDK", "src\OpenPuppet.DataTypes\OpenPuppet.SDK.csproj", "{E4A8B804-ECED-4140-8B30-66B7842FD863}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPuppet.SDK", "src\OpenPuppet.SDK\OpenPuppet.SDK.csproj", "{E4A8B804-ECED-4140-8B30-66B7842FD863}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
