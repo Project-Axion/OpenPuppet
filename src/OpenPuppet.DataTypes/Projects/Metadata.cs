@@ -8,6 +8,6 @@ namespace OpenPuppet.SDK.Projects
 {
     public class ProjectMetadata
     {
-
+        public string Name { get; set; } = string.Empty;
     }
 }

@@ -9,5 +9,6 @@ namespace OpenPuppet.SDK.Projects
     public static class ProjectManager
     {
         public static Dictionary<string, ProjectMetadata> RecentProjects { get; } = new();
+        public static ProjectMetadata? ActiveProject { get; set; } = null;
     }
 }

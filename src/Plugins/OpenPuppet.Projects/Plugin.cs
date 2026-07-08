@@ -1,4 +1,5 @@
-﻿using OpenPuppet.SDK;
+﻿using OpenPuppet.Projects.Dialogs;
+using OpenPuppet.SDK;
 using OpenPuppet.SDK.Events;
 
 namespace OpenPuppet.Projects
@@ -14,9 +15,26 @@ namespace OpenPuppet.Projects
             Global.MainPlugin = this;
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Hello Projects Plugin");
 
+            Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering windows");
+            IUIWindow.Register("openpuppet.projects.project", typeof(Project));
+            IUIWindow.Register("openpuppet.projects.hierarchy", typeof(Hierarchy));
+            Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all windows successfully");
+
+            Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering dialogs");
+            IUIDialog.Register("openpuppet.projects.createproject", typeof(CreateProject));
+            IUIDialog.Register("openpuppet.projects.openproject", typeof(OpenProject));
+            Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Reigstered all dialogs successfully");
+
+            Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering context menu items");
+            ContextMenu.AddMenuItem("View.Project", () => IUIWindow.Open("openpuppet.projects.project"));
+            ContextMenu.AddMenuItem("View.Hierarchy", () => IUIWindow.Open("openpuppet.projects.hierarchy"));
+
             ContextMenu.AddMenuList("project");
 
-            IEvent<string>.Invoke("main_window.change_name", this, "OpenPuppet [No Project]");
+            Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all context menu items successfully");
+
+            Events.Subscribe();
+            IEvent<string>.Invoke("openpuppet.window.modify.title", this, "OpenPuppet [No Project]");
         }
 
         public void OnShutdown()

@@ -58,7 +58,7 @@ namespace OpenPuppet
             window.Closing += Closing;
 
             SDK.Events.IEvent<string>.Subscribe(
-                "main_window.change_name",
+                "openpuppet.window.modify.title",
                 (object sender, string e) =>
                 {
                     window.Title = e;
