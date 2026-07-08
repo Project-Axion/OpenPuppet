@@ -1,6 +1,8 @@
-﻿using System;
+﻿using ImGuiNET;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +14,8 @@ namespace OpenPuppet.SDK
         public static IUIDialog? ActiveDialog { get; internal set; }
 
         public string Title { get; set; }
+        public ImGuiWindowFlags? Flags { get; set; }
+        public Vector2? Size { get; set; }
 
         void OnLoad();
         void OnClose();

@@ -3,6 +3,7 @@ using OpenPuppet.SDK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +12,8 @@ namespace OpenPuppet.SVG
     public class ImportSVG : IUIDialog
     {
         public string Title { get; set; } = "Import SVG";
+        public ImGuiWindowFlags? Flags { get; set; } = null;
+        public Vector2? Size { get; set; } = null;
 
         private static string path = string.Empty;
         private static bool openDisabled = true;

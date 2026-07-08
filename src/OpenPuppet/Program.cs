@@ -254,9 +254,11 @@ namespace OpenPuppet
                 if (ImGui.BeginPopupModal(
                     IUIDialog.ActiveDialog.Title + "##openpuppet.dialog",
                     ref open,
-                    ImGuiWindowFlags.AlwaysAutoResize
+                    IUIDialog.ActiveDialog.Flags ?? ImGuiWindowFlags.AlwaysAutoResize
                 ))
                 {
+                    if (IUIDialog.ActiveDialog.Size != null)
+                        ImGui.SetNextWindowSize(IUIDialog.ActiveDialog.Size ?? Vector2.NaN);
                     ImGui.SetWindowFocus();
                     IUIDialog.ActiveDialog.OnRender();
                     ImGui.EndPopup();

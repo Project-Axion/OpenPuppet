@@ -3,6 +3,7 @@ using OpenPuppet.SDK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +12,8 @@ namespace OpenPuppet.Preferences.Layouts
     public class NewLayout : IUIDialog
     {
         public string Title { get; set; } = "New Layout";
+        public ImGuiWindowFlags? Flags { get; set; } = null;
+        public Vector2? Size { get; set; } = null;
 
         private static string path = string.Empty;
         private static bool createDisabled = true;

@@ -3,6 +3,7 @@ using OpenPuppet.SDK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +12,8 @@ namespace OpenPuppet.Projects.Dialogs
     public class OpenProject : IUIDialog
     {
         public string Title { get; set; } = "Open Project";
+        public ImGuiWindowFlags? Flags { get; set; } = ImGuiWindowFlags.NoResize;
+        public Vector2? Size { get; set; } = new Vector2(400, 500);
 
         public void OnClose()
         {
@@ -29,9 +32,7 @@ namespace OpenPuppet.Projects.Dialogs
 
         public void OnRender()
         {
-            ImGui.Text("Yes");
-            ImGui.Columns();
-            ImGui.Columns(2);
+            ImGui.Columns(2, "openpuppet.projects.openproject.recentprojects", false);
             ImGui.SetColumnWidth(0, 300);
             ImGui.SetColumnWidth(1, 100);
 
