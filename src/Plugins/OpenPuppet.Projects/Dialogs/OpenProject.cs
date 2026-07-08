@@ -43,12 +43,12 @@ namespace OpenPuppet.Projects.Dialogs
 
             ImGui.NextColumn();
 
-            if(ImGui.Button("Create project"))
+            if(ImGui.Button("Create project", Vector2.Create(120, 20)))
             {
                 IUIDialog.Close();
                 SDK.Events.IEvent<EventArgs>.Invoke("openpuppet.projects.create", this, EventArgs.Empty);
             }
-            ImGui.Button("Open folder");
+            ImGui.Button("Open folder", Vector2.Create(120, 20));
             ImGui.Button("Open project", Vector2.Create(120, 20));
         }
     }

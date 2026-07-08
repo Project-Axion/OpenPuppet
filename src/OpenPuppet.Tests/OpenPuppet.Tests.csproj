@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OpenPuppet.DataTypes\OpenPuppet.SDK.csproj" />
+    <ProjectReference Include="..\OpenPuppet.SDK\OpenPuppet.SDK.csproj" />
   </ItemGroup>
 
   <ItemGroup>

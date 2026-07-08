@@ -258,7 +258,7 @@ namespace OpenPuppet
                 ))
                 {
                     if (IUIDialog.ActiveDialog.Size != null)
-                        ImGui.SetNextWindowSize(IUIDialog.ActiveDialog.Size ?? Vector2.NaN);
+                        ImGui.SetNextWindowSize(IUIDialog.ActiveDialog.Size ?? Vector2.PositiveInfinity);
                     ImGui.SetWindowFocus();
                     IUIDialog.ActiveDialog.OnRender();
                     ImGui.EndPopup();
