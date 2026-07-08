@@ -13,7 +13,7 @@ namespace OpenPuppet.Projects.Dialogs
     {
         public string Title { get; set; } = "Open Project";
         public ImGuiWindowFlags? Flags { get; set; } = ImGuiWindowFlags.NoResize;
-        public Vector2? Size { get; set; } = new Vector2(400, 500);
+        public Vector2? Size { get; set; } = new Vector2(600, 450);
 
         public void OnClose()
         {
@@ -33,8 +33,8 @@ namespace OpenPuppet.Projects.Dialogs
         public void OnRender()
         {
             ImGui.Columns(2, "openpuppet.projects.openproject.recentprojects", false);
-            ImGui.SetColumnWidth(0, 300);
-            ImGui.SetColumnWidth(1, 100);
+            ImGui.SetColumnWidth(0, 450);
+            ImGui.SetColumnWidth(1, 150);
 
             ImGui.Text("Recent projects");
             ImGui.Spacing();
@@ -43,10 +43,13 @@ namespace OpenPuppet.Projects.Dialogs
 
             ImGui.NextColumn();
 
-            ImGui.SetNextItemWidth(100);
+            if(ImGui.Button("Create project"))
+            {
+                IUIDialog.Close();
+                SDK.Events.IEvent<EventArgs>.Invoke("openpuppet.projects.create", this, EventArgs.Empty);
+            }
             ImGui.Button("Open folder");
-            ImGui.SetNextItemWidth(100);
-            ImGui.Button("Open project file");
+            ImGui.Button("Open project", Vector2.Create(120, 20));
         }
     }
 }

@@ -40,7 +40,11 @@ namespace OpenPuppet.Projects.Dialogs
 
             } else
             {
-
+                if(ImGui.Button("Open existing project"))
+                {
+                    IUIDialog.Close();
+                    SDK.Events.IEvent<EventArgs>.Invoke("openpuppet.projects.open", this, EventArgs.Empty);
+                }
             }
         }
     }
