@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using OpenPuppet.Core.Dialogs;
 using OpenPuppet.SDK;
 
 namespace OpenPuppet.Core
@@ -25,20 +26,30 @@ namespace OpenPuppet.Core
             IUIWindow.Register("openpuppet.core.editor", typeof(Editor));
             IUIWindow.Register("openpuppet.core.properties", typeof(Properties));
             IUIWindow.Register("openpuppet.settings", typeof(SettingsWindow));
+            IUIWindow.Register("openpuppet.core.project", typeof(Project));
+            IUIWindow.Register("openpuppet.core.hierarchy", typeof(Hierarchy));
             Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all windows successfully");
+
+            Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering dialogs");
+            IUIDialog.Register("openpuppet.core.createproject", typeof(CreateProject));
+            IUIDialog.Register("openpuppet.core.welcome", typeof(WelcomeDialog));
+            Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Reigstered all dialogs successfully");
 
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering context menu items");
             ContextMenu.AddMenuItem("View.Timeline", () => IUIWindow.Open("openpuppet.core.timeline"));
             ContextMenu.AddMenuItem("View.Editor", () => IUIWindow.Open("openpuppet.core.editor"));
             ContextMenu.AddMenuItem("View.Properties", () => IUIWindow.Open("openpuppet.core.properties"));
             ContextMenu.AddMenuItem("View.Settings", () => IUIWindow.Open("openpuppet.settings"));
-
-            ContextMenu.AddMenuItem("Project.Create", () => { }, "Create Project", false);
-            ContextMenu.AddMenuItem("Project.Open", () => { }, "Open Project", false);
+            ContextMenu.AddMenuItem("Project.Settings", () => IUIWindow.Open("openpuppet.core.project"));
+            ContextMenu.AddMenuItem("View.Hierarchy", () => IUIWindow.Open("openpuppet.core.hierarchy"));
             Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all context menu items successfully");
 
             ISettingsSection.RegisterSection("General",new TestSection());
             ISettingsSection.RegisterSection("Appearance",new TestSection());
+
+            Events.Subscribe();
+
+            IUIDialog.Open("openpuppet.core.welcome");
         }
 
         public void OnShutdown()

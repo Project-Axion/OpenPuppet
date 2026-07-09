@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace OpenPuppet.SDK
 {
@@ -70,7 +71,7 @@ namespace OpenPuppet.SDK
             }
         }
 
-        static bool ProcessE(string path, ContextMenuList currentNode, bool enabled)
+        static void ProcessE(string path, ContextMenuList currentNode, bool enabled)
         {
             var parts = path.Split('.');
             if(parts.Length == 1)
@@ -78,25 +79,16 @@ namespace OpenPuppet.SDK
                 IContextMenuNode? node = currentNode.Nodes.Find(m => m.Name == path);
                 if (node == null) throw new ArgumentException($"{path} does not exist on the context menu");
                 node.Enabled = enabled;
-                return true;
             }
             else
             {
                 foreach (var node in currentNode.Nodes)
-                {
-                    if(node.Name == path)
-                    {
-                        node.Enabled = enabled;
-                        return true;
-                    }
-                    if (node is ContextMenuList list)
-                        if (ProcessE(path, list, enabled)) return true;
-                }
+                    if (node.Name == parts[0] && node is ContextMenuList li)
+                        ProcessE(string.Join('.', parts.Skip(1)), li, enabled);
             }
-            return false;
         }
 
-        static bool ProcessR(string path, ContextMenuList currentNode, string name)
+        static void ProcessR(string path, ContextMenuList currentNode, string name)
         {
             var parts = path.Split('.');
             if (parts.Length == 1)
@@ -104,24 +96,15 @@ namespace OpenPuppet.SDK
                 IContextMenuNode? node = currentNode.Nodes.Find(m => m.Name == path);
                 if (node == null) throw new ArgumentException($"{path} does not exist on the context menu");
                 node.Name = name;
-                return true;
             }
             else
             {
                 foreach (var node in currentNode.Nodes)
-                {
-                    if (node.Name == path)
-                    {
-                        node.Name = name;
-                        return true;
-                    }
-                    if (node is ContextMenuList list)
-                        if (ProcessR(path, list, name)) return true;
-                }
+                    if (node.Name == parts[0] && node is ContextMenuList li)
+                        ProcessR(string.Join('.', parts.Skip(1)), li, name);
             }
-            return false;
         }
-        static bool ProcessRm(string path, ContextMenuList currentNode)
+        static void ProcessRm(string path, ContextMenuList currentNode)
         {
             var parts = path.Split('.');
             if (parts.Length == 1)
@@ -129,27 +112,31 @@ namespace OpenPuppet.SDK
                 IContextMenuNode? node = currentNode.Nodes.Find(m => m.Name == path);
                 if (node == null) throw new ArgumentException($"{path} does not exist on the context menu");
                 currentNode.Nodes.Remove(node);
-                return true;
             }
             else
             {
                 foreach (var node in currentNode.Nodes)
-                {
-                    if (node.Name == path)
-                    {
-                        currentNode.Nodes.Remove(node);
-                        return true;
-                    }
-                    if (node is ContextMenuList list)
-                        if (ProcessRm(path, list)) return true;
-                }
+                    if (node.Name == parts[0] && node is ContextMenuList li)
+                        ProcessRm(string.Join('.', parts.Skip(1)), li);
             }
-            return false;
         }
 
         public static void AddMenuList(string path, string? name = null, bool enabled = true) => ProcessList(path, Root, name, enabled);
         public static void AddMenuItem(string path, Action onClick, string? name = null, bool enabled = true) => ProcessItem(path, onClick, Root, name, enabled);
         //public static void AddMenuSeparator(string path) => ProcessList(path, Root, true);
+
+        public static void SetEnabledAll(bool enabled)
+        {
+            void iterateContext(IContextMenuNode node)
+            {
+                if (node is ContextMenuItem item)
+                    item.Enabled = enabled;
+                else if (node is ContextMenuList list)
+                    foreach (var inode in list.Nodes) iterateContext(inode);
+            }
+
+            iterateContext(Root);
+        }
 
         public static void SetEnabled(string path, bool enabled) => ProcessE(path, Root, enabled);
         public static void Rename(string path, string name) => ProcessR(path, Root, name);

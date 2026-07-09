@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 18
-VisualStudioVersion = 18.8.11925.187
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37111.16 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPuppet", "src\OpenPuppet\OpenPuppet.csproj", "{04493B85-FA83-4B82-B1B2-B574DDAF93D3}"
 EndProject
@@ -16,8 +16,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPuppet.Core", "src\Plugins\OpenPuppet.Core\OpenPuppet.Core.csproj", "{710B2E9D-DBCF-490D-B58E-FB2F19A0881A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPuppet.Preferences", "src\Plugins\OpenPuppet.Preferences\OpenPuppet.Preferences.csproj", "{B4C01F7A-1E01-4DFA-96A2-8A3CE95F38B9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenPuppet.Projects", "src\Plugins\OpenPuppet.Projects\OpenPuppet.Projects.csproj", "{B086F663-CD65-4925-BB2A-26B774DB1E30}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,10 +47,6 @@ Global
 		{B4C01F7A-1E01-4DFA-96A2-8A3CE95F38B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4C01F7A-1E01-4DFA-96A2-8A3CE95F38B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4C01F7A-1E01-4DFA-96A2-8A3CE95F38B9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B086F663-CD65-4925-BB2A-26B774DB1E30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B086F663-CD65-4925-BB2A-26B774DB1E30}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B086F663-CD65-4925-BB2A-26B774DB1E30}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B086F663-CD65-4925-BB2A-26B774DB1E30}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,7 +55,6 @@ Global
 		{F8F83C68-494B-6C0F-59A9-2875CFAB98DA} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{710B2E9D-DBCF-490D-B58E-FB2F19A0881A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{B4C01F7A-1E01-4DFA-96A2-8A3CE95F38B9} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{B086F663-CD65-4925-BB2A-26B774DB1E30} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8242C2F9-5D81-4332-8968-F5B543049B2E}

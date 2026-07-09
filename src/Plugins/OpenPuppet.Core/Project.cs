@@ -7,12 +7,12 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenPuppet.Projects
+namespace OpenPuppet.Core
 {
-    public class Hierarchy : IUIWindow
+    public class Project : IUIWindow
     {
         public uint InstanceIndex { get; set; }
-        public string Title { get; set; } = "Hierarchy";
+        public string Title { get; set; } = "Project";
         public ImGuiWindowFlags? Flags { get; set; } = null;
         public Vector2? Size { get; set; } = null;
 
@@ -24,7 +24,7 @@ namespace OpenPuppet.Projects
 
         public void OnRender(double deltaTime)
         {
-            if(SDK.Projects.ProjectManager.ActiveProject == null)
+            if (SDK.Projects.ProjectManager.ActiveProject == null)
             {
                 ImGui.Spacing();
                 ImGui.Text("No project loaded");

@@ -3,6 +3,7 @@ using OpenPuppet.Plugins;
 using OpenPuppet.rendering;
 using OpenPuppet.rendering.VertexTypes;
 using OpenPuppet.SDK;
+using OpenPuppet.SDK.Events;
 using OpenPuppet.vector;
 using Silk.NET.Input;
 using Silk.NET.Maths;
@@ -58,13 +59,15 @@ namespace OpenPuppet
             window.FramebufferResize += Resize;
             window.Closing += Closing;
 
-            SDK.Events.IEvent<string>.Subscribe(
+            IEvent<string>.Subscribe(
                 "openpuppet.window.modify.title",
                 (object sender, string e) =>
                 {
                     window.Title = e;
                 }
             );
+
+            IEvent<EventArgs>.Subscribe("openpuppet.quit", (_, _) => window.Close());
 
             window.Run();
         }

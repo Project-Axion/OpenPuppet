@@ -7,7 +7,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenPuppet.Projects.Dialogs
+namespace OpenPuppet.Core.Dialogs
 {
     public class CreateProject : IUIDialog
     {
