@@ -211,7 +211,14 @@ namespace OpenPuppet
 
                 item.OnPreRender(deltaSeconds);
 
-                ImGui.Begin(item.Title + "##" + item.IstanceIndex,ref open);
+                if (item.Size != null)
+                    ImGui.SetNextWindowSize(item.Size ?? Vector2.PositiveInfinity);
+
+                ImGui.Begin(
+                    item.Title + "##" + item.InstanceIndex,
+                    ref open,
+                    item.Flags ?? ImGuiWindowFlags.None
+                );
 
                 item.OnRender(deltaSeconds);
 
@@ -229,7 +236,7 @@ namespace OpenPuppet
                 {
                     item.OnClose();
                     IUIWindow.ActiveWindows.Remove(item);
-                    SDK.Events.WindowEvents.InvokeOnWindowClosed(null, new(IUIWindow.RegistryFromType(item.GetType()) + "##" + item.IstanceIndex));
+                    SDK.Events.WindowEvents.InvokeOnWindowClosed(null, new(IUIWindow.RegistryFromType(item.GetType()) + "##" + item.InstanceIndex));
                 }
                 PoppedWindows.Clear();
                 logger.WriteLine(Logger.ILogger.Level.Log, $"Successfully popped {total} closed windows");
@@ -254,14 +261,15 @@ namespace OpenPuppet
                     new Vector2(0.5f, 0.5f)
                 );
 
+                if (IUIDialog.ActiveDialog.Size != null)
+                    ImGui.SetNextWindowSize(IUIDialog.ActiveDialog.Size ?? Vector2.PositiveInfinity);
+
                 if (ImGui.BeginPopupModal(
                     IUIDialog.ActiveDialog.Title + "##openpuppet.dialog",
                     ref open,
                     IUIDialog.ActiveDialog.Flags ?? ImGuiWindowFlags.AlwaysAutoResize
                 ))
                 {
-                    if (IUIDialog.ActiveDialog.Size != null)
-                        ImGui.SetNextWindowSize(IUIDialog.ActiveDialog.Size ?? Vector2.PositiveInfinity);
                     ImGui.SetWindowFocus();
                     IUIDialog.ActiveDialog.OnRender();
                     ImGui.EndPopup();

@@ -12,8 +12,10 @@ namespace OpenPuppet.Core
 {
     public class Editor : IUIWindow
     {
-        public uint IstanceIndex { get; set; }
+        public uint InstanceIndex { get; set; }
         public string Title { get; set; } = "Editor";
+        public ImGuiWindowFlags? Flags { get; set; } = null;
+        public Vector2? Size { get; set; } = null;
 
         RenderSurface surface = null!;
         Camera camera = null!;

@@ -11,8 +11,11 @@ namespace OpenPuppet.Core
 {
     internal class SettingsWindow : IUIWindow
     {
-        public uint IstanceIndex { get; set; }
+        public uint InstanceIndex { get; set; }
         public string Title { get; set; } = "Settings";
+
+        public ImGuiWindowFlags? Flags { get; set; } = null;
+        public Vector2? Size { get; set; } = null;
 
         string selected = "";
         float sidebarsize = 160f;
@@ -29,14 +32,14 @@ namespace OpenPuppet.Core
 
             float rowHeight = ImGui.GetFontSize() * 2;
 
-            ImGui.BeginChild("Sidebar##sidebar" + IstanceIndex, new(sidebarsize, 0),false);
+            ImGui.BeginChild("Sidebar##sidebar" + InstanceIndex, new(sidebarsize, 0),false);
             for (int i = 0; i < cats.Length; i++)
             {
                 bool isSelected = (selected == cats[i]);
 
                 Vector2 startPos = ImGui.GetCursorPos();
 
-                if (ImGui.Selectable("##" + (i + IstanceIndex * 1000), isSelected, ImGuiSelectableFlags.None, new Vector2(0, rowHeight)))
+                if (ImGui.Selectable("##" + (i + InstanceIndex * 1000), isSelected, ImGuiSelectableFlags.None, new Vector2(0, rowHeight)))
                     selected = cats[i];
 
                 Vector2 nextRowPos = ImGui.GetCursorPos();
@@ -55,7 +58,7 @@ namespace OpenPuppet.Core
 
             ImGui.SameLine();
 
-            ImGui.InvisibleButton("##splitter" + IstanceIndex, new(4, ImGui.GetContentRegionAvail().Y));
+            ImGui.InvisibleButton("##splitter" + InstanceIndex, new(4, ImGui.GetContentRegionAvail().Y));
 
             if (ImGui.IsItemActive()) sidebarsize += ImGui.GetIO().MouseDelta.X;
 
@@ -70,7 +73,7 @@ namespace OpenPuppet.Core
 
             ImGui.SameLine();
 
-            ImGui.BeginChild("Content##content" + IstanceIndex, new(0, 0), false);
+            ImGui.BeginChild("Content##content" + InstanceIndex, new(0, 0), false);
 
             if (!ISettingsSection.RegisteredSections.ContainsKey(selected))
                 selected = cats.FirstOrDefault("");

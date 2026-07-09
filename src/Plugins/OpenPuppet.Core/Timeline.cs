@@ -11,8 +11,11 @@ namespace OpenPuppet.Core
 {
     public class Timeline : IUIWindow
     {
-        public uint IstanceIndex { get; set; }
+        public uint InstanceIndex { get; set; }
         public string Title { get; set; } = "Timeline";
+
+        public ImGuiWindowFlags? Flags { get; set; } = null;
+        public Vector2? Size { get; set; } = null;
 
         public void OnLoad()
         {

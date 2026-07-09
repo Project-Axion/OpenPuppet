@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using ImGuiNET;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +14,10 @@ namespace OpenPuppet.SDK
         public static Dictionary<string,Type> RegisteredWindows { get; } = new();
         public static List<IUIWindow> ActiveWindows { get; } = new();
 
-        public uint IstanceIndex { get; protected set; }
+        public uint InstanceIndex { get; protected set; }
         public string Title { get; set; }
+        public ImGuiWindowFlags? Flags { get; set; }
+        public Vector2? Size { get; set; }
 
         void OnLoad();
         void OnClose();
@@ -52,9 +55,9 @@ namespace OpenPuppet.SDK
             if (RegisteredWindows.ContainsKey(registry))
             {
                 var win = (IUIWindow)Activator.CreateInstance(RegisteredWindows[registry])!;
-                win.IstanceIndex = (uint)ActiveWindows.Where(w => w.GetType() == win.GetType()).Count();
+                win.InstanceIndex = (uint)ActiveWindows.Where(w => w.GetType() == win.GetType()).Count();
 
-                Events.WindowEvents.InvokeOnWindowOpened(null, new(registry + "##" + win.IstanceIndex));
+                Events.WindowEvents.InvokeOnWindowOpened(null, new(registry + "##" + win.InstanceIndex));
 
                 return win;
             }

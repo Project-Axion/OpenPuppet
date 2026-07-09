@@ -3,6 +3,7 @@ using OpenPuppet.SDK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,8 +11,10 @@ namespace OpenPuppet.Core
 {
     public class Properties : IUIWindow
     {
-        public uint IstanceIndex { get; set; }
+        public uint InstanceIndex { get; set; }
         public string Title { get; set; } = "Properties";
+        public ImGuiWindowFlags? Flags { get; set; } = null;
+        public Vector2? Size { get; set; } = null;
 
         public void OnLoad() { }
 
