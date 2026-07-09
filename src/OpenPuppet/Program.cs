@@ -11,6 +11,7 @@ using Silk.NET.OpenGL.Extensions.ImGui;
 using Silk.NET.Windowing;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -185,16 +186,18 @@ namespace OpenPuppet
             {
                 void RenderMenuNode(IContextMenuNode node)
                 {
+                    if (!node.Enabled) ImGui.BeginDisabled();
                     if (node is ContextMenuList list)
                     {
-                        if (ImGui.BeginMenu(list.Name))
+                        if (ImGui.BeginMenu(list.DisplayName))
                         {
                             foreach (var item in list.Nodes) RenderMenuNode(item);
                             ImGui.EndMenu();
                         }
                     }
                     else if (node is ContextMenuItem item)
-                        if (ImGui.MenuItem(item.Name)) item.OnClick();
+                        if (ImGui.MenuItem(item.DisplayName) && node.Enabled) item.OnClick();
+                    if (!node.Enabled) ImGui.EndDisabled();
                 }
 
                 foreach (var item in ContextMenu.Root.Nodes) RenderMenuNode(item);

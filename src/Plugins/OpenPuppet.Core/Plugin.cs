@@ -15,7 +15,10 @@ namespace OpenPuppet.Core
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Hello Core");
 
             ContextMenu.AddMenuList("File");
+            ContextMenu.AddMenuList("File.Import");
             ContextMenu.AddMenuList("View");
+            ContextMenu.AddMenuList("View.Layouts");
+            ContextMenu.AddMenuList("Project");
 
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering windows");
             IUIWindow.Register("openpuppet.core.timeline", typeof(Timeline));
@@ -29,6 +32,9 @@ namespace OpenPuppet.Core
             ContextMenu.AddMenuItem("View.Editor", () => IUIWindow.Open("openpuppet.core.editor"));
             ContextMenu.AddMenuItem("View.Properties", () => IUIWindow.Open("openpuppet.core.properties"));
             ContextMenu.AddMenuItem("View.Settings", () => IUIWindow.Open("openpuppet.settings"));
+
+            ContextMenu.AddMenuItem("Project.Create", () => { }, "Create Project", false);
+            ContextMenu.AddMenuItem("Project.Open", () => { }, "Open Project", false);
             Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all context menu items successfully");
 
             ISettingsSection.RegisterSection("General",new TestSection());
