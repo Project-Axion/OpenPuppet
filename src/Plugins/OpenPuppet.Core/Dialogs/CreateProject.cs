@@ -1,5 +1,8 @@
 ﻿using ImGuiNET;
+using Newtonsoft.Json;
 using OpenPuppet.SDK;
+using OpenPuppet.SDK.Events;
+using OpenPuppet.SDK.Projects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,7 +58,8 @@ namespace OpenPuppet.Core.Dialogs
             ImGui.Spacing();
 
             ImGui.SetCursorPosX(200);
-            if (ImGui.Button("Cancel")) { ImGui.CloseCurrentPopup(); IUIDialog.Close(); }
+
+            if (ImGui.Button("Cancel")) IUIDialog.Close();
 
             ImGui.SameLine();
 
@@ -63,7 +67,20 @@ namespace OpenPuppet.Core.Dialogs
 
             if (ImGui.Button("Create"))
             {
-                
+                var proj = new ProjectMetadata()
+                {
+                    Name = name,
+                    Directory = path,
+                };
+
+                WelcomeDialog.OpenProject(proj);
+
+                File.WriteAllText(
+                    Path.Combine(path,name+".opp"),
+                    JsonConvert.SerializeObject(ProjectManager.ActiveProject)
+                );
+
+                IUIDialog.Close();
             }
 
             if (openDisabled) ImGui.EndDisabled();

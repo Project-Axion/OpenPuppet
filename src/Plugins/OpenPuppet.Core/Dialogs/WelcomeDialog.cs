@@ -1,13 +1,16 @@
 ﻿using ImGuiNET;
+using Newtonsoft.Json;
 using OpenPuppet.SDK;
 using OpenPuppet.SDK.Events;
 using OpenPuppet.SDK.Projects;
+using Silk.NET.Core.Native;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace OpenPuppet.Core.Dialogs
 {
@@ -20,6 +23,8 @@ namespace OpenPuppet.Core.Dialogs
         bool NoProjectMode = false;
 
         const string NoProjString = "continue without a project";
+
+        public static List<string> RecentProjects = new();
 
         public void OnLoad()
         {
@@ -43,6 +48,44 @@ namespace OpenPuppet.Core.Dialogs
 
                 ImGui.SameLine();
 
+                if (ImGui.Button("open", cardsize))
+                {
+                    NativeDialogs.OpenFileResult result = NativeDialogs.OpenFileDialog("opp", null);
+                    if (NativeDialogs.OpenFileDialogResultHasPath(result))
+                    {
+                        var json = JsonConvert.DeserializeObject<ProjectMetadata>(File.ReadAllText(result.Path!))!;
+                        json.Directory = Directory.GetParent(result.Path!)!.FullName;
+
+                        OpenProject(json);
+
+                        IUIDialog.Close();
+                    }
+                }
+
+                ImGui.SameLine();
+
+                foreach (var item in RecentProjects.ToArray())
+                {
+                    if (ImGui.Button(Path.GetFileName(item), cardsize))
+                    {
+                        if (!File.Exists(item))
+                        {
+                            RecentProjects.Remove(item);
+                            continue;
+                        }
+
+                        var json = JsonConvert.DeserializeObject<ProjectMetadata>(File.ReadAllText(item))!;
+                        json.Directory = Directory.GetParent(item)!.FullName;
+
+                        OpenProject(json);
+
+                        IUIDialog.Close();
+                    }
+
+                    if (ImGui.GetCursorPosX() < ImGui.GetContentRegionAvail().X)
+                        ImGui.SameLine();
+                }
+
                 ImGui.EndChild();
             }
 
@@ -60,6 +103,24 @@ namespace OpenPuppet.Core.Dialogs
             }
 
             ImGui.PopStyleColor();
+        }
+
+        public static void OpenProject(ProjectMetadata meta)
+        {
+            ProjectManager.ActiveProject = meta;
+
+            var projfile = Path.Combine(meta.Directory, meta.Name + ".opp");
+
+            RecentProjects.Remove(projfile);
+            RecentProjects.Insert(0, projfile);
+
+            RecentProjects = RecentProjects.Take(25).ToList();
+
+            File.WriteAllLines("projcache",RecentProjects);
+
+            IEvent<string>.Invoke("openpuppet.window.modify.title", null, $"OpenPuppet - {meta.Name}");
+
+            ContextMenu.SetEnabledAll(true);
         }
 
         public void OnClose()

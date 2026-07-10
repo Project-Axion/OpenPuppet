@@ -1,6 +1,10 @@
 ﻿using ImGuiNET;
+using Newtonsoft.Json;
 using OpenPuppet.Core.Dialogs;
 using OpenPuppet.SDK;
+using OpenPuppet.SDK.Events;
+using OpenPuppet.SDK.Projects;
+using System.Xml.Linq;
 
 namespace OpenPuppet.Core
 {
@@ -14,6 +18,11 @@ namespace OpenPuppet.Core
         {
             Global.MainPlugin = this;
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Hello Core");
+
+            if (!File.Exists("projcache"))
+                File.WriteAllText("projcache","");
+
+            WelcomeDialog.RecentProjects = File.ReadAllLines("projcache").ToList();
 
             ContextMenu.AddMenuList("File");
             ContextMenu.AddMenuList("File.Import");
@@ -36,6 +45,16 @@ namespace OpenPuppet.Core
             Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Reigstered all dialogs successfully");
 
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering context menu items");
+            ContextMenu.AddMenuItem("File.Save", () =>
+            {
+                IEvent<EventArgs>.Invoke("project.save",this,EventArgs.Empty);
+
+                File.WriteAllText(
+                    Path.Combine(ProjectManager.ActiveProject!.Directory, ProjectManager.ActiveProject.Name + ".opp"),
+                    JsonConvert.SerializeObject(ProjectManager.ActiveProject)
+                );
+            });
+
             ContextMenu.AddMenuItem("View.Timeline", () => IUIWindow.Open("openpuppet.core.timeline"));
             ContextMenu.AddMenuItem("View.Editor", () => IUIWindow.Open("openpuppet.core.editor"));
             ContextMenu.AddMenuItem("View.Properties", () => IUIWindow.Open("openpuppet.core.properties"));
