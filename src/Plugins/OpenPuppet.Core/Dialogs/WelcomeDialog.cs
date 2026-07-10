@@ -14,7 +14,7 @@ namespace OpenPuppet.Core.Dialogs
     public class WelcomeDialog : IUIDialog
     {
         public string Title { get; set; } = "Welcome";
-        public ImGuiWindowFlags? Flags { get; set; } = ImGuiWindowFlags.NoResize;
+        public ImGuiWindowFlags? Flags { get; set; } = ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse;
         public Vector2? Size { get; set; } = new Vector2(640, 480);
 
         bool NoProjectMode = false;
@@ -34,17 +34,31 @@ namespace OpenPuppet.Core.Dialogs
 
         public void OnRender()
         {
+            if (ImGui.BeginChild("projectview", ImGui.GetContentRegionAvail() / new Vector2(1,1.2f),true))
+            {
+                var cardsize = ImGui.GetWindowSize() / new Vector2(8f,4f);
+
+                if (ImGui.Button("+",cardsize))
+                    IUIDialog.Open("openpuppet.core.createproject", false);
+
+                ImGui.SameLine();
+
+                ImGui.EndChild();
+            }
+
             ImGui.PushStyleColor(ImGuiCol.Button,0);
 
-            var cpos = ImGui.GetCursorPos();
-
-            ImGui.SetCursorPos(ImGui.GetContentRegionAvail() - ImGui.CalcTextSize(NoProjString));
+            ImGui.SetCursorPos(
+                ImGui.GetContentRegionMax() - 
+                (ImGui.CalcTextSize(NoProjString) + new Vector2(5,5))
+            );
 
             if (ImGui.Button(NoProjString))
             {
                 NoProjectMode = true;
                 IUIDialog.Close();
             }
+
             ImGui.PopStyleColor();
         }
 

@@ -42,20 +42,14 @@ namespace OpenPuppet.SDK
             else throw new ArgumentException($"No dialog registered under the registry: '{registry}'.");
         }
 
-        public static bool Open(string registry)
+        public static void Open(string registry,bool causeUpdates = true)
         {
             SDK.logger.WriteLine(Logger.ILogger.Level.Log, $"Opening dialog with ID {registry}");
             var win = SpawnFromRegistry(registry);
             win.OnLoad();
 
-            if(ActiveDialog != null) SDK.logger.WriteLine(Logger.ILogger.Level.Warn, "A dialog is already open");
-
-            if (ActiveDialog == null)
-            {
-                ActiveDialog = win;
-                return true;
-            }
-            else return false;
+            if (ActiveDialog != null && causeUpdates) ActiveDialog.OnClose();
+            ActiveDialog = win;
         }
 
         public static void Close()
