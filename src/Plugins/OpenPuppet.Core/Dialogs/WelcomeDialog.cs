@@ -34,9 +34,9 @@ namespace OpenPuppet.Core.Dialogs
 
         public void OnRender()
         {
-            if (ImGui.BeginChild("projectview", ImGui.GetContentRegionAvail() / new Vector2(1,1.2f),true))
+            if (ImGui.BeginChild("projectview", ImGui.GetContentRegionAvail() / new Vector2(1,1.2f)))
             {
-                var cardsize = ImGui.GetWindowSize() / new Vector2(8f,4f);
+                var cardsize = ImGui.GetWindowSize() / new Vector2(4f,2f);
 
                 if (ImGui.Button("+",cardsize))
                     IUIDialog.Open("openpuppet.core.createproject", false);
