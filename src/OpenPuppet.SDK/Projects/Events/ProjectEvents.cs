@@ -13,7 +13,7 @@ namespace OpenPuppet.SDK.Projects.Events
 
         }
 
-        public class ProjectUnoaded : EventArgs
+        public class ProjectUnloaded : EventArgs
         {
 
         }
