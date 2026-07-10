@@ -1,4 +1,5 @@
 ﻿{
+    "id": "com.openpuppet.svg",
     "name": "OpenPuppet SVG Plugin",
     "description": "SVG plugin",
     "author": "OpenPuppet (Project-Axion)",

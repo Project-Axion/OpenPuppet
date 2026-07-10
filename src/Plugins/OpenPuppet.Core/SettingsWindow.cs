@@ -14,7 +14,7 @@ namespace OpenPuppet.Core
         public uint InstanceIndex { get; set; }
         public string Title { get; set; } = "Settings";
 
-        public ImGuiWindowFlags? Flags { get; set; } = null;
+        public ImGuiWindowFlags? Flags { get; set; } = ImGuiWindowFlags.NoDocking;
         public Vector2? Size { get; set; } = null;
 
         string selected = "";

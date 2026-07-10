@@ -1,4 +1,5 @@
 ﻿{
+    "id": "com.openpuppet.core",
     "name": "OpenPuppet Core Plugin",
     "description": "Core plugin",
     "author": "OpenPuppet (Project-Axion)",

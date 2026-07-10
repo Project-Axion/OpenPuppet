@@ -44,8 +44,9 @@ namespace OpenPuppet.Core
             ContextMenu.AddMenuItem("View.Hierarchy", () => IUIWindow.Open("openpuppet.core.hierarchy"));
             Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all context menu items successfully");
 
-            ISettingsSection.RegisterSection("General",new TestSection());
-            ISettingsSection.RegisterSection("Appearance",new TestSection());
+            ISettingsSection.RegisterSection("General", new TestSection());
+            ISettingsSection.RegisterSection("Appearance", new TestSection());
+            ISettingsSection.RegisterSection("Plugins", new Settings.Plugins());
 
             Events.Subscribe();
 

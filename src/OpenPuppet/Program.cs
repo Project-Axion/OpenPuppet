@@ -239,7 +239,7 @@ namespace OpenPuppet
                 {
                     item.OnClose();
                     IUIWindow.ActiveWindows.Remove(item);
-                    SDK.Events.WindowEvents.InvokeOnWindowClosed(null, new(IUIWindow.RegistryFromType(item.GetType()) + "##" + item.InstanceIndex));
+                    WindowEvents.InvokeOnWindowClosed(null, new(IUIWindow.RegistryFromType(item.GetType()) + "##" + item.InstanceIndex));
                 }
                 PoppedWindows.Clear();
                 logger.WriteLine(Logger.ILogger.Level.Log, $"Successfully popped {total} closed windows");
@@ -303,28 +303,23 @@ namespace OpenPuppet
 
         static void LoadPlugins()
         {
+            List<string> errors = new();
             foreach (var item in Directory.GetDirectories(PluginsPath.PluginPath!))
             {
-                var anycpu = Path.Combine(item, $"anycpu.dll");
-                var specific = Path.Combine(item, $"{RuntimeInformation.ProcessArchitecture}.dll");
-
-                if (File.Exists(specific)) LoadAssembly(specific);
-                else if (File.Exists(anycpu)) LoadAssembly(anycpu);
-                else Console.WriteLine($"Warning: could not load {Path.GetFileName(item)}: " +
-                    $"no dll found for archirecture '{RuntimeInformation.ProcessArchitecture}'");
+                try
+                {
+                    IPlugin.LoadPluginDirectory(item);
+                } catch (Exception ex)
+                {
+                    // In the future, this should be a popup with all the errors
+                    errors.Add(ex.Message);
+                    logger.WriteLine(ex.Message);
+                }
             }
 
-            SDK.Events.PluginEvents.InvokeFinishedLoading(null);
-        }
-        static void LoadAssembly(string path)
-        {
-            var asm = Assembly.LoadFrom(path);
-            asm.DefinedTypes.Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass).ToList().ForEach(t =>
-            {
-                var plugin = (IPlugin)Activator.CreateInstance(t.AsType())!;
-                PluginManager.LoadedPlugins.Add(plugin);
-                plugin.OnInitialized();
-            });
+            logger.WriteLine($"{errors.Count} plugins failed to load");
+
+            PluginEvents.InvokeFinishedLoading(null);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿{
+    "id": "com.openpuppet.preferences",
     "name": "OpenPuppet Preferences Plugin",
     "description": "Preferences plugin",
     "author": "OpenPuppet (Project-Axion)",
