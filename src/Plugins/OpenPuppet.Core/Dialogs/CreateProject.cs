@@ -15,13 +15,9 @@ namespace OpenPuppet.Core.Dialogs
         public ImGuiWindowFlags? Flags { get; set; } = null;
         public Vector2? Size { get; set; } = null;
 
-        // TODO: Update this so that it gets fetch from and pushed into preferences
-        public static bool LoadTemplates = false;
-
-        public void OnClose()
-        {
-            
-        }
+        private static string name = "New project";
+        private static string path = string.Empty;
+        private static bool openDisabled = true;
 
         public void OnLoad()
         {
@@ -35,17 +31,47 @@ namespace OpenPuppet.Core.Dialogs
 
         public void OnRender()
         {
-            if(LoadTemplates)
-            {
+            ImGui.Text("Project name:");
+            ImGui.InputText("##nameinp", ref name, 1024);
 
-            } else
+            ImGui.Text("Project Path:");
+            ImGui.InputText("##pathinp", ref path, 1024);
+
+            openDisabled = string.IsNullOrEmpty(path) || File.Exists(path);
+
+            ImGui.SameLine();
+
+            if (ImGui.Button("Browse..."))
             {
-                if(ImGui.Button("Open existing project"))
+                NativeDialogs.OpenFileResult result = NativeDialogs.OpenFileDialog(null, openDisabled ? null : path);
+                if (NativeDialogs.OpenFileDialogResultHasPath(result))
                 {
-                    IUIDialog.Close();
-                    SDK.Events.IEvent<EventArgs>.Invoke("openpuppet.projects.open", this, EventArgs.Empty);
+                    path = result.Path ?? "";
                 }
             }
+
+            ImGui.Spacing();
+            ImGui.Separator();
+            ImGui.Spacing();
+
+            ImGui.SetCursorPosX(200);
+            if (ImGui.Button("Cancel")) { ImGui.CloseCurrentPopup(); IUIDialog.Close(); }
+
+            ImGui.SameLine();
+
+            if (openDisabled) ImGui.BeginDisabled();
+
+            if (ImGui.Button("Create"))
+            {
+                
+            }
+
+            if (openDisabled) ImGui.EndDisabled();
+        }
+
+        public void OnClose()
+        {
+
         }
     }
 }
