@@ -42,7 +42,7 @@ namespace OpenPuppet.SDK
             else throw new ArgumentException($"No dialog registered under the registry: '{registry}'.");
         }
 
-        public static void Open(string registry,bool causeUpdates = true)
+        public static void Open(string registry, bool causeUpdates = true)
         {
             SDK.logger.WriteLine(Logger.ILogger.Level.Log, $"Opening dialog with ID {registry}");
             var win = SpawnFromRegistry(registry);

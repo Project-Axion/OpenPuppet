@@ -26,22 +26,7 @@ namespace OpenPuppet.Core
         {
             if(SDK.Projects.ProjectManager.ActiveProject == null)
             {
-                ImGui.Spacing();
-                ImGui.Text("No project loaded");
-                ImGui.Spacing();
-                ImGui.Separator();
-                ImGui.Spacing();
-                ImGui.TextWrapped("Create or load an existing project to get started");
-                ImGui.Spacing();
-                if (ImGui.Button("Create project"))
-                {
-                    SDK.Events.IEvent<EventArgs>.Invoke("openpuppet.projects.create", this, EventArgs.Empty);
-                }
-                ImGui.SameLine();
-                if (ImGui.Button("Open existing project"))
-                {
-                    SDK.Events.IEvent<EventArgs>.Invoke("openpuppet.projects.open", this, EventArgs.Empty);
-                }
+                ImGui.Text("Not available in no project mode");
             }
         }
 
