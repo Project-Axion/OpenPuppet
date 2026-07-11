@@ -40,7 +40,10 @@ namespace OpenPuppet.Core
                 Vector2 startPos = ImGui.GetCursorPos();
 
                 if (ImGui.Selectable("##" + (i + InstanceIndex * 1000), isSelected, ImGuiSelectableFlags.None, new Vector2(0, rowHeight)))
+                {
                     selected = cats[i];
+                    ISettingsSection.RegisteredSections[cats[i]].OnOpened();
+                }
 
                 Vector2 nextRowPos = ImGui.GetCursorPos();
 

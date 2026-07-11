@@ -80,6 +80,8 @@ namespace OpenPuppet.Core
 
     public class TestSection : ISettingsSection
     {
+        public void OnOpened() { }
+
         public void OnRender(double deltaTime)
         {
             ImGui.Text("hello world");

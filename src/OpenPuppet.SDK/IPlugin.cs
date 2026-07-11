@@ -17,12 +17,14 @@ namespace OpenPuppet
         {
             if (RegisteredPlugins.ContainsKey(metadata.ID))
                 throw new ArgumentException($"Plugin with the ID of \"{metadata.ID}\" is already registered");
-            RegisteredPlugins[metadata.ID] = new(metadata, path, plugin);
+            RegisteredPlugins[metadata.ID] = new(metadata, path, plugin, false);
         }
         public static void EnablePlugin(string registry)
         {
             if (RegisteredPlugins.ContainsKey(registry))
             {
+                if (RegisteredPlugins[registry].Assembly != null) return;
+
                 string item = RegisteredPlugins[registry].Path;
 
                 var anycpu = Path.Combine(item, $"anycpu.dll");
@@ -35,6 +37,35 @@ namespace OpenPuppet
             }
             else throw new ArgumentException($"Plugin with the ID of\"{registry}\" has not been registered");
         }
+        public static void DisablePlugin(string registry)
+        {
+            if (RegisteredPlugins.ContainsKey(registry))
+            {
+                if (RegisteredPlugins[registry].Assembly == null) return;
+
+                SDK.SDK.logger.WriteLine(
+                    SDK.Logger.ILogger.Level.Warn,
+                    "Disabling plugins has not yet been implemented"
+                );
+                RegisteredPlugins[registry].Assembly.OnShutdown();
+                RegisteredPlugins[registry].Enabled = false; // Temporary, move to unloading method
+                // Unload plugin
+            }
+            else throw new ArgumentException($"Plugin with the ID of\"{registry}\" has not been registered");
+        }
+        public static void RemovePlugin(string registry)
+        {
+            if (RegisteredPlugins.ContainsKey(registry))
+            {
+                SDK.SDK.logger.WriteLine(
+                    SDK.Logger.ILogger.Level.Warn,
+                    "Removing plugins has not yet been fully implemented"
+                );
+                // Uninstall
+                RegisteredPlugins.Remove(registry);
+            }
+            else throw new ArgumentException($"Plugin with the ID of\"{registry}\" has not been registered");
+        }
 
         static void LoadAssembly(string path, string registry)
         {
@@ -44,6 +75,7 @@ namespace OpenPuppet
                 var plugin = (IPlugin)Activator.CreateInstance(t.AsType())!;
                 //PluginManager.LoadedPlugins.Add(plugin, path);
                 RegisteredPlugins[registry].Assembly = plugin;
+                RegisteredPlugins[registry].Enabled = true;
 
                 plugin.OnInitialized();
             });
@@ -118,12 +150,14 @@ namespace OpenPuppet
         public PluginMetadata Metadata { get; set; }
         public string Path { get; set; }
         public IPlugin? Assembly { get; set; }
+        public bool Enabled { get; set; }
 
-        public RegisteredPlugin(PluginMetadata metadata, string path, IPlugin? assembly)
+        public RegisteredPlugin(PluginMetadata metadata, string path, IPlugin? assembly, bool enabled)
         {
             Metadata = metadata;
             Path = path;
             Assembly = assembly;
+            Enabled = enabled;
         }
     }
 }

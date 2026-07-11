@@ -12,6 +12,7 @@ namespace OpenPuppet.SDK
 
         public static void RegisterSection(string name, ISettingsSection section) => RegisteredSections[name] = section;
 
+        public void OnOpened();
         public void OnRender(double deltaTime);
     }
 }

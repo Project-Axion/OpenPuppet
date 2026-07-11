@@ -67,6 +67,23 @@ namespace OpenPuppet
                 }
             );
 
+            IEvent<bool>.Subscribe(
+                "openpuppet.restart",
+                (object sender, bool soft) =>
+                {
+                    if(soft)
+                    {
+
+                    } else
+                    {
+                        logger.WriteLine($"Launching {Assembly.GetExecutingAssembly().Location.Replace(".dll", ".exe")}");
+                        window.Close();
+                        Process.Start(Assembly.GetExecutingAssembly().Location.Replace(".dll", ".exe"));
+                        Environment.Exit(0);
+                    }
+                }
+            );
+
             IEvent<EventArgs>.Subscribe("openpuppet.quit", (_, _) => window.Close());
 
             window.Run();
@@ -294,8 +311,23 @@ namespace OpenPuppet
             shader.Dispose(gl);
             testmdl.Dispose(gl);
 
-            for (int i = 0; i < PluginManager.LoadedPlugins.Count; i++)
-                PluginManager.LoadedPlugins[i].OnShutdown();
+            //for (int i = 0; i < PluginManager.LoadedPlugins.Count; i++)
+            //    PluginManager.LoadedPlugins[i].OnShutdown();
+
+            PluginManager.SavePluginList();
+            foreach (var plugin in IPlugin.RegisteredPlugins)
+            {
+                try
+                {
+                    plugin.Value.Assembly?.OnShutdown();
+                } catch (Exception ex)
+                {
+                    logger.WriteLine(
+                        Logger.ILogger.Level.Warn,
+                        $"\"{plugin.Key}\" failed to shut down: {ex.Message}"
+                    );
+                }
+            }
 
             SDK.SDK.DestroyLogger();
             logger.Dispose();
@@ -303,6 +335,7 @@ namespace OpenPuppet
 
         static void LoadPlugins()
         {
+            PluginManager.LoadPluginList();
             List<string> errors = new();
             foreach (var item in Directory.GetDirectories(PluginsPath.PluginPath!))
             {
