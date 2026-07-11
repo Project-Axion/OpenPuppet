@@ -20,8 +20,15 @@ namespace OpenPuppet.SDK.Plugins
 
         protected override Assembly? Load(AssemblyName assemblyName)
         {
+            if (assemblyName.Name == typeof(IPlugin).Assembly.GetName().Name)
+                return null;
+
             var path = _resolver.ResolveAssemblyToPath(assemblyName);
-            return path is null ? null : LoadFromAssemblyPath(path);
+            if (path != null)
+                return LoadFromAssemblyPath(path);
+            else
+                return null;
+            //return path is null ? null : LoadFromAssemblyPath(path);
         }
 
         /*protected override nint LoadUnmanagedDll(string unmanagedDllName)

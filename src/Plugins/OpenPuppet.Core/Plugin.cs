@@ -74,6 +74,7 @@ namespace OpenPuppet.Core
 
         public void OnShutdown()
         {
+            Events.Unsubscribe();
             Logger.Dispose();
         }
     }

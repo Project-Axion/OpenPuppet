@@ -45,13 +45,9 @@ namespace OpenPuppet
             {
                 if (RegisteredPlugins[registry].Assembly == null) return;
 
-                SDK.SDK.logger.WriteLine(
-                    SDK.Logger.ILogger.Level.Warn,
-                    "Disabling plugins has not yet been implemented"
-                );
-                RegisteredPlugins[registry].Assembly.OnShutdown();
+                //RegisteredPlugins[registry].Assembly!.OnShutdown();
                 RegisteredPlugins[registry].Enabled = false; // Temporary, move to unloading method
-                // Unload plugin
+                UnloadPlugin(registry);
             }
             else throw new ArgumentException($"Plugin with the ID of \"{registry}\" has not been registered");
         }
@@ -81,28 +77,37 @@ namespace OpenPuppet
                     $"Plugin with the ID of \"{registry}\" cannot be unloaded, as it is not loaded"
                 );
 
-            RegisteredPlugins[registry].LoadContext?.Unload();
-            for(int i = 0; (RegisteredPlugins[registry].WeakReference?.IsAlive ?? false) && i < 10; i++)
+            var plugin = RegisteredPlugins[registry];
+            var weakRef = plugin.WeakReference;
+            plugin.Assembly!.OnShutdown();
+            plugin.Assembly = null;
+            plugin.LoadContext?.Unload();
+            plugin.LoadContext = null;
+            for (int i = 0; weakRef!.IsAlive && i < 10; i++)
             {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
                 GC.Collect();
             }
 
-            SDK.SDK.logger.WriteLine(
-                SDK.Logger.ILogger.Level.Warn,
-                $"Could not unload Plugin \"{registry}\", possible reference leak"
-            );
-
-            // Trigger a full restart of the application if soft restarting,
-            // or add a warning dialog telling the user that the application
-            // is unstable, and needs a restart
-
-            if(soft)
+            if (weakRef!.IsAlive)
             {
-                IEvent<EventArgs>.Invoke("window.restart", null, EventArgs.Empty);
-            } else
-                IEvent<EventArgs>.Invoke("window.unstable", null, EventArgs.Empty);
+                SDK.SDK.logger.WriteLine(
+                    SDK.Logger.ILogger.Level.Warn,
+                    $"Could not unload Plugin \"{registry}\", possible reference leak"
+                );
+
+                // Trigger a full restart of the application if soft restarting,
+                // or add a warning dialog telling the user that the application
+                // is unstable, and needs a restart
+
+                if (soft)
+                {
+                    IEvent<bool>.Invoke("openpuppet.restart", null, false);
+                }
+                else
+                    IEvent<EventArgs>.Invoke("openpuppet.unstable", null, EventArgs.Empty);
+            }
         }
 
         static void LoadAssembly(string path, string registry)
@@ -114,7 +119,7 @@ namespace OpenPuppet
 
             SDK.SDK.logger.WriteLine($"Loading assembly {path}");
             RegisteredPlugins[registry].LoadContext = new PluginLoadContext(path);
-            Assembly asm = Assembly.LoadFrom(path); //RegisteredPlugins[registry].LoadContext!.LoadFromAssemblyPath(path);
+            Assembly asm = RegisteredPlugins[registry].LoadContext!.LoadFromAssemblyPath(path);
             SDK.SDK.logger.WriteLine($"Initializing Plugin {registry}");
             asm.DefinedTypes.Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass).ToList().ForEach(t =>
             {

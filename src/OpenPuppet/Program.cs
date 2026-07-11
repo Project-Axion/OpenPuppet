@@ -359,12 +359,12 @@ namespace OpenPuppet
         {
             logger.WriteLine("Starting soft restart");
 
-            foreach (var plugin in IPlugin.RegisteredPlugins)
+            foreach (var plugin in IPlugin.RegisteredPlugins.ToList())
             {
                 try
                 {
-                    plugin.Value.Assembly?.OnShutdown();
-                    IPlugin.UnloadPlugin(plugin.Key, true);
+                    //plugin.Value.Assembly?.OnShutdown();
+                    IPlugin.UnloadPlugin(plugin.Key, false); // Temporarily false
                 }
                 catch (Exception ex)
                 {
@@ -374,6 +374,12 @@ namespace OpenPuppet
                     );
                 }
             }
+
+            ContextMenu.Root.Nodes.Clear();
+            IUIWindow.RegisteredWindows.Clear();
+            IUIDialog.RegisteredWindows.Clear();
+
+            LoadPlugins();
         }
     }
 }

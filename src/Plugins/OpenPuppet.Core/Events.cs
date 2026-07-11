@@ -13,5 +13,7 @@ namespace OpenPuppet.Core
         {
             
         }
+
+        public static void Unsubscribe() { }
     }
 }

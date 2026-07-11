@@ -26,6 +26,15 @@ namespace OpenPuppet.Preferences
             SDK.Events.PluginEvents.OnFinishedLoading += OnFinishedLoading;
         }
 
+        public static void UnsubscribeToEvents()
+        {
+            Global.MainPlugin.Logger.WriteLine("Unsubscribed to events");
+
+            SDK.Events.WindowEvents.OnWindowOpened -= OnWindowOpened;
+            SDK.Events.WindowEvents.OnWindowClosed -= OnWindowClosed;
+            SDK.Events.PluginEvents.OnFinishedLoading -= OnFinishedLoading;
+        }
+
         public static void OnWindowOpened(object? sender, SDK.Events.WindowEvents.WindowOpenedArgs args)
         {
             Global.MainPlugin.Logger.WriteLine("Window opened: " + args.Window);

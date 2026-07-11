@@ -130,7 +130,7 @@ namespace OpenPuppet.SDK
             {
                 GC.SuppressFinalize(this);
 
-                WriteLine("Plugin unloading");
+                WriteLine("Logger disposed");
 
                 Close();
 
