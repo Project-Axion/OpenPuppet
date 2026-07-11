@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OpenPuppet.SDK
 {
@@ -30,13 +25,13 @@ namespace OpenPuppet.SDK
         {
             public static string RequestPluginLogFile(string pluginName)
             {
-                if(!Directory.Exists(Path.Combine(LogPath!, Plugins.PluginsPath.SafePluginName(pluginName)))) {
-                    Directory.CreateDirectory(Path.Combine(LogPath!, Plugins.PluginsPath.SafePluginName(pluginName)));
+                if(!Directory.Exists(Path.Combine(LogPath!, OpenPuppet.Plugins.PluginsPath.SafePluginName(pluginName)))) {
+                    Directory.CreateDirectory(Path.Combine(LogPath!, OpenPuppet.Plugins.PluginsPath.SafePluginName(pluginName)));
                 }
 
                 string path = Path.Combine(
                     LogPath!,
-                    Plugins.PluginsPath.SafePluginName(pluginName),
+                    OpenPuppet.Plugins.PluginsPath.SafePluginName(pluginName),
                     DateTime.Now.ToString("dd'-'MM'-'yyyy'.txt'")
                 );
 
