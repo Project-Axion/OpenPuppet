@@ -125,7 +125,7 @@ namespace OpenPuppet.Core
                 var ngonpos = new Vector2(pos.X + sidebarsize + (float)(item.TotalMilliseconds * zoom), keyframeY);
 
                 drawList.AddNgonFilled(ngonpos,padding.Y, ImGui.GetColorU32(ImGuiCol.TableHeaderBg), 4);
-                drawList.AddNgon(ngonpos, padding.Y, ImGui.GetColorU32(ImGuiCol.Border), 4);
+                drawList.AddNgon(ngonpos, padding.Y - 2, ImGui.GetColorU32(ImGuiCol.Border), 4);
             }
 
             drawList.PopClipRect();
