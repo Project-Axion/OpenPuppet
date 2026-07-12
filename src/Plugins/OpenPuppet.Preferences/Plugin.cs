@@ -30,6 +30,11 @@ namespace OpenPuppet.Preferences
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Saving current window layout");
             Windows.SavePreviousWindows();
             Windows.SaveLayout("default");
+            ContextMenu.Remove("view.layouts");
+            //ContextMenu.Remove("view.layouts.new");
+            //ContextMenu.Remove("view.layouts.layouts");
+            //ContextMenu.Remove("view.layouts.layouts.default");
+            Windows.UnsubscribeToEvents();
             Logger.Dispose();
         }
     }

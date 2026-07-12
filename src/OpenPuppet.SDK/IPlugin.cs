@@ -1,5 +1,7 @@
 ﻿using ImGuiNET;
 using OpenPuppet.Plugins;
+using OpenPuppet.SDK.Events;
+using OpenPuppet.SDK.Plugins;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.Json;
@@ -17,7 +19,7 @@ namespace OpenPuppet
         {
             if (RegisteredPlugins.ContainsKey(metadata.ID))
                 throw new ArgumentException($"Plugin with the ID of \"{metadata.ID}\" is already registered");
-            RegisteredPlugins[metadata.ID] = new(metadata, path, plugin, false);
+            RegisteredPlugins[metadata.ID] = new(metadata, path, null, null, plugin, false);
         }
         public static void EnablePlugin(string registry)
         {
@@ -43,15 +45,11 @@ namespace OpenPuppet
             {
                 if (RegisteredPlugins[registry].Assembly == null) return;
 
-                SDK.SDK.logger.WriteLine(
-                    SDK.Logger.ILogger.Level.Warn,
-                    "Disabling plugins has not yet been implemented"
-                );
-                RegisteredPlugins[registry].Assembly.OnShutdown();
+                //RegisteredPlugins[registry].Assembly!.OnShutdown();
                 RegisteredPlugins[registry].Enabled = false; // Temporary, move to unloading method
-                // Unload plugin
+                UnloadPlugin(registry);
             }
-            else throw new ArgumentException($"Plugin with the ID of\"{registry}\" has not been registered");
+            else throw new ArgumentException($"Plugin with the ID of \"{registry}\" has not been registered");
         }
         public static void RemovePlugin(string registry)
         {
@@ -64,12 +62,88 @@ namespace OpenPuppet
                 // Uninstall
                 RegisteredPlugins.Remove(registry);
             }
-            else throw new ArgumentException($"Plugin with the ID of\"{registry}\" has not been registered");
+            else throw new ArgumentException($"Plugin with the ID of \"{registry}\" has not been registered");
+        }
+        public static void UnloadPlugin(string registry, bool soft = false)
+        {
+            if (!RegisteredPlugins.ContainsKey(registry))
+                throw new ArgumentException($"Plugin with the ID of \"{registry}\" has not been registered");
+
+            if (RegisteredPlugins[registry].Assembly == null ||
+                RegisteredPlugins[registry].LoadContext == null ||
+                RegisteredPlugins[registry].WeakReference == null)
+                SDK.SDK.logger.WriteLine(
+                    SDK.Logger.ILogger.Level.Log,
+                    $"Plugin with the ID of \"{registry}\" cannot be unloaded, as it is not loaded"
+                );
+
+            var plugin = RegisteredPlugins[registry];
+            var weakRef = plugin.WeakReference;
+            plugin.Assembly!.OnShutdown();
+            plugin.Assembly = null;
+            plugin.LoadContext?.Unload();
+            plugin.LoadContext = null;
+            for (int i = 0; weakRef!.IsAlive && i < 10; i++)
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+            }
+
+            if (weakRef!.IsAlive)
+            {
+                SDK.SDK.logger.WriteLine(
+                    SDK.Logger.ILogger.Level.Warn,
+                    $"Could not unload Plugin \"{registry}\", possible reference leak"
+                );
+
+                // Trigger a full restart of the application if soft restarting,
+                // or add a warning dialog telling the user that the application
+                // is unstable, and needs a restart
+
+                if (soft)
+                {
+                    IEvent<bool>.Invoke("openpuppet.restart", null, false);
+                }
+                else
+                    IEvent<EventArgs>.Invoke("openpuppet.unstable", null, EventArgs.Empty);
+            }
         }
 
         static void LoadAssembly(string path, string registry)
         {
-            var asm = Assembly.LoadFrom(path);
+            if (!RegisteredPlugins.ContainsKey(registry))
+                throw new ArgumentException($"Plugin with the ID of \"{registry}\" has not been registered");
+
+            // Remove the logs once fixed
+
+            SDK.SDK.logger.WriteLine($"Loading assembly {path}");
+            RegisteredPlugins[registry].LoadContext = new PluginLoadContext(path);
+            Assembly asm = RegisteredPlugins[registry].LoadContext!.LoadFromAssemblyPath(path);
+            SDK.SDK.logger.WriteLine($"Initializing Plugin {registry}");
+            asm.DefinedTypes.Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass).ToList().ForEach(t =>
+            {
+                SDK.SDK.logger.WriteLine($"Found IPlugin in Plugin {registry}");
+                RegisteredPlugins[registry].Assembly = (IPlugin)Activator.CreateInstance(t.AsType())!;
+                RegisteredPlugins[registry].Assembly!.OnInitialized();
+                SDK.SDK.logger.WriteLine($"Initialised Plugin {registry}");
+            });
+            /*foreach(Type t in asm.GetTypes())
+            {
+                if (typeof(IPlugin).IsAssignableFrom(t) && !t.IsInterface && t.IsClass)
+                {
+                    SDK.SDK.logger.WriteLine($"Found IPlugin in Plugin {registry}");
+                    RegisteredPlugins[registry].Assembly = (IPlugin)Activator.CreateInstance(t)!;
+                    RegisteredPlugins[registry].Assembly!.OnInitialized();
+                    SDK.SDK.logger.WriteLine($"Initialised Plugin {registry}");
+                }
+            }*/
+            RegisteredPlugins[registry].WeakReference = new(
+                RegisteredPlugins[registry].LoadContext,
+                trackResurrection: true
+            );
+
+            /*var asm = Assembly.LoadFrom(path);
             asm.DefinedTypes.Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass).ToList().ForEach(t =>
             {
                 var plugin = (IPlugin)Activator.CreateInstance(t.AsType())!;
@@ -78,7 +152,7 @@ namespace OpenPuppet
                 RegisteredPlugins[registry].Enabled = true;
 
                 plugin.OnInitialized();
-            });
+            });*/
         }
 
         /// <summary>
@@ -149,13 +223,23 @@ namespace OpenPuppet
     {
         public PluginMetadata Metadata { get; set; }
         public string Path { get; set; }
+        public PluginLoadContext? LoadContext { get; set; }
+        public WeakReference? WeakReference { get; set; }
         public IPlugin? Assembly { get; set; }
         public bool Enabled { get; set; }
 
-        public RegisteredPlugin(PluginMetadata metadata, string path, IPlugin? assembly, bool enabled)
+        public RegisteredPlugin(
+            PluginMetadata metadata,
+            string path,
+            PluginLoadContext? loadContext,
+            WeakReference? weakReference,
+            IPlugin? assembly,
+            bool enabled)
         {
             Metadata = metadata;
             Path = path;
+            LoadContext = loadContext;
+            WeakReference = weakReference;
             Assembly = assembly;
             Enabled = enabled;
         }

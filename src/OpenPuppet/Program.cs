@@ -73,7 +73,7 @@ namespace OpenPuppet
                 {
                     if(soft)
                     {
-
+                        SoftRestart();
                     } else
                     {
                         logger.WriteLine($"Launching {Assembly.GetExecutingAssembly().Location.Replace(".dll", ".exe")}");
@@ -353,6 +353,33 @@ namespace OpenPuppet
             logger.WriteLine($"{errors.Count} plugins failed to load");
 
             PluginEvents.InvokeFinishedLoading(null);
+        }
+
+        static void SoftRestart()
+        {
+            logger.WriteLine("Starting soft restart");
+
+            foreach (var plugin in IPlugin.RegisteredPlugins.ToList())
+            {
+                try
+                {
+                    //plugin.Value.Assembly?.OnShutdown();
+                    IPlugin.UnloadPlugin(plugin.Key, false); // Temporarily false
+                }
+                catch (Exception ex)
+                {
+                    logger.WriteLine(
+                        Logger.ILogger.Level.Warn,
+                        $"\"{plugin.Key}\" failed to shut down: {ex.Message}"
+                    );
+                }
+            }
+
+            ContextMenu.Root.Nodes.Clear();
+            IUIWindow.RegisteredWindows.Clear();
+            IUIDialog.RegisteredWindows.Clear();
+
+            LoadPlugins();
         }
     }
 }
