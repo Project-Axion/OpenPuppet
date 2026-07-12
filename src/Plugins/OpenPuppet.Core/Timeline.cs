@@ -20,6 +20,10 @@ namespace OpenPuppet.Core
 
         Timer timer = null!;
 
+        float sidebarsize = 200;
+
+        double zoom = 1d / 10d;
+
         public void OnLoad() {}
 
         public void OnUpdate(double deltaTime) {}
@@ -52,7 +56,7 @@ namespace OpenPuppet.Core
             foreach (var item in scene.AnimationScene)
             {
                 if (ImGui.CollapsingHeader(scene.SceneObjects.First(x => x.ID == item.Key).Name))
-                    foreach (var item1 in item.Value) DrawTrack(item1.Name);
+                    foreach (var item1 in item.Value) DrawTrack(item1.Name,item1.GetKeyframes());
             }
         }
 
@@ -60,25 +64,71 @@ namespace OpenPuppet.Core
 
         public void OnClose() {}
 
-        static void DrawTrack(string name)
+        void DrawTrack(string name,List<TimeSpan> keyframes)
         {
-            Vector2 pos = ImGui.GetCursorScreenPos();
+            Vector2 rpos = ImGui.GetCursorPos();
+            Vector2 pos = ImGui.GetCursorScreenPos() - ImGui.GetStyle().FramePadding;
             Vector2 textSize = ImGui.CalcTextSize(name);
-            Vector2 padding = new Vector2(6, 3);
-            Vector2 rectSize = new Vector2(textSize.X + padding.X * 2, textSize.Y + padding.Y * 2);
+            Vector2 padding = new Vector2(24, 12);
+            Vector2 rectSize = new Vector2(ImGui.GetContentRegionMax().X, textSize.Y + padding.Y * 2);
+
+            float keyframeY = pos.Y + rectSize.Y / 2;
+
+            ImGui.SetCursorScreenPos(new Vector2(pos.X + sidebarsize, pos.Y));
+
+            ImGui.InvisibleButton("##splitter" + InstanceIndex, new(4, rectSize.Y));
+
+            if (ImGui.IsItemActive()) 
+                sidebarsize = Math.Max(Math.Min(ImGui.GetIO().MousePos.X - pos.X, rectSize.X - 10),10);
+
+            ImGui.SetCursorPos(rpos);
 
             ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+
             drawList.AddRectFilled(
                 pos,
                 new Vector2(pos.X + rectSize.X, pos.Y + rectSize.Y),
                 ImGui.GetColorU32(ImGuiCol.TitleBg),
                 0f
             );
+
+            drawList.AddRect(
+                pos + Vector2.One,
+                new Vector2(pos.X + rectSize.X, pos.Y + rectSize.Y + 1),
+                ImGui.GetColorU32(ImGuiCol.Border),
+                0f
+            );
+
+            drawList.PushClipRect(pos, new Vector2(pos.X + sidebarsize, pos.Y + rectSize.Y));
+
             drawList.AddText(
                 new Vector2(pos.X + padding.X, pos.Y + padding.Y),
-                ImGui.GetColorU32(new Vector4(1f, 1f, 1f, 1f)),
+                ImGui.GetColorU32(ImGuiCol.Text),
                 name
             );
+
+            drawList.PopClipRect();
+
+            drawList.AddLine(
+                new Vector2(pos.X + sidebarsize, pos.Y),
+                new Vector2(pos.X + sidebarsize, pos.Y + rectSize.Y),
+                ImGui.GetColorU32(ImGui.IsItemHovered() ? ImGuiCol.SeparatorHovered : ImGuiCol.Separator)
+            );
+
+            drawList.PushClipRect(
+                new Vector2(pos.X + sidebarsize, pos.Y), 
+                new Vector2(pos.X + rectSize.X, pos.Y + rectSize.Y)
+            );
+
+            foreach (var item in keyframes)
+            {
+                var ngonpos = new Vector2(pos.X + sidebarsize + (float)(item.TotalMilliseconds * zoom), keyframeY);
+
+                drawList.AddNgonFilled(ngonpos,padding.Y, ImGui.GetColorU32(ImGuiCol.TableHeaderBg), 4);
+                drawList.AddNgon(ngonpos, padding.Y, ImGui.GetColorU32(ImGuiCol.Border), 4);
+            }
+
+            drawList.PopClipRect();
 
             ImGui.Dummy(rectSize);
         }

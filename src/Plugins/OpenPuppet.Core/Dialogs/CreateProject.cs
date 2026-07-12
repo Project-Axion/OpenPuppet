@@ -86,6 +86,13 @@ namespace OpenPuppet.Core.Dialogs
                         "Letterbox color",
                         () => proj.Scenes[0].LetterboxColor
                     )
+                    {
+                        Keyframes = new()
+                        {
+                            {new(0,0,0),Vector3.Zero},
+                            {new(0,0,1),Vector3.One},
+                        }
+                    }
                 );
 
                 WelcomeDialog.OpenProject(proj);

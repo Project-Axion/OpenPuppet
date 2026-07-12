@@ -57,7 +57,10 @@ namespace OpenPuppet.Core
 
                 File.WriteAllText(
                     Path.Combine(ProjectManager.ActiveProject!.Directory, ProjectManager.ActiveProject.Name + ".opp"),
-                    JsonConvert.SerializeObject(ProjectManager.ActiveProject)
+                    JsonConvert.SerializeObject(ProjectManager.ActiveProject, new JsonSerializerSettings()
+                    {
+                        TypeNameHandling = TypeNameHandling.Auto
+                    })
                 );
             });
 
