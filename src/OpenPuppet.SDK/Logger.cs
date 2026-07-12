@@ -60,9 +60,9 @@ namespace OpenPuppet.SDK
             }
 
             abstract void Write(string message);
-            abstract void WriteLine(string message);
+            abstract void WriteLine(string message, bool write = true);
 
-            abstract void WriteLine(Level level, string message);
+            abstract void WriteLine(Level level, string message, bool forceWrite = false);
         }
 
         public class PluginLogger : ILogger
@@ -102,19 +102,20 @@ namespace OpenPuppet.SDK
                 FileWriter.Flush();
             }
 
-            public void WriteLine(string message)
+            public void WriteLine(string message, bool write = true)
             {
                 string msg = $"[{PluginName}] ({DateTime.Now:dd'-'MM'-'yyyy HH':'mm':'ss}) {message}";
-                FileWriter.WriteLine(msg);
+                if(write) FileWriter.WriteLine(msg);
                 Console.WriteLine(msg);
                 Debug.WriteLine(msg);
 
                 FileWriter.Flush();
             }
 
-            public void WriteLine(ILogger.Level level, string message)
+            public void WriteLine(ILogger.Level level, string message, bool forceWrite = false)
             {
-                WriteLine($"{level}: {message}");
+                // Cut down on the excessive logging to disk
+                WriteLine($"{level}: {message}", level != ILogger.Level.Log || forceWrite);
             }
 
             public void Close(bool dispose = false)

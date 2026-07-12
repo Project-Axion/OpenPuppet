@@ -1,4 +1,5 @@
-﻿using OpenPuppet.SDK;
+﻿using Newtonsoft.Json;
+using OpenPuppet.SDK;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,7 +38,7 @@ namespace OpenPuppet.Plugins
                 throw new Exception("\"PluginListPath\" is null");
             if(File.Exists(PluginListPath))
             {
-                PluginItem[]? plugins = JsonSerializer.Deserialize<PluginItem[]>(File.ReadAllText(PluginListPath));
+                PluginItem[]? plugins = JsonConvert.DeserializeObject<PluginItem[]>(File.ReadAllText(PluginListPath));
                 if(plugins == null)
                 {
                     SDK.SDK.logger.WriteLine(
@@ -65,13 +66,30 @@ namespace OpenPuppet.Plugins
                 throw new Exception("\"PluginListPath\" is null");
             File.WriteAllText(
                 PluginListPath,
-                JsonSerializer.Serialize(PluginList)
+                JsonConvert.SerializeObject(PluginList, Formatting.Indented)
             );
         }
 
         public static void GenerateDefaultPluginList()
         {
             // This just puts the currently available/loaded plugins into the list
+            foreach (var item in Directory.GetDirectories(PluginsPath.PluginPath!))
+            {
+                string meta = Path.Combine(item, "meta.inf");
+                if (!File.Exists(meta))
+                    throw new ArgumentException($"No metadata present in \"{item}\" (\"{meta}\" does not exist)");
+
+                PluginMetadata? metadata = JsonConvert.DeserializeObject<PluginMetadata>(File.ReadAllText(meta));
+                if (metadata == null)
+                    throw new ArgumentException($"Metadata in \"{meta}\" is invalid");
+
+                PluginList.Add(new PluginItem
+                {
+                    ID = metadata.ID,
+                    Path = item,
+                    Enabled = true
+                });
+            }
         }
 
         /// <summary>
@@ -108,6 +126,19 @@ namespace OpenPuppet.Plugins
         {
             if(enabled) IPlugin.EnablePlugin(ID);
             else IPlugin.DisablePlugin(ID);
+
+            var plugin = PluginList.Find(p => p.ID == ID);
+            if(plugin == null)
+            {
+                SDK.SDK.logger.WriteLine(
+                    Logger.ILogger.Level.Warn,
+                    "Plugin with ID \"{ID}\" is not present in the plugin list. " +
+                    "The plugin list, and the currently loaded plugins may be desynced."
+                );
+            } else
+            {
+                plugin.Enabled = enabled;
+            }
         }
 
         public static void UninstallPlugin(string ID)

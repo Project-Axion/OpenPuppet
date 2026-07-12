@@ -53,6 +53,17 @@ namespace OpenPuppet
 
         static void Main(string[] args)
         {
+            if(args.Length > 0)
+            {
+                if (args[0] == "clean")
+                {
+                    logger.Dispose();
+                    if (Directory.Exists(Logger.LogPath))
+                        Directory.Delete(Logger.LogPath, true);
+                    Environment.Exit(0);
+                }
+            }
+
             window.Load += Load;
             window.Update += Update;
             window.Render += Render;
@@ -341,7 +352,7 @@ namespace OpenPuppet
         {
             PluginManager.LoadPluginList();
             List<string> errors = new();
-            foreach (var item in Directory.GetDirectories(PluginsPath.PluginPath!))
+            /*foreach (var item in Directory.GetDirectories(PluginsPath.PluginPath!))
             {
                 try
                 {
@@ -351,6 +362,21 @@ namespace OpenPuppet
                     // In the future, this should be a popup with all the errors
                     errors.Add(ex.Message);
                     logger.WriteLine(ex.Message);
+                }
+            }*/
+
+            foreach(var item in PluginManager.PluginList)
+            {
+                if(item.Enabled)
+                {
+                    try
+                    {
+                        IPlugin.LoadPluginDirectory(item.Path);
+                    } catch (Exception ex)
+                    {
+                        errors.Add(ex.Message);
+                        logger.WriteLine(ex.Message);
+                    }
                 }
             }
 
