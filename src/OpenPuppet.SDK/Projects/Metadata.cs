@@ -1,10 +1,10 @@
-﻿using OpenPuppet.rendering;
+﻿using Newtonsoft.Json;
+using OpenPuppet.rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace OpenPuppet.SDK.Projects
@@ -17,7 +17,7 @@ namespace OpenPuppet.SDK.Projects
         public string Directory { get; set; } = string.Empty;
 
         public List<AssetMetadata> Assets { get; set; } = new();
-        public List<SceneMetadata> Scenes { get; set; } = [new()];
+        public List<SceneMetadata> Scenes { get; set; } = new();
 
         [JsonIgnore]
         public int ActiveScene { get; set; } = 0;
@@ -33,6 +33,11 @@ namespace OpenPuppet.SDK.Projects
 
     public class SceneMetadata
     {
-        public Camera SceneCamera { get; set; } = new Camera(new(1920,1080));
+        public Camera SceneCamera { get; set; } = new Camera(new(2160,1080));
+        public Vector3 LetterboxColor { get; set; } = new Vector3(0,0,0);
+
+        public List<ISceneGameObject> SceneObjects { get; set; } = new();
+
+        public Dictionary<Guid,List<ITimelineTrack>> AnimationScene { get; set; } = new();
     }
 }

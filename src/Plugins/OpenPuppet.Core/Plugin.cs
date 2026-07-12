@@ -1,9 +1,11 @@
 ﻿using ImGuiNET;
 using Newtonsoft.Json;
 using OpenPuppet.Core.Dialogs;
+using OpenPuppet.Core.Mutators;
 using OpenPuppet.SDK;
 using OpenPuppet.SDK.Events;
 using OpenPuppet.SDK.Projects;
+using System.Numerics;
 using System.Xml.Linq;
 
 namespace OpenPuppet.Core
@@ -19,6 +21,9 @@ namespace OpenPuppet.Core
             Global.MainPlugin = this;
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Hello Core");
 
+            IMutator<Vector3>.RegisterMutator(typeof(Vec3Mutator));
+            IMutator<Vector2>.RegisterMutator(typeof(Vec2Mutator));
+
             if (!File.Exists("projcache"))
                 File.WriteAllText("projcache","");
 
@@ -33,6 +38,7 @@ namespace OpenPuppet.Core
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering windows");
             IUIWindow.Register("openpuppet.core.timeline", typeof(Timeline));
             IUIWindow.Register("openpuppet.core.editor", typeof(Editor));
+            IUIWindow.Register("openpuppet.core.viewport", typeof(Viewport));
             IUIWindow.Register("openpuppet.core.properties", typeof(Properties));
             IUIWindow.Register("openpuppet.settings", typeof(SettingsWindow));
             IUIWindow.Register("openpuppet.core.project", typeof(Project));
@@ -42,7 +48,7 @@ namespace OpenPuppet.Core
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering dialogs");
             IUIDialog.Register("openpuppet.core.createproject", typeof(CreateProject));
             IUIDialog.Register("openpuppet.core.welcome", typeof(WelcomeDialog));
-            Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Reigstered all dialogs successfully");
+            Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all dialogs successfully");
 
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering context menu items");
             ContextMenu.AddMenuItem("File.Save", () =>
@@ -57,6 +63,7 @@ namespace OpenPuppet.Core
 
             ContextMenu.AddMenuItem("View.Timeline", () => IUIWindow.Open("openpuppet.core.timeline"));
             ContextMenu.AddMenuItem("View.Editor", () => IUIWindow.Open("openpuppet.core.editor"));
+            ContextMenu.AddMenuItem("View.Viewport", () => IUIWindow.Open("openpuppet.core.viewport"));
             ContextMenu.AddMenuItem("View.Properties", () => IUIWindow.Open("openpuppet.core.properties"));
             ContextMenu.AddMenuItem("View.Settings", () => IUIWindow.Open("openpuppet.settings"));
             ContextMenu.AddMenuItem("Project.Settings", () => IUIWindow.Open("openpuppet.core.project"));

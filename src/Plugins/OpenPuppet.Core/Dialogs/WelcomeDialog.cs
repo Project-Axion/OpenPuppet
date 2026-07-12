@@ -53,7 +53,14 @@ namespace OpenPuppet.Core.Dialogs
                     NativeDialogs.OpenFileResult result = NativeDialogs.OpenFileDialog("opp", null);
                     if (NativeDialogs.OpenFileDialogResultHasPath(result))
                     {
-                        var json = JsonConvert.DeserializeObject<ProjectMetadata>(File.ReadAllText(result.Path!))!;
+                        var json = JsonConvert.DeserializeObject<ProjectMetadata>(
+                            File.ReadAllText(result.Path!),
+                            new JsonSerializerSettings()
+                            {
+                                TypeNameHandling = TypeNameHandling.Auto
+                            }
+                        )!;
+
                         json.Directory = Directory.GetParent(result.Path!)!.FullName;
 
                         OpenProject(json);
@@ -74,7 +81,14 @@ namespace OpenPuppet.Core.Dialogs
                             continue;
                         }
 
-                        var json = JsonConvert.DeserializeObject<ProjectMetadata>(File.ReadAllText(item))!;
+                        var json = JsonConvert.DeserializeObject<ProjectMetadata>(
+                            File.ReadAllText(item),
+                            new JsonSerializerSettings()
+                            {
+                                TypeNameHandling = TypeNameHandling.Auto
+                            }
+                        )!;
+
                         json.Directory = Directory.GetParent(item)!.FullName;
 
                         OpenProject(json);
@@ -107,6 +121,12 @@ namespace OpenPuppet.Core.Dialogs
 
         public static void OpenProject(ProjectMetadata meta)
         {
+            foreach (var item in meta.Scenes)
+            {
+                foreach (var item1 in item.AnimationScene)
+                    foreach (var item2 in item1.Value) item2.Scene = item;
+            }
+
             ProjectManager.ActiveProject = meta;
 
             var projfile = Path.Combine(meta.Directory, meta.Name + ".opp");

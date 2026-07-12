@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using OpenPuppet.SDK;
 using OpenPuppet.SDK.Events;
 using OpenPuppet.SDK.Projects;
+using OpenPuppet.SDK.TimelineTracks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,11 +74,28 @@ namespace OpenPuppet.Core.Dialogs
                     Directory = path,
                 };
 
+                proj.Scenes.Add(new());
+
+                proj.Scenes[0].SceneObjects.Add(ISceneGameObject.Scene);
+                proj.Scenes[0].AnimationScene.Add(ISceneGameObject.Scene.ID, new());
+
+                proj.Scenes[0].AnimationScene[ISceneGameObject.Scene.ID].Add(
+                    new PropertyTimeline<Vector3>(
+                        ISceneGameObject.Scene.ID,
+                        proj.Scenes[0],
+                        "Letterbox color",
+                        () => proj.Scenes[0].LetterboxColor
+                    )
+                );
+
                 WelcomeDialog.OpenProject(proj);
 
                 File.WriteAllText(
                     Path.Combine(path,name+".opp"),
-                    JsonConvert.SerializeObject(ProjectManager.ActiveProject)
+                    JsonConvert.SerializeObject(ProjectManager.ActiveProject,new JsonSerializerSettings() 
+                    {
+                        TypeNameHandling = TypeNameHandling.Auto
+                    })
                 );
 
                 IUIDialog.Close();

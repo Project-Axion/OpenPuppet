@@ -1,0 +1,123 @@
+﻿using Newtonsoft.Json;
+using OpenPuppet.SDK.Projects;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.Metrics;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace OpenPuppet.SDK.TimelineTracks
+{
+    public class PropertyTimeline<T> : ITimelineTrack
+    {
+        public string Name { get; set; }
+        public Guid HolderID { get; set; }
+
+        SceneMetadata _scene;
+
+        [JsonIgnore]
+        public SceneMetadata Scene
+        {
+            get => _scene; set
+            {
+                _scene = value;
+
+                var (gtr, str) = ResolveLocal();
+
+                GetValue = gtr;
+                SetValue = str;
+            }
+        }
+
+        public string Property { get; set; }
+
+        Func<T> GetValue;
+        Action<T> SetValue;
+
+        [JsonConstructor]
+        public PropertyTimeline(Guid holder, SceneMetadata scene, string name, string property)
+        {
+            Name = name;
+            HolderID = holder;
+            Property = property;
+            Scene = scene;
+        }
+
+        public PropertyTimeline(Guid holder, SceneMetadata scene, string name, Expression<Func<T>> property) :
+            this(holder, scene, name, GetPropertyPath(property)) { }
+
+        IMutator<T> Mutator = IMutator<T>.GetMutator();
+
+        public SortedList<TimeSpan, T> Keyframes { get; set; } = new();
+
+        public void AddKeyframe(TimeSpan timestamp) => Keyframes.Add(timestamp, GetValue());
+        public void UpdateKeyframe(TimeSpan timestamp) => Keyframes[timestamp] = GetValue();
+
+        public List<TimeSpan> GetKeyframes() => Keyframes.Keys.ToList();
+
+        public void Mutate(TimeSpan timestamp)
+        {
+            var (prev, next) = ITimelineTrack.GetSurroundingKeyframes(timestamp, Keyframes.Keys);
+
+            if (!prev.HasValue && !next.HasValue) return;
+            if (!prev.HasValue && next.HasValue) prev = next;
+            if (prev.HasValue && !next.HasValue) next = prev;
+
+            if (Mutator == null) SetValue(Keyframes[prev!.Value]);
+            else SetValue(
+                Mutator.Mutate(
+                    Keyframes[prev!.Value], Keyframes[next!.Value], 
+                    (timestamp - prev.Value) / (next.Value - prev.Value)
+                )
+            );
+        }
+
+        (Func<T> getter, Action<T> setter) ResolveLocal()
+        {
+            if (Scene == null) return (null!,null!);
+
+            object root = HolderID == Guid.Empty ? Scene : Scene.SceneObjects.First(x => x.ID == HolderID);
+
+            return ResolvePath<T>(root, Property);
+        }
+
+        static (Func<T1> getter, Action<T1> setter) ResolvePath<T1>(object root, string path)
+        {
+            var parts = path.Split('.');
+
+            object owner = root;
+            for (int i = 0; i < parts.Length - 1; i++)
+            {
+                var prop = owner.GetType().GetProperty(parts[i])
+                    ?? throw new InvalidOperationException($"'{parts[i]}' not found on {owner.GetType()}");
+                owner = prop.GetValue(owner)!;
+            }
+
+            var lastProp = owner.GetType().GetProperty(parts[^1])
+                ?? throw new InvalidOperationException($"'{parts[^1]}' not found on {owner.GetType()}");
+
+            return (
+                () => (T1)lastProp.GetValue(owner)!,
+                v => lastProp.SetValue(owner, v)
+            );
+        }
+
+        static string GetPropertyPath<T1>(Expression<Func<T1>> expr)
+        {
+            var names = new List<string>();
+            var current = expr.Body;
+
+            while (current is MemberExpression member)
+            {
+                names.Add(member.Member.Name);
+                current = member.Expression;
+            }
+
+            names.Reverse();
+            return string.Join(".", names);
+        }
+    }
+}

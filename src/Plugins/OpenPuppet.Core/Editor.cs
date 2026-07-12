@@ -101,6 +101,8 @@ namespace OpenPuppet.Core
                 }
             }
 
+            surface.Active = !ImGui.IsWindowCollapsed();
+
             ImGui.Image(surface.GetImage(), camera.Resolution, new(0,1), new(1, 0));
 
             var drawlist = ImGui.GetWindowDrawList();
