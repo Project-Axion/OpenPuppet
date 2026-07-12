@@ -225,7 +225,11 @@ namespace OpenPuppet
                 ImGui.EndMainMenuBar();
             }
 
-            foreach (var item in IUIWindow.ActiveWindows)
+            // Temporarily take a copy of the list of windows, this needs redoing
+            // Note: This collection may be modified while the list is being
+            //       enumerated. This could probably be mitigated by pausing
+            //       window rendering while the soft restart is happening
+            foreach (var item in IUIWindow.ActiveWindows.ToList())
             {
                 bool open = true;
 
@@ -376,8 +380,11 @@ namespace OpenPuppet
             }
 
             ContextMenu.Root.Nodes.Clear();
+            IUIWindow.CloseAll();
+            IUIDialog.Close();
             IUIWindow.RegisteredWindows.Clear();
             IUIDialog.RegisteredWindows.Clear();
+            IPlugin.RegisteredPlugins.Clear();
 
             LoadPlugins();
         }

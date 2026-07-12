@@ -1,5 +1,6 @@
 ﻿using ImGuiNET;
 using Microsoft.Win32;
+using OpenPuppet.SDK.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace OpenPuppet.SDK
                 var win = (IUIWindow)Activator.CreateInstance(RegisteredWindows[registry])!;
                 win.InstanceIndex = (uint)ActiveWindows.Where(w => w.GetType() == win.GetType()).Count();
 
-                Events.WindowEvents.InvokeOnWindowOpened(null, new(registry + "##" + win.InstanceIndex));
+                WindowEvents.InvokeOnWindowOpened(null, new(registry + "##" + win.InstanceIndex));
 
                 return win;
             }
@@ -71,6 +72,27 @@ namespace OpenPuppet.SDK
             win.OnLoad();
 
             ActiveWindows.Add(win);
+        }
+
+        public static void Close(string registry, uint id)
+        {
+            var item = ActiveWindows.Find(w => w.InstanceIndex == id);
+            if (item == null)
+                throw new ArgumentException($"Window instance \"{registry}##{id}\" does not exist");
+            
+            item.OnClose();
+            ActiveWindows.Remove(item);
+            WindowEvents.InvokeOnWindowClosed(null, new(RegistryFromType(item.GetType()) + "##" + item.InstanceIndex));
+        }
+
+        public static void CloseAll()
+        {
+            ActiveWindows.ToList().ForEach(w =>
+            {
+                // Temporary, use Close instead
+                w.OnClose();
+                ActiveWindows.Remove(w);
+            });
         }
     }
 }

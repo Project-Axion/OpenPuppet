@@ -16,6 +16,8 @@ namespace OpenPuppet.Core
 
         public Logger.PluginLogger Logger { get; internal set; } = SDK.Logger.LogManager.RequestPluginLogger(PluginID);
 
+        private bool shutdown = false;
+
         public void OnInitialized()
         {
             Global.MainPlugin = this;
@@ -79,13 +81,21 @@ namespace OpenPuppet.Core
 
             Events.Subscribe();
 
-            IUIDialog.Open("openpuppet.core.welcome");
+            if(ProjectManager.ActiveProject == null)
+                IUIDialog.Open("openpuppet.core.welcome");
         }
 
         public void OnShutdown()
         {
+            if (shutdown) return;
             Events.Unsubscribe();
             Logger.Dispose();
+            shutdown = true;
+        }
+
+        public void Dispose()
+        {
+            OnShutdown();
         }
     }
 

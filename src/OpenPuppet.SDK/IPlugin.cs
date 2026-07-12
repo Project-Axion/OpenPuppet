@@ -11,7 +11,7 @@ namespace OpenPuppet
     /// <summary>
     /// Plugin interface
     /// </summary>
-    public interface IPlugin
+    public interface IPlugin : IDisposable
     {
         public static Dictionary<string, RegisteredPlugin> RegisteredPlugins { get; } = new();
         public static void RegisterPlugin(PluginMetadata metadata, string path, IPlugin? plugin)
@@ -68,15 +68,19 @@ namespace OpenPuppet
             if (!RegisteredPlugins.ContainsKey(registry))
                 throw new ArgumentException($"Plugin with the ID of \"{registry}\" has not been registered");
 
-            if (RegisteredPlugins[registry].Assembly == null ||
-                RegisteredPlugins[registry].LoadContext == null ||
-                RegisteredPlugins[registry].WeakReference == null)
+            var plugin = RegisteredPlugins[registry];
+
+            if (plugin.Assembly == null ||
+                plugin.LoadContext == null ||
+                plugin.WeakReference == null)
+            {
                 SDK.SDK.logger.WriteLine(
                     SDK.Logger.ILogger.Level.Log,
                     $"Plugin with the ID of \"{registry}\" cannot be unloaded, as it is not loaded"
                 );
+                return;
+            }
 
-            var plugin = RegisteredPlugins[registry];
             var weakRef = plugin.WeakReference;
             plugin.Assembly!.OnShutdown();
             plugin.Assembly = null;

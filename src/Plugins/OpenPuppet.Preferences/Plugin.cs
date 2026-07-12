@@ -9,6 +9,8 @@ namespace OpenPuppet.Preferences
 
         public Logger.PluginLogger Logger { get; internal set; } = SDK.Logger.LogManager.RequestPluginLogger(PluginID);
 
+        private bool shutdown = false;
+
         public void OnInitialized()
         {
             Global.MainPlugin = this;
@@ -27,6 +29,7 @@ namespace OpenPuppet.Preferences
 
         public void OnShutdown()
         {
+            if(shutdown) return;
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Saving current window layout");
             Windows.SavePreviousWindows();
             Windows.SaveLayout("default");
@@ -36,6 +39,12 @@ namespace OpenPuppet.Preferences
             //ContextMenu.Remove("view.layouts.layouts.default");
             Windows.UnsubscribeToEvents();
             Logger.Dispose();
+            shutdown = true;
+        }
+
+        public void Dispose()
+        {
+            OnShutdown();
         }
     }
 

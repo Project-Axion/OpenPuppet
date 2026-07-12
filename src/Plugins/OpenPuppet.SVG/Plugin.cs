@@ -15,6 +15,8 @@ namespace OpenPuppet.SVG
 
         public Logger.PluginLogger Logger { get; internal set; } = SDK.Logger.LogManager.RequestPluginLogger(PluginID);
 
+        private bool shutdown = false;
+
         public void OnInitialized()
         {
             bool hasProject = SDK.Projects.ProjectManager.ActiveProject != null;
@@ -32,8 +34,18 @@ namespace OpenPuppet.SVG
 
         public void OnShutdown()
         {
-            ContextMenu.Remove("File.Import.SVG");
+            if (shutdown) return;
+            try
+            {
+                ContextMenu.Remove("File.Import.SVG");
+            } catch { }
             Logger.Dispose();
+            shutdown = true;
+        }
+
+        public void Dispose()
+        {
+            OnShutdown();
         }
     }
 }
