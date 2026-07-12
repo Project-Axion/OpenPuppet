@@ -1,11 +1,10 @@
 ﻿using ImGuiNET;
+using Newtonsoft.Json;
 using OpenPuppet.Plugins;
 using OpenPuppet.SDK.Events;
 using OpenPuppet.SDK.Plugins;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace OpenPuppet
 {
@@ -170,7 +169,7 @@ namespace OpenPuppet
             if (!File.Exists(meta))
                 throw new ArgumentException($"No metadata present in \"{path}\" (\"{meta}\" does not exist)");
 
-            PluginMetadata? metadata = JsonSerializer.Deserialize<PluginMetadata>(File.ReadAllText(meta));
+            PluginMetadata? metadata = JsonConvert.DeserializeObject<PluginMetadata>(File.ReadAllText(meta));
             if(metadata == null)
                 throw new ArgumentException($"Metadata in \"{meta}\" is invalid");
 
@@ -203,19 +202,11 @@ namespace OpenPuppet
     /// </summary>
     public class PluginMetadata
     {
-        // E.g. "com.openpuppet.core"
-        [JsonPropertyName("id")]
         public string ID                { get; set; } = string.Empty;
-        // E.g. "OpenPuppet Core"
-        [JsonPropertyName("name")]
         public string Name              { get; set; } = string.Empty;
-        [JsonPropertyName("description")]
         public string Description       { get; set; } = string.Empty;
-        [JsonPropertyName("author")]
         public string Author            { get; set; } = string.Empty;
-        [JsonPropertyName("version")]
         public string Version           { get; set; } = string.Empty;
-        [JsonPropertyName("icon")]
         public string Icon              { get; set; } = string.Empty;
     }
 
