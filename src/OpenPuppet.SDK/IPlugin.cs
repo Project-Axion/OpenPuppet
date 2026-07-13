@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using OpenPuppet.Plugins;
 using OpenPuppet.SDK.Events;
 using OpenPuppet.SDK.Plugins;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -14,6 +15,10 @@ namespace OpenPuppet
     public interface IPlugin : IDisposable
     {
         public static Dictionary<string, RegisteredPlugin> RegisteredPlugins { get; } = new();
+
+        static readonly object _pluginLock = new();
+        const int MaxUnloadGcAttempts = 10;
+
         public static void RegisterPlugin(PluginMetadata metadata, string path, IPlugin? plugin)
         {
             if (RegisteredPlugins.ContainsKey(metadata.ID))
@@ -63,53 +68,79 @@ namespace OpenPuppet
             }
             else throw new ArgumentException($"Plugin with the ID of \"{registry}\" has not been registered");
         }
-        public static void UnloadPlugin(string registry, bool soft = false)
+
+        public static bool UnloadPlugin(string registry, bool soft = false)
         {
-            if (!RegisteredPlugins.ContainsKey(registry))
-                throw new ArgumentException($"Plugin with the ID of \"{registry}\" has not been registered");
-
-            var plugin = RegisteredPlugins[registry];
-
-            if (plugin.Assembly == null ||
-                plugin.LoadContext == null ||
-                plugin.WeakReference == null)
+            lock (_pluginLock)
             {
-                SDK.SDK.logger.WriteLine(
-                    SDK.Logger.ILogger.Level.Log,
-                    $"Plugin with the ID of \"{registry}\" cannot be unloaded, as it is not loaded"
-                );
-                return;
-            }
+                if (!RegisteredPlugins.TryGetValue(registry, out var plugin))
+                    throw new ArgumentException($"Plugin with the ID of \"{registry}\" has not been registered");
 
-            var weakRef = plugin.WeakReference;
-            plugin.Assembly!.OnShutdown();
-            plugin.Assembly = null;
-            plugin.LoadContext?.Unload();
-            plugin.LoadContext = null;
-            for (int i = 0; weakRef!.IsAlive && i < 10; i++)
-            {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                GC.Collect();
-            }
-
-            if (weakRef!.IsAlive)
-            {
-                SDK.SDK.logger.WriteLine(
-                    SDK.Logger.ILogger.Level.Warn,
-                    $"Could not unload Plugin \"{registry}\", possible reference leak"
-                );
-
-                // Trigger a full restart of the application if soft restarting,
-                // or add a warning dialog telling the user that the application
-                // is unstable, and needs a restart
-
-                if (soft)
+                if (plugin.Assembly == null ||
+                    plugin.LoadContext == null ||
+                    plugin.WeakReference == null)
                 {
-                    IEvent<bool>.Invoke("openpuppet.restart", null, false);
+                    SDK.SDK.logger.WriteLine(
+                        SDK.Logger.ILogger.Level.Log,
+                        $"Plugin with the ID of \"{registry}\" cannot be unloaded, as it is not loaded"
+                    );
+
+                    RegisteredPlugins.Remove(registry);
+                    return true;
                 }
-                else
-                    IEvent<EventArgs>.Invoke("openpuppet.unstable", null, EventArgs.Empty);
+
+                var weakRef = plugin.WeakReference;
+                var loadContext = plugin.LoadContext;
+
+                try
+                {
+                    plugin.Assembly.OnShutdown();
+                }
+                catch (Exception ex)
+                {
+                    SDK.SDK.logger.WriteLine(
+                        SDK.Logger.ILogger.Level.Error,
+                        $"Plugin \"{registry}\" threw during OnShutdown: {ex}"
+                    );
+                }
+                finally
+                {
+                    plugin.Assembly = null;
+                }
+
+                try
+                {
+                    loadContext.Unload();
+                }
+                finally
+                {
+                    plugin.LoadContext = null;
+                }
+
+                for (int i = 0; weakRef.IsAlive && i < MaxUnloadGcAttempts; i++)
+                {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    GC.Collect();
+                }
+
+                bool leaked = weakRef.IsAlive;
+
+                if (leaked)
+                {
+                    SDK.SDK.logger.WriteLine(
+                        SDK.Logger.ILogger.Level.Warn,
+                        $"Could not unload Plugin \"{registry}\", possible reference leak"
+                    );
+
+                    if (soft)
+                        IEvent<bool>.Invoke("openpuppet.restart", null, false);
+                    else
+                        IEvent<EventArgs>.Invoke("openpuppet.unstable", null, EventArgs.Empty);
+                }
+
+                RegisteredPlugins.Remove(registry);
+                return !leaked;
             }
         }
 

@@ -51,8 +51,6 @@ namespace OpenPuppet
 
         public static Logger.PluginLogger logger = Logger.LogManager.RequestPluginLogger("openpuppet");
 
-        private static bool pausedRendering = false;
-
         static void Main(string[] args)
         {
             if(args.Length > 0)
@@ -84,10 +82,8 @@ namespace OpenPuppet
                 "openpuppet.restart",
                 (object sender, bool soft) =>
                 {
-                    if(soft)
-                    {
-                        SoftRestart();
-                    } else
+                    if(soft) SoftRestart();
+                    else
                     {
                         logger.WriteLine($"Launching {Assembly.GetExecutingAssembly().Location.Replace(".dll", ".exe")}");
                         window.Close();
@@ -201,11 +197,6 @@ namespace OpenPuppet
         }
         static unsafe void Render(double deltaSeconds) 
         {
-            if(pausedRendering)
-            {
-                return;
-            }
-
             gl.ClearColor(0f, 0f, 0f, 1f);
 
             testmdl.Bind(gl);
@@ -252,10 +243,6 @@ namespace OpenPuppet
                 ImGui.EndMainMenuBar();
             }
 
-            // Temporarily take a copy of the list of windows, this needs redoing
-            // Note: This collection may be modified while the list is being
-            //       enumerated. This could probably be mitigated by pausing
-            //       window rendering while the soft restart is happening
             foreach (var item in IUIWindow.ActiveWindows.ToList())
             {
                 bool open = true;
@@ -277,20 +264,11 @@ namespace OpenPuppet
 
                 item.OnPostRender(deltaSeconds);
 
-                if (!open) PoppedWindows.Add(item);
-            }
-
-            if (PoppedWindows.Count > 0)
-            {
-                int total = PoppedWindows.Count;
-                foreach (var item in PoppedWindows)
+                if (!open)
                 {
                     item.OnClose();
                     IUIWindow.ActiveWindows.Remove(item);
-                    WindowEvents.InvokeOnWindowClosed(null, new(IUIWindow.RegistryFromType(item.GetType()) + "##" + item.InstanceIndex));
                 }
-                PoppedWindows.Clear();
-                logger.WriteLine(Logger.ILogger.Level.Log, $"Successfully popped {total} closed windows");
             }
 
             if(IUIDialog.ActiveDialog != null)
@@ -401,7 +379,12 @@ namespace OpenPuppet
         static void SoftRestart()
         {
             logger.WriteLine("Starting soft restart");
-            pausedRendering = true;
+
+            ContextMenu.Root.Nodes.Clear();
+            IUIWindow.CloseAll();
+            IUIDialog.Close();
+            IUIWindow.RegisteredWindows.Clear();
+            IUIDialog.RegisteredWindows.Clear();
 
             foreach (var plugin in IPlugin.RegisteredPlugins.ToList())
             {
@@ -419,15 +402,9 @@ namespace OpenPuppet
                 }
             }
 
-            ContextMenu.Root.Nodes.Clear();
-            IUIWindow.CloseAll();
-            IUIDialog.Close();
-            IUIWindow.RegisteredWindows.Clear();
-            IUIDialog.RegisteredWindows.Clear();
             IPlugin.RegisteredPlugins.Clear();
 
             LoadPlugins();
-            pausedRendering = false;
         }
     }
 }

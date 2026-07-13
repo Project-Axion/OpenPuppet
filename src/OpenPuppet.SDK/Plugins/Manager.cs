@@ -54,9 +54,7 @@ namespace OpenPuppet.Plugins
                     else
                     {
                         foreach (var plugin in plugins)
-                        {
-                            Plugins.Add(plugin.Key, plugin.Value);
-                        }
+                            Plugins[plugin.Key] = plugin.Value;
                     }
                 } catch (Exception ex)
                 {

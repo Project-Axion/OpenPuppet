@@ -56,6 +56,7 @@ namespace OpenPuppet.SDK.TimelineTracks
 
         public void AddKeyframe(TimeSpan timestamp) => Keyframes.Add(timestamp, GetValue());
         public void UpdateKeyframe(TimeSpan timestamp) => Keyframes[timestamp] = GetValue();
+        public bool KeyframeExists(TimeSpan keyframe) => Keyframes.ContainsKey(keyframe);
 
         public List<(TimeSpan frame, bool selected)> GetKeyframes() => 
             Keyframes.Keys.Select(x => (x, GetKeyframeSelection(x))).ToList();

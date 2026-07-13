@@ -26,9 +26,16 @@ namespace OpenPuppet.SDK
         public static void Register(string registry, Type t)
         {
             if (t.IsAssignableTo(typeof(IUIDialog)) && t.IsClass)
-                RegisteredWindows.Add(registry, t);
-            else
-                throw new ArgumentException($"{t.FullName} is not a class that implements the IUIDialog interface.");
+            {
+                if (RegisteredWindows.ContainsKey(registry))
+                    SDK.logger.WriteLine(
+                        Logger.ILogger.Level.Warn,
+                        $"A dialog with registry: '{registry}' already exists, overriding"
+                    );
+
+                RegisteredWindows[registry] = t;
+            }
+            else throw new ArgumentException($"{t.FullName} is not a class that implements the IUIDialog interface.");
         }
 
         public static IUIDialog SpawnFromRegistry(string registry)

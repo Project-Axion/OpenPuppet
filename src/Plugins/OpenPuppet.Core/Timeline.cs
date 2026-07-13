@@ -88,7 +88,8 @@ namespace OpenPuppet.Core
                     (ImGui.GetIO().MousePos.X - (pos.X + sidebarsize)) / zoom
                 ) + scroll;
 
-                if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left)) track.AddKeyframe(kpos);
+                if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left) && !track.KeyframeExists(kpos)) 
+                    track.AddKeyframe(kpos);
 
                 if (!ImGui.IsKeyDown(ImGuiKey.LeftShift) && !ImGui.IsKeyDown(ImGuiKey.RightShift))
                     track.DeselectAll();
