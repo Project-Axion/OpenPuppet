@@ -129,7 +129,7 @@ namespace OpenPuppet
                 SDK.SDK.logger.WriteLine($"Found IPlugin in Plugin {registry}");
                 RegisteredPlugins[registry].Assembly = (IPlugin)Activator.CreateInstance(t.AsType())!;
                 RegisteredPlugins[registry].Assembly!.OnInitialized();
-                SDK.SDK.logger.WriteLine($"Initialised Plugin {registry}");
+                SDK.SDK.logger.WriteLine($"Initialized Plugin {registry}");
             });
             /*foreach(Type t in asm.GetTypes())
             {
@@ -164,7 +164,7 @@ namespace OpenPuppet
         /// plugins can be loaded later on.
         /// </summary>
         /// <param name="path">The path of the directory</param>
-        public static void LoadPluginDirectory(string path)
+        public static void LoadPluginDirectory(string path, bool enabled = true)
         {
             if (!Directory.Exists(path))
                 throw new ArgumentException($"\"{path}\" does not exist");
@@ -178,7 +178,7 @@ namespace OpenPuppet
                 throw new ArgumentException($"Metadata in \"{meta}\" is invalid");
 
             RegisterPlugin(metadata, path, null);
-            EnablePlugin(metadata.ID);
+            if(enabled) EnablePlugin(metadata.ID);
         }
 
         /// <summary>

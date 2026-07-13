@@ -15,7 +15,7 @@ namespace OpenPuppet.Plugins
     public static class PluginManager
     {
         //public static List<IPlugin> LoadedPlugins { get; internal set; } = new();
-        public static List<PluginItem> PluginList { get; set; } = new();
+        public static Dictionary<string, PluginItem> Plugins { get; set; } = new();
         public static string? PluginListPath
         {
             get
@@ -26,7 +26,6 @@ namespace OpenPuppet.Plugins
 
         public class PluginItem
         {
-            public string ID        { get; set; }
             public string Path      { get; set; }
 
             public bool Enabled     { get; set; }
@@ -38,20 +37,41 @@ namespace OpenPuppet.Plugins
                 throw new Exception("\"PluginListPath\" is null");
             if(File.Exists(PluginListPath))
             {
-                PluginItem[]? plugins = JsonConvert.DeserializeObject<PluginItem[]>(File.ReadAllText(PluginListPath));
-                if(plugins == null)
+                try
+                {
+                    var plugins = JsonConvert.DeserializeObject<Dictionary<string, PluginItem>>(File.ReadAllText(PluginListPath));
+                    if (plugins == null)
+                    {
+                        SDK.SDK.logger.WriteLine(
+                            Logger.ILogger.Level.Warn,
+                            "Plugins list is null, rewriting with default values. " +
+                            "The user will need to reinstall plugins."
+                        );
+
+                        GenerateDefaultPluginList();
+                        SavePluginList();
+                    }
+                    else
+                    {
+                        foreach (var plugin in plugins)
+                        {
+                            Plugins.Add(plugin.Key, plugin.Value);
+                        }
+                    }
+                } catch (Exception ex)
                 {
                     SDK.SDK.logger.WriteLine(
+                        Logger.ILogger.Level.Error,
+                        $"Failed to load plugins list: " + ex.Message
+                    );
+                    SDK.SDK.logger.WriteLine(
                         Logger.ILogger.Level.Warn,
-                        "Plugins list is null, rewriting with default values. " +
+                        "Rewriting plugin list with default values. " +
                         "The user will need to reinstall plugins."
                     );
 
                     GenerateDefaultPluginList();
                     SavePluginList();
-                } else
-                {
-                    PluginList.AddRange(plugins);
                 }
             } else
             {
@@ -66,12 +86,27 @@ namespace OpenPuppet.Plugins
                 throw new Exception("\"PluginListPath\" is null");
             File.WriteAllText(
                 PluginListPath,
-                JsonConvert.SerializeObject(PluginList, Formatting.Indented)
+                JsonConvert.SerializeObject(Plugins, Formatting.Indented)
             );
         }
 
         public static void GenerateDefaultPluginList()
         {
+            if(Plugins.Count != 0)
+            {
+                // For now just print a warning, and then end
+                // In the future, this should probably throw an exception.
+                // This seems to get triggered at some point during the loading, even
+                // when the file is in fact valid.
+
+                SDK.SDK.logger.WriteLine(
+                    Logger.ILogger.Level.Warn,
+                    "Refusing to generate default plugin list: Plugins already exist in the list"
+                );
+
+                return;
+            }
+
             // This just puts the currently available/loaded plugins into the list
             foreach (var item in Directory.GetDirectories(PluginsPath.PluginPath!))
             {
@@ -83,12 +118,14 @@ namespace OpenPuppet.Plugins
                 if (metadata == null)
                     throw new ArgumentException($"Metadata in \"{meta}\" is invalid");
 
-                PluginList.Add(new PluginItem
-                {
-                    ID = metadata.ID,
-                    Path = item,
-                    Enabled = true
-                });
+                Plugins.Add(
+                    metadata.ID,
+                    new PluginItem
+                    {
+                        Path = item,
+                        Enabled = true
+                    }
+                );
             }
         }
 
@@ -127,17 +164,16 @@ namespace OpenPuppet.Plugins
             if(enabled) IPlugin.EnablePlugin(ID);
             else IPlugin.DisablePlugin(ID);
 
-            var plugin = PluginList.Find(p => p.ID == ID);
-            if(plugin == null)
+            if(Plugins.ContainsKey(ID))
+            {
+                Plugins[ID].Enabled = enabled;
+            } else
             {
                 SDK.SDK.logger.WriteLine(
                     Logger.ILogger.Level.Warn,
                     "Plugin with ID \"{ID}\" is not present in the plugin list. " +
                     "The plugin list, and the currently loaded plugins may be desynced."
                 );
-            } else
-            {
-                plugin.Enabled = enabled;
             }
         }
 

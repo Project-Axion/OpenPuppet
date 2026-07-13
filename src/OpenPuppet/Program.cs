@@ -51,6 +51,8 @@ namespace OpenPuppet
 
         public static Logger.PluginLogger logger = Logger.LogManager.RequestPluginLogger("openpuppet");
 
+        private static bool pausedRendering = false;
+
         static void Main(string[] args)
         {
             if(args.Length > 0)
@@ -97,7 +99,16 @@ namespace OpenPuppet
 
             IEvent<EventArgs>.Subscribe("openpuppet.quit", (_, _) => window.Close());
 
-            window.Run();
+            try
+            {
+                window.Run();
+            } catch (Exception ex)
+            {
+                logger.WriteLine(
+                    Logger.ILogger.Level.Error,
+                    $"Failed to start main window: {ex.Message}"
+                );
+            }
         }
 
         static void Load() 
@@ -190,6 +201,11 @@ namespace OpenPuppet
         }
         static unsafe void Render(double deltaSeconds) 
         {
+            if(pausedRendering)
+            {
+                return;
+            }
+
             gl.ClearColor(0f, 0f, 0f, 1f);
 
             testmdl.Bind(gl);
@@ -365,18 +381,15 @@ namespace OpenPuppet
                 }
             }*/
 
-            foreach(var item in PluginManager.PluginList)
+            foreach(var item in PluginManager.Plugins)
             {
-                if(item.Enabled)
+                try
                 {
-                    try
-                    {
-                        IPlugin.LoadPluginDirectory(item.Path);
-                    } catch (Exception ex)
-                    {
-                        errors.Add(ex.Message);
-                        logger.WriteLine(ex.Message);
-                    }
+                    IPlugin.LoadPluginDirectory(item.Value.Path, item.Value.Enabled);
+                } catch (Exception ex)
+                {
+                    errors.Add(ex.Message);
+                    logger.WriteLine(ex.Message);
                 }
             }
 
@@ -388,6 +401,7 @@ namespace OpenPuppet
         static void SoftRestart()
         {
             logger.WriteLine("Starting soft restart");
+            pausedRendering = true;
 
             foreach (var plugin in IPlugin.RegisteredPlugins.ToList())
             {
@@ -413,6 +427,7 @@ namespace OpenPuppet
             IPlugin.RegisteredPlugins.Clear();
 
             LoadPlugins();
+            pausedRendering = false;
         }
     }
 }
