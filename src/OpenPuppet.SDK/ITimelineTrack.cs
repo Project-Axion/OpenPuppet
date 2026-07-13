@@ -16,10 +16,13 @@ namespace OpenPuppet.SDK
 
         public void AddKeyframe(TimeSpan timestamp);
         public void UpdateKeyframe(TimeSpan timestamp);
+        public void MoveKeyframe(TimeSpan timestamp, TimeSpan newFrame);
         public List<(TimeSpan frame,bool selected)> GetKeyframes();
+        public List<TimeSpan> GetSelectedKeyframes();
 
         public bool KeyframeInRange(TimeSpan range,out TimeSpan keyframe, float radius = 12);
         public bool KeyframeExists(TimeSpan keyframe);
+        public bool IsKeyframeSelected(TimeSpan keyframe);
 
         public void ToggleSelectKeyframe(TimeSpan timestamp);
         public void DeselectAll();

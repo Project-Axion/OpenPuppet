@@ -25,6 +25,8 @@ namespace OpenPuppet.Core
 
         double zoom = 1d / 10d;
 
+        bool isInDrag = false;
+
         public void OnLoad() {}
 
         public void OnUpdate(double deltaTime) {}
@@ -82,20 +84,70 @@ namespace OpenPuppet.Core
                 rectSize
             );
 
+            bool pendingSimpleClick = false;
+
             if (ImGui.IsItemActivated())
             {
                 var kpos = TimeSpan.FromMilliseconds(
                     (ImGui.GetIO().MousePos.X - (pos.X + sidebarsize)) / zoom
                 ) + scroll;
 
-                if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left) && !track.KeyframeExists(kpos)) 
-                    track.AddKeyframe(kpos);
+                if (
+                    ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left) &&
+                    !track.KeyframeInRange(kpos, out _, 5f / (float)zoom)
+                ) track.AddKeyframe(kpos);
 
-                if (!ImGui.IsKeyDown(ImGuiKey.LeftShift) && !ImGui.IsKeyDown(ImGuiKey.RightShift))
-                    track.DeselectAll();
+                bool shiftHeld = ImGui.IsKeyDown(ImGuiKey.LeftShift) || ImGui.IsKeyDown(ImGuiKey.RightShift);
+                bool hitKeyframe = track.KeyframeInRange(kpos, out var kf, padding.Y / (float)zoom);
+                bool hitSelected = hitKeyframe && track.IsKeyframeSelected(kf);
 
-                if (track.KeyframeInRange(kpos,out var kf, padding.Y / (float)zoom))
-                    track.ToggleSelectKeyframe(kf);
+                if (!shiftHeld && hitSelected) pendingSimpleClick = true;
+                else
+                {
+                    if (!shiftHeld)
+                        track.DeselectAll();
+                    if (hitKeyframe)
+                        track.ToggleSelectKeyframe(kf);
+                    pendingSimpleClick = false;
+                }
+
+                isInDrag = false;
+            }
+
+            if (ImGui.IsItemActive())
+            {
+                if (!isInDrag && ImGui.IsMouseDragging(ImGuiMouseButton.Left))
+                    isInDrag = true;
+
+                if (isInDrag)
+                {
+                    var kdelta = TimeSpan.FromMilliseconds(ImGui.GetIO().MouseDelta.X / zoom);
+                    if (kdelta != TimeSpan.Zero)
+                    {
+                        var selected = track.GetSelectedKeyframes().ToList();
+                        foreach (var item in selected)
+                            track.MoveKeyframe(item, item + kdelta);
+                    }
+                }
+            }
+            else
+            {
+                if (pendingSimpleClick && !isInDrag)
+                {
+                    var kpos = TimeSpan.FromMilliseconds(
+                        (ImGui.GetIO().MousePos.X - (pos.X + sidebarsize)) / zoom
+                    ) + scroll;
+
+                    bool shiftHeld = ImGui.IsKeyDown(ImGuiKey.LeftShift) || ImGui.IsKeyDown(ImGuiKey.RightShift);
+                    if (!shiftHeld && track.KeyframeInRange(kpos, out var kf, padding.Y / (float)zoom))
+                    {
+                        track.DeselectAll();
+                        track.ToggleSelectKeyframe(kf);
+                    }
+                    pendingSimpleClick = false;
+                }
+
+                if (isInDrag) isInDrag = false;
             }
 
             ImGui.SetCursorScreenPos(new Vector2(pos.X + sidebarsize, pos.Y));

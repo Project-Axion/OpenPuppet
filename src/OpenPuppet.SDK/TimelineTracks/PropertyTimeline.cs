@@ -51,21 +51,40 @@ namespace OpenPuppet.SDK.TimelineTracks
 
         IMutator<T> Mutator = IMutator<T>.GetMutator();
 
-        public Dictionary<TimeSpan, bool> SlectedKeyframes { get; set; } = new();
+        public Dictionary<TimeSpan, bool> SelectedKeyframes { get; set; } = new();
         public SortedList<TimeSpan, T> Keyframes { get; set; } = new();
 
         public void AddKeyframe(TimeSpan timestamp) => Keyframes.Add(timestamp, GetValue());
         public void UpdateKeyframe(TimeSpan timestamp) => Keyframes[timestamp] = GetValue();
         public bool KeyframeExists(TimeSpan keyframe) => Keyframes.ContainsKey(keyframe);
 
+        public void MoveKeyframe(TimeSpan timestamp, TimeSpan newFrame)
+        {
+            if (!Keyframes.TryGetValue(timestamp, out var keyframeValue)) return;
+
+            if (SelectedKeyframes.ContainsKey(timestamp))
+            {
+                SelectedKeyframes[newFrame] = SelectedKeyframes[timestamp];
+                SelectedKeyframes.Remove(timestamp);
+            }
+
+            Keyframes[newFrame] = Keyframes[timestamp];
+            Keyframes.Remove(timestamp);
+        }
+
+        public List<TimeSpan> GetSelectedKeyframes() => 
+            SelectedKeyframes.Keys.Where(x => SelectedKeyframes[x]).ToList();
+
         public List<(TimeSpan frame, bool selected)> GetKeyframes() => 
             Keyframes.Keys.Select(x => (x, GetKeyframeSelection(x))).ToList();
 
+        public bool IsKeyframeSelected(TimeSpan keyframe) => GetKeyframeSelection(keyframe);
+
         bool GetKeyframeSelection(TimeSpan kf)
         {
-            if (!SlectedKeyframes.ContainsKey(kf)) SlectedKeyframes.Add(kf, false);
+            if (!SelectedKeyframes.ContainsKey(kf)) SelectedKeyframes.Add(kf, false);
 
-            return SlectedKeyframes[kf];
+            return SelectedKeyframes[kf];
         }
 
         public void Mutate(TimeSpan timestamp)
@@ -102,21 +121,21 @@ namespace OpenPuppet.SDK.TimelineTracks
 
         public void ToggleSelectKeyframe(TimeSpan timestamp)
         {
-            if (!SlectedKeyframes.ContainsKey(timestamp)) return;
+            if (!SelectedKeyframes.ContainsKey(timestamp)) return;
 
-            SlectedKeyframes[timestamp] = !SlectedKeyframes[timestamp];
+            SelectedKeyframes[timestamp] = !SelectedKeyframes[timestamp];
         }
 
         public void DeselectAll()
         {
-            foreach (var item in SlectedKeyframes.Keys) 
-                SlectedKeyframes[item] = false;
+            foreach (var item in SelectedKeyframes.Keys) 
+                SelectedKeyframes[item] = false;
         }
 
         public void SelectAll()
         {
-            foreach (var item in SlectedKeyframes.Keys)
-                SlectedKeyframes[item] = true;
+            foreach (var item in SelectedKeyframes.Keys)
+                SelectedKeyframes[item] = true;
         }
 
         (Func<T> getter, Action<T> setter) ResolveLocal()
