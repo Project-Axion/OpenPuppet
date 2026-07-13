@@ -51,12 +51,21 @@ namespace OpenPuppet.SDK.TimelineTracks
 
         IMutator<T> Mutator = IMutator<T>.GetMutator();
 
+        public Dictionary<TimeSpan, bool> SlectedKeyframes { get; set; } = new();
         public SortedList<TimeSpan, T> Keyframes { get; set; } = new();
 
         public void AddKeyframe(TimeSpan timestamp) => Keyframes.Add(timestamp, GetValue());
         public void UpdateKeyframe(TimeSpan timestamp) => Keyframes[timestamp] = GetValue();
 
-        public List<TimeSpan> GetKeyframes() => Keyframes.Keys.ToList();
+        public List<(TimeSpan frame, bool selected)> GetKeyframes() => 
+            Keyframes.Keys.Select(x => (x, GetKeyframeSelection(x))).ToList();
+
+        bool GetKeyframeSelection(TimeSpan kf)
+        {
+            if (!SlectedKeyframes.ContainsKey(kf)) SlectedKeyframes.Add(kf, false);
+
+            return SlectedKeyframes[kf];
+        }
 
         public void Mutate(TimeSpan timestamp)
         {
@@ -73,6 +82,40 @@ namespace OpenPuppet.SDK.TimelineTracks
                     (timestamp - prev.Value) / (next.Value - prev.Value)
                 )
             );
+        }
+
+        public bool KeyframeInRange(TimeSpan range, out TimeSpan keyframe, float radius = 12)
+        {
+            foreach (var kvp in Keyframes)
+            {
+                if (Math.Abs((kvp.Key - range).TotalMilliseconds) <= radius)
+                {
+                    keyframe = kvp.Key;
+                    return true;
+                }
+            }
+
+            keyframe = default;
+            return false;
+        }
+
+        public void ToggleSelectKeyframe(TimeSpan timestamp)
+        {
+            if (!SlectedKeyframes.ContainsKey(timestamp)) return;
+
+            SlectedKeyframes[timestamp] = !SlectedKeyframes[timestamp];
+        }
+
+        public void DeselectAll()
+        {
+            foreach (var item in SlectedKeyframes.Keys) 
+                SlectedKeyframes[item] = false;
+        }
+
+        public void SelectAll()
+        {
+            foreach (var item in SlectedKeyframes.Keys)
+                SlectedKeyframes[item] = true;
         }
 
         (Func<T> getter, Action<T> setter) ResolveLocal()

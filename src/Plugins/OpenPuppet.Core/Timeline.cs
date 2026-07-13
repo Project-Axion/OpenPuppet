@@ -19,6 +19,7 @@ namespace OpenPuppet.Core
         public Vector2? Size { get; set; } = null;
 
         Timer timer = null!;
+        TimeSpan scroll = TimeSpan.Zero;
 
         float sidebarsize = 200;
 
@@ -56,7 +57,7 @@ namespace OpenPuppet.Core
             foreach (var item in scene.AnimationScene)
             {
                 if (ImGui.CollapsingHeader(scene.SceneObjects.First(x => x.ID == item.Key).Name))
-                    foreach (var item1 in item.Value) DrawTrack(item1.Name,item1.GetKeyframes());
+                    foreach (var item1 in item.Value) DrawTrack(item1);
             }
         }
 
@@ -64,15 +65,37 @@ namespace OpenPuppet.Core
 
         public void OnClose() {}
 
-        void DrawTrack(string name,List<TimeSpan> keyframes)
+        void DrawTrack(ITimelineTrack track)
         {
             Vector2 rpos = ImGui.GetCursorPos();
             Vector2 pos = ImGui.GetCursorScreenPos() - ImGui.GetStyle().FramePadding;
-            Vector2 textSize = ImGui.CalcTextSize(name);
+            Vector2 textSize = ImGui.CalcTextSize(track.Name);
             Vector2 padding = new Vector2(24, 12);
             Vector2 rectSize = new Vector2(ImGui.GetContentRegionMax().X, textSize.Y + padding.Y * 2);
 
             float keyframeY = pos.Y + rectSize.Y / 2;
+
+            ImGui.SetCursorScreenPos(new Vector2(pos.X + sidebarsize + 4, pos.Y));
+
+            ImGui.InvisibleButton(
+                $"##trackaddbtn{track.Name}{track.HolderID}" + InstanceIndex,
+                rectSize
+            );
+
+            if (ImGui.IsItemActivated())
+            {
+                var kpos = TimeSpan.FromMilliseconds(
+                    (ImGui.GetIO().MousePos.X - (pos.X + sidebarsize)) / zoom
+                ) + scroll;
+
+                if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left)) track.AddKeyframe(kpos);
+
+                if (!ImGui.IsKeyDown(ImGuiKey.LeftShift) && !ImGui.IsKeyDown(ImGuiKey.RightShift))
+                    track.DeselectAll();
+
+                if (track.KeyframeInRange(kpos,out var kf, padding.Y / (float)zoom))
+                    track.ToggleSelectKeyframe(kf);
+            }
 
             ImGui.SetCursorScreenPos(new Vector2(pos.X + sidebarsize, pos.Y));
 
@@ -104,7 +127,7 @@ namespace OpenPuppet.Core
             drawList.AddText(
                 new Vector2(pos.X + padding.X, pos.Y + padding.Y),
                 ImGui.GetColorU32(ImGuiCol.Text),
-                name
+                track.Name
             );
 
             drawList.PopClipRect();
@@ -120,12 +143,20 @@ namespace OpenPuppet.Core
                 new Vector2(pos.X + rectSize.X, pos.Y + rectSize.Y)
             );
 
-            foreach (var item in keyframes)
+            foreach (var item in track.GetKeyframes())
             {
-                var ngonpos = new Vector2(pos.X + sidebarsize + (float)(item.TotalMilliseconds * zoom), keyframeY);
+                var ngonpos = new Vector2(pos.X + sidebarsize + (float)((item.frame - scroll).TotalMilliseconds * zoom), keyframeY);
 
-                drawList.AddNgonFilled(ngonpos,padding.Y, ImGui.GetColorU32(ImGuiCol.TableHeaderBg), 4);
-                drawList.AddNgon(ngonpos, padding.Y - 2, ImGui.GetColorU32(ImGuiCol.Border), 4);
+                if (
+                    ngonpos.X < pos.X + sidebarsize - padding.Y || 
+                    ngonpos.X > pos.X + rectSize.X + padding.Y
+                ) continue;
+
+                var cola = ImGui.GetColorU32(item.selected ? ImGuiCol.FrameBgHovered : ImGuiCol.TableHeaderBg);
+                var colb = ImGui.GetColorU32(item.selected ? ImGuiCol.FrameBgActive : ImGuiCol.Border);
+
+                drawList.AddNgonFilled(ngonpos,padding.Y, cola, 4);
+                drawList.AddNgon(ngonpos, padding.Y - 2, colb, 4);
             }
 
             drawList.PopClipRect();

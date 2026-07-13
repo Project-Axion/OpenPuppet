@@ -136,7 +136,7 @@ namespace OpenPuppet.Core.Dialogs
 
             RecentProjects = RecentProjects.Take(25).ToList();
 
-            File.WriteAllLines("projcache",RecentProjects);
+            File.WriteAllLines(Path.Combine(SDK.SDK.DataPath, "projcache"),RecentProjects);
 
             IEvent<string>.Invoke("openpuppet.window.modify.title", null, $"OpenPuppet - {meta.Name}");
 

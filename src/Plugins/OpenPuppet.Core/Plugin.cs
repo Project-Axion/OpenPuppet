@@ -26,10 +26,10 @@ namespace OpenPuppet.Core
             IMutator<Vector3>.RegisterMutator(typeof(Vec3Mutator));
             IMutator<Vector2>.RegisterMutator(typeof(Vec2Mutator));
 
-            if (!File.Exists("projcache"))
-                File.WriteAllText("projcache","");
+            if (!File.Exists(Path.Combine(SDK.SDK.DataPath,"projcache")))
+                File.WriteAllText(Path.Combine(SDK.SDK.DataPath, "projcache"), "");
 
-            WelcomeDialog.RecentProjects = File.ReadAllLines("projcache").ToList();
+            WelcomeDialog.RecentProjects = File.ReadAllLines(Path.Combine(SDK.SDK.DataPath, "projcache")).ToList();
 
             ContextMenu.AddMenuList("File");
             ContextMenu.AddMenuList("File.Import");
