@@ -14,7 +14,27 @@ namespace OpenPuppet.Preferences.Settings
 
         public void OnRender(double deltaTime)
         {
-            ImGui.Text("View layouts here");
+            if(ImGui.Button("New layout"))
+            {
+                IUIDialog.Open("openpuppet.layouts.new_layout");
+            }
+            ImGui.SameLine();
+            if(ImGui.Button("Import layout"))
+            {
+
+            }
+            ImGui.Spacing();
+            ImGui.Separator();
+            ImGui.Spacing();
+
+            ImGui.BeginChild(
+                "Layouts",
+                new System.Numerics.Vector2(0, 0),
+                false,
+                ImGuiWindowFlags.AlwaysVerticalScrollbar
+            );
+
+            ImGui.EndChild();
         }
     }
 }
