@@ -126,7 +126,12 @@ namespace OpenPuppet.Core
                     {
                         var selected = track.GetSelectedKeyframes().ToList();
                         foreach (var item in selected)
-                            track.MoveKeyframe(item, item + kdelta);
+                        {
+                            var off = item + kdelta;
+
+                            if (!track.KeyframeExists(off))
+                                track.MoveKeyframe(item, off);
+                        }
                     }
                 }
             }
