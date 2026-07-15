@@ -18,8 +18,11 @@ namespace OpenPuppet.Core
         public ImGuiWindowFlags? Flags { get; set; } = ImGuiWindowFlags.MenuBar;
         public Vector2? Size { get; set; } = null;
 
-        Timer timer = null!;
+        static Timer timer = null!;
+        static DateTime start = DateTime.Now;
         TimeSpan scroll = TimeSpan.Zero;
+        static TimeSpan ellapsed = TimeSpan.Zero;
+        static bool playing = false;
 
         float sidebarsize = 200;
 
@@ -47,14 +50,35 @@ namespace OpenPuppet.Core
                 return;
             }
 
+            var scene = ProjectManager.ActiveProject!.Scenes[ProjectManager.ActiveProject!.ActiveScene];
+
             if (ImGui.BeginMenuBar())
             {
-                if (ImGui.Button("Play")) {}
+                if (!playing && ImGui.Button("Play"))
+                {
+                    start = DateTime.Now;
+
+                    timer = new(_ =>
+                    {
+                        ellapsed = (DateTime.Now - start);
+
+                        foreach (var item in scene.AnimationScene)
+                        {
+                            foreach (var item1 in item.Value)
+                                item1.Mutate(ellapsed);
+                        }
+                    },null,0,16);
+
+                    playing = true;
+                }
+                else if (playing && ImGui.Button("Stop"))
+                {
+                    playing = false;
+                    timer.Dispose();
+                }
 
                 ImGui.EndMenuBar();
             }
-
-            var scene = ProjectManager.ActiveProject!.Scenes[ProjectManager.ActiveProject!.ActiveScene];
 
             foreach (var item in scene.AnimationScene)
             {
@@ -216,6 +240,14 @@ namespace OpenPuppet.Core
                 drawList.AddNgonFilled(ngonpos,padding.Y, cola, 4);
                 drawList.AddNgon(ngonpos, padding.Y - 2, colb, 4);
             }
+
+            var ellapsedpx = (float)((ellapsed - scroll).TotalMilliseconds * zoom);
+
+            drawList.AddLine(
+                new Vector2(pos.X + sidebarsize + ellapsedpx, pos.Y),
+                new Vector2(pos.X + sidebarsize + ellapsedpx, pos.Y + rectSize.Y),
+                ImGui.GetColorU32(ImGuiCol.SeparatorHovered)
+            );
 
             drawList.PopClipRect();
 

@@ -25,7 +25,6 @@ namespace silkgltriangle.Imgui
             PreferredDepthBufferBits = 24,
             PreferredStencilBufferBits = 8,
             IsVisible = false,
-            TransparentFramebuffer = true,
             WindowBorder = WindowBorder.Hidden,
             API = new GraphicsAPI(ContextAPI.OpenGL, new APIVersion(3, 3))
         };
@@ -219,7 +218,10 @@ namespace silkgltriangle.Imgui
         public static unsafe void SwapBuffers(ImGuiViewportPtr viewport, IntPtr renderArg)
         {
             if (windows.TryGetValue(viewport.ID, out var window) && window.window.IsInitialized)
+            {
                 window.window.GLContext.SwapBuffers();
+                window.window.GLContext.Clear();
+            }
         }
 
         public static unsafe byte GetWindowFocus(ImGuiViewportPtr viewport)
