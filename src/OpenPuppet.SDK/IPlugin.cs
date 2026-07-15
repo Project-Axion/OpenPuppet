@@ -187,6 +187,8 @@ namespace OpenPuppet
 
                 plugin.OnInitialized();
             });*/
+
+            RegisteredPlugins[registry].Enabled = true;
         }
 
         /// <summary>

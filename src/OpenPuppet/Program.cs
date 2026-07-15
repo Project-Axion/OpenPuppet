@@ -102,8 +102,19 @@ namespace OpenPuppet
             {
                 logger.WriteLine(
                     Logger.ILogger.Level.Error,
-                    $"Failed to start main window: {ex.Message}"
+                    $"Exception occurred while running main window: {ex.Message} ({ex.GetType()})"
                 );
+
+                if(ex.GetType() == typeof(Silk.NET.GLFW.GlfwException))
+                {
+                    logger.WriteLine(
+                        Logger.ILogger.Level.Warn,
+                        "The above exception may occur if you are using an extremely low-end " +
+                        "GPU, or integrated graphics. If you have multiple GPUs, please modify " +
+                        "the operating system settings to ensure that OpenPuppet uses the " +
+                        "correct GPU."
+                    );
+                }
             }
         }
 
@@ -202,6 +213,7 @@ namespace OpenPuppet
             testmdl.Bind(gl);
             shader.Use(gl);
 
+            // This list may need copying (.ToList())
             foreach (var item in RenderSurface.Surfaces)
             {
                 item.Bind();
@@ -266,19 +278,20 @@ namespace OpenPuppet
 
                 if (!open)
                 {
-                    item.OnClose();
-                    IUIWindow.ActiveWindows.Remove(item);
+                    IUIWindow.Close(item);
                 }
             }
 
             if(IUIDialog.ActiveDialog != null)
             {
+                var dialog = IUIDialog.ActiveDialog;
+
                 ImGui.OpenPopup(
-                    IUIDialog.ActiveDialog.Title + "##openpuppet.dialog",
+                    dialog.Title + "##openpuppet.dialog",
                     ImGuiPopupFlags.None
                 );
 
-                IUIDialog.ActiveDialog.OnPreRender();
+                dialog.OnPreRender();
 
                 bool open = true;
 
@@ -290,17 +303,17 @@ namespace OpenPuppet
                     new Vector2(0.5f, 0.5f)
                 );
 
-                if (IUIDialog.ActiveDialog.Size != null)
-                    ImGui.SetNextWindowSize(IUIDialog.ActiveDialog.Size ?? Vector2.PositiveInfinity);
+                if (dialog.Size != null)
+                    ImGui.SetNextWindowSize(dialog.Size ?? Vector2.PositiveInfinity);
 
                 if (ImGui.BeginPopupModal(
-                    IUIDialog.ActiveDialog.Title + "##openpuppet.dialog",
+                    dialog.Title + "##openpuppet.dialog",
                     ref open,
-                    IUIDialog.ActiveDialog.Flags ?? ImGuiWindowFlags.AlwaysAutoResize
+                    dialog.Flags ?? ImGuiWindowFlags.AlwaysAutoResize
                 ))
                 {
                     ImGui.SetWindowFocus();
-                    IUIDialog.ActiveDialog.OnRender();
+                    dialog.OnRender();
                     ImGui.EndPopup();
                 }
 
@@ -340,6 +353,10 @@ namespace OpenPuppet
 
             SDK.SDK.DestroyLogger();
             logger.Dispose();
+
+            // Some plugins may still be loaded if there were reference leaks,
+            // so just forcefully exit
+            Environment.Exit(0);
         }
 
         static void LoadPlugins()

@@ -26,16 +26,16 @@ namespace OpenPuppet.Plugins
 
         public class PluginItem
         {
-            public string Path      { get; set; }
+            public string Path { get; set; }
 
-            public bool Enabled     { get; set; }
+            public bool Enabled { get; set; }
         }
 
         public static void LoadPluginList()
         {
             if (PluginListPath == null)
                 throw new Exception("\"PluginListPath\" is null");
-            if(File.Exists(PluginListPath))
+            if (File.Exists(PluginListPath))
             {
                 try
                 {
@@ -56,7 +56,8 @@ namespace OpenPuppet.Plugins
                         foreach (var plugin in plugins)
                             Plugins[plugin.Key] = plugin.Value;
                     }
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     SDK.SDK.logger.WriteLine(
                         Logger.ILogger.Level.Error,
@@ -71,7 +72,8 @@ namespace OpenPuppet.Plugins
                     GenerateDefaultPluginList();
                     SavePluginList();
                 }
-            } else
+            }
+            else
             {
                 GenerateDefaultPluginList();
                 SavePluginList();
@@ -90,7 +92,7 @@ namespace OpenPuppet.Plugins
 
         public static void GenerateDefaultPluginList()
         {
-            if(Plugins.Count != 0)
+            if (Plugins.Count != 0)
             {
                 // For now just print a warning, and then end
                 // In the future, this should probably throw an exception.
@@ -159,13 +161,14 @@ namespace OpenPuppet.Plugins
 
         public static void SetPluginEnabled(string ID, bool enabled)
         {
-            if(enabled) IPlugin.EnablePlugin(ID);
+            if (enabled) IPlugin.EnablePlugin(ID);
             else IPlugin.DisablePlugin(ID);
 
-            if(Plugins.ContainsKey(ID))
+            if (Plugins.ContainsKey(ID))
             {
                 Plugins[ID].Enabled = enabled;
-            } else
+            }
+            else
             {
                 SDK.SDK.logger.WriteLine(
                     Logger.ILogger.Level.Warn,
@@ -178,7 +181,12 @@ namespace OpenPuppet.Plugins
         public static void UninstallPlugin(string ID)
         {
             IPlugin.DisablePlugin(ID);
-            IPlugin.RemovePlugin(ID);
+            //IPlugin.RemovePlugin(ID);
+            if (Plugins.ContainsKey(ID))
+            {
+                Directory.Delete(Plugins[ID].Path, true);
+                Plugins.Remove(ID);
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -83,6 +84,18 @@ namespace OpenPuppet.SDK
             item.OnClose();
             ActiveWindows.Remove(item);
             WindowEvents.InvokeOnWindowClosed(null, new(RegistryFromType(item.GetType()) + "##" + item.InstanceIndex));
+        }
+
+        public static void Close(IUIWindow window)
+        {
+            if (ActiveWindows.Contains(window))
+            {
+                window.OnClose();
+                ActiveWindows.Remove(window);
+                WindowEvents.InvokeOnWindowClosed(null, new(RegistryFromType(window.GetType()) + "##" + window.InstanceIndex));
+            }
+            else
+                throw new ArgumentException($"Window \"{window.InstanceIndex}\" does not exist");
         }
 
         public static void CloseAll()

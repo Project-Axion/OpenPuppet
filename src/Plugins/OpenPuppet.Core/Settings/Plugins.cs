@@ -103,13 +103,13 @@ namespace OpenPuppet.Core.Settings
                 ImGui.Text($"Author: {plugin.Value.Metadata.Author}");
                 if (disabled)
                     ImGui.BeginDisabled(true);
-                if(ImGui.Button(enabled ? "Disable" : "Enable") && !disabled)
+                if(ImGui.Button((enabled ? "Disable" : "Enable") + $"##{plugin.Key}") && !disabled)
                 {
                     PluginManager.SetPluginEnabled(plugin.Key, !enabled);
                     if(enabled) WarnRestart = true;
                 }
                 ImGui.SameLine();
-                if(ImGui.Button("Uninstall") && !disabled)
+                if(ImGui.Button("Uninstall##" + plugin.Key) && !disabled)
                 {
                     PluginManager.UninstallPlugin(plugin.Key);
                     WarnRestart = true;
