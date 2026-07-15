@@ -23,6 +23,8 @@ namespace OpenPuppet.Preferences
             ContextMenu.AddMenuList("view.layouts.layouts");
             ContextMenu.AddMenuItem("view.layouts.layouts.default", () => { });
 
+            ISettingsSection.RegisterSection("Layouts", new Settings.Layouts());
+
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Subscribing to window events");
             Windows.SubscribeToEvents();
         }
