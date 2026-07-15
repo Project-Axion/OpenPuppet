@@ -107,6 +107,7 @@ namespace OpenPuppet
 
                 if(ex.GetType() == typeof(Silk.NET.GLFW.GlfwException))
                 {
+                    // Temporary message
                     logger.WriteLine(
                         Logger.ILogger.Level.Warn,
                         "The above exception may occur if you are using an extremely low-end " +
