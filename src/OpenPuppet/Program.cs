@@ -17,9 +17,6 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using static Silk.NET.Core.Native.WinString;
-using static System.Net.Mime.MediaTypeNames;
 using Shader = OpenPuppet.rendering.Shader;
 
 namespace OpenPuppet
@@ -27,8 +24,6 @@ namespace OpenPuppet
     class Program
     {
         public static Camera PlaybackCamera = null;
-
-        static List<IUIWindow> PoppedWindows = new();
 
         static WindowOptions windowOptions = WindowOptions.Default with
         {
@@ -51,6 +46,9 @@ namespace OpenPuppet
 
         public static Logger.PluginLogger logger = Logger.LogManager.RequestPluginLogger("openpuppet");
 
+        // Just so we can see how long it takes for it to start up
+        internal static Stopwatch startupSW;
+
         static void Main(string[] args)
         {
             if(args.Length > 0)
@@ -63,6 +61,9 @@ namespace OpenPuppet
                     Environment.Exit(0);
                 }
             }
+
+            startupSW = new();
+            startupSW.Start();
 
             window.Load += Load;
             window.Update += Update;
@@ -201,6 +202,9 @@ namespace OpenPuppet
             RenderSurface.Init(gl);
 
             LoadPlugins();
+
+            startupSW.Stop();
+            logger.WriteLine(Logger.ILogger.Level.OK, $"Started up in {startupSW.Elapsed}");
         }
         static void Update(double deltaSeconds)
         {

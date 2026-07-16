@@ -72,6 +72,7 @@ namespace OpenPuppet.Core
             ISettingsSection.RegisterSection("General", new Settings.General());
             ISettingsSection.RegisterSection("Appearance", new Settings.Appearance());
             ISettingsSection.RegisterSection("Plugins", new Settings.Plugins());
+            ISettingsSection.RegisterSection("Updates", new Settings.Updates());
 
             Events.Subscribe();
 
