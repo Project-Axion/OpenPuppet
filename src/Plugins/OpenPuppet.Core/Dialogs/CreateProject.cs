@@ -47,8 +47,8 @@ namespace OpenPuppet.Core.Dialogs
 
             if (ImGui.Button("Browse..."))
             {
-                NativeDialogs.OpenFileResult result = NativeDialogs.OpenFileDialog(null, openDisabled ? null : path);
-                if (NativeDialogs.OpenFileDialogResultHasPath(result))
+                var result = NativeDialogs.OpenDirectoryDialog(openDisabled ? null : path);
+                if (NativeDialogs.OpenDirectoryDialogResultHasPath(result))
                 {
                     path = result.Path ?? "";
                 }
