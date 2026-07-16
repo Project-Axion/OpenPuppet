@@ -48,12 +48,12 @@ namespace OpenPuppet.Core
             while(Directory.Exists(dir))
             {
                 i++;
-                dir = Path.Combine(dir, name + (i > 0 ? $"({i})" : ""));
+                dir = Path.Combine(path, name + $"({i})");
             }
             Directory.CreateDirectory(dir);
             var proj = new ProjectMetadata()
             {
-                Name = name + $"({i})",
+                Name = name + (i > 0 ? $"({i})" : ""),
                 Directory = dir,
             };
 
@@ -81,7 +81,7 @@ namespace OpenPuppet.Core
             OpenProject(proj);
 
             File.WriteAllText(
-                Path.Combine(dir, name + ".opp"),
+                Path.Combine(dir, proj.Name + ".opp"),
                 JsonConvert.SerializeObject(ProjectManager.ActiveProject, new JsonSerializerSettings()
                 {
                     TypeNameHandling = TypeNameHandling.Auto,
