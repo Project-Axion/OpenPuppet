@@ -25,7 +25,6 @@ namespace OpenPuppet.Preferences
 
             ISettingsSection.RegisterSection("Layouts", new Settings.Layouts());
 
-            Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Subscribing to window events");
             Windows.SubscribeToEvents();
         }
 

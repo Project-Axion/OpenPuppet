@@ -22,9 +22,7 @@ namespace OpenPuppet.Core.Dialogs
 
         bool NoProjectMode = false;
 
-        const string NoProjString = "continue without a project";
-
-        public static List<string> RecentProjects = new();
+        const string NoProjString = "Continue without a project";
 
         public void OnLoad()
         {
@@ -63,7 +61,7 @@ namespace OpenPuppet.Core.Dialogs
 
                         json.Directory = Directory.GetParent(result.Path!)!.FullName;
 
-                        OpenProject(json);
+                        Projects.OpenProject(json);
 
                         IUIDialog.Close();
                     }
@@ -71,13 +69,13 @@ namespace OpenPuppet.Core.Dialogs
 
                 ImGui.SameLine();
 
-                foreach (var item in RecentProjects.ToArray())
+                foreach (var item in Projects.RecentProjects.ToArray())
                 {
                     if (ImGui.Button(Path.GetFileName(item), cardsize))
                     {
                         if (!File.Exists(item))
                         {
-                            RecentProjects.Remove(item);
+                            Projects.RecentProjects.Remove(item);
                             continue;
                         }
 
@@ -91,7 +89,7 @@ namespace OpenPuppet.Core.Dialogs
 
                         json.Directory = Directory.GetParent(item)!.FullName;
 
-                        OpenProject(json);
+                        Projects.OpenProject(json);
 
                         IUIDialog.Close();
                     }
@@ -117,30 +115,6 @@ namespace OpenPuppet.Core.Dialogs
             }
 
             ImGui.PopStyleColor();
-        }
-
-        public static void OpenProject(ProjectMetadata meta)
-        {
-            foreach (var item in meta.Scenes)
-            {
-                foreach (var item1 in item.AnimationScene)
-                    foreach (var item2 in item1.Value) item2.Scene = item;
-            }
-
-            ProjectManager.ActiveProject = meta;
-
-            var projfile = Path.Combine(meta.Directory, meta.Name + ".opp");
-
-            RecentProjects.Remove(projfile);
-            RecentProjects.Insert(0, projfile);
-
-            RecentProjects = RecentProjects.Take(25).ToList();
-
-            File.WriteAllLines(Path.Combine(SDK.SDK.DataPath, "projcache"),RecentProjects);
-
-            IEvent<string>.Invoke("openpuppet.window.modify.title", null, $"OpenPuppet - {meta.Name}");
-
-            ContextMenu.SetEnabledAll(true);
         }
 
         public void OnClose()

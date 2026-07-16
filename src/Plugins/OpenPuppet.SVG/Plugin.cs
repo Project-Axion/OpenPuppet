@@ -23,13 +23,9 @@ namespace OpenPuppet.SVG
 
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Hello SVG Plugin");
 
-            Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering dialogs");
             IUIDialog.Register("openpuppet.svg.import", typeof(ImportSVG));
-            Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all dialogs successfully");
 
-            Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering context menu items");
             ContextMenu.AddMenuItem("File.Import.SVG", () => IUIDialog.Open("openpuppet.svg.import"), "Import SVG", hasProject);
-            Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all context menu items successfully");
         }
 
         public void OnShutdown()

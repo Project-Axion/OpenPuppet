@@ -391,7 +391,7 @@ namespace OpenPuppet
                 }
             }
 
-            logger.WriteLine($"{errors.Count} plugins failed to load");
+            logger.WriteLine(Logger.ILogger.Level.Warn, $"{errors.Count} plugins failed to load");
 
             PluginEvents.InvokeFinishedLoading(null);
         }
@@ -427,6 +427,8 @@ namespace OpenPuppet
             SDK.Dialogs.Dialogs.RegisterBuiltInDialogs();
 
             LoadPlugins();
+
+            logger.WriteLine("Finished soft restart");
         }
     }
 }

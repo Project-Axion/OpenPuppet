@@ -68,42 +68,7 @@ namespace OpenPuppet.Core.Dialogs
 
             if (ImGui.Button("Create"))
             {
-                var proj = new ProjectMetadata()
-                {
-                    Name = name,
-                    Directory = path,
-                };
-
-                proj.Scenes.Add(new());
-
-                proj.Scenes[0].SceneObjects.Add(ISceneGameObject.Scene);
-                proj.Scenes[0].AnimationScene.Add(ISceneGameObject.Scene.ID, new());
-
-                proj.Scenes[0].AnimationScene[ISceneGameObject.Scene.ID].Add(
-                    new PropertyTimeline<Vector3>(
-                        ISceneGameObject.Scene.ID,
-                        proj.Scenes[0],
-                        "Letterbox color",
-                        () => proj.Scenes[0].LetterboxColor
-                    )
-                    {
-                        Keyframes = new()
-                        {
-                            {new(0,0,0),Vector3.Zero},
-                            {new(0,0,1),Vector3.One},
-                        }
-                    }
-                );
-
-                WelcomeDialog.OpenProject(proj);
-
-                File.WriteAllText(
-                    Path.Combine(path,name+".opp"),
-                    JsonConvert.SerializeObject(ProjectManager.ActiveProject,new JsonSerializerSettings() 
-                    {
-                        TypeNameHandling = TypeNameHandling.Auto
-                    })
-                );
+                Projects.Create(name, path);
 
                 IUIDialog.Close();
             }

@@ -29,7 +29,7 @@ namespace OpenPuppet.Core
             if (!File.Exists(Path.Combine(SDK.SDK.DataPath,"projcache")))
                 File.WriteAllText(Path.Combine(SDK.SDK.DataPath, "projcache"), "");
 
-            WelcomeDialog.RecentProjects = File.ReadAllLines(Path.Combine(SDK.SDK.DataPath, "projcache")).ToList();
+            Projects.RecentProjects = File.ReadAllLines(Path.Combine(SDK.SDK.DataPath, "projcache")).ToList();
 
             ContextMenu.AddMenuList("File");
             ContextMenu.AddMenuList("File.Import");
@@ -37,7 +37,6 @@ namespace OpenPuppet.Core
             ContextMenu.AddMenuList("View.Layouts");
             ContextMenu.AddMenuList("Project");
 
-            Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering windows");
             IUIWindow.Register("openpuppet.core.timeline", typeof(Timeline));
             IUIWindow.Register("openpuppet.core.editor", typeof(Editor));
             IUIWindow.Register("openpuppet.core.viewport", typeof(Viewport));
@@ -45,14 +44,10 @@ namespace OpenPuppet.Core
             IUIWindow.Register("openpuppet.settings", typeof(SettingsWindow));
             IUIWindow.Register("openpuppet.core.project", typeof(Project));
             IUIWindow.Register("openpuppet.core.hierarchy", typeof(Hierarchy));
-            Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all windows successfully");
 
-            Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering dialogs");
             IUIDialog.Register("openpuppet.core.createproject", typeof(CreateProject));
             IUIDialog.Register("openpuppet.core.welcome", typeof(WelcomeDialog));
-            Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all dialogs successfully");
 
-            Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Registering context menu items");
             ContextMenu.AddMenuItem("File.Save", () =>
             {
                 IEvent<EventArgs>.Invoke("project.save",this,EventArgs.Empty);
@@ -73,7 +68,6 @@ namespace OpenPuppet.Core
             ContextMenu.AddMenuItem("View.Settings", () => IUIWindow.Open("openpuppet.settings"));
             ContextMenu.AddMenuItem("Project.Settings", () => IUIWindow.Open("openpuppet.core.project"));
             ContextMenu.AddMenuItem("View.Hierarchy", () => IUIWindow.Open("openpuppet.core.hierarchy"));
-            Logger.WriteLine(SDK.Logger.ILogger.Level.OK, "Registered all context menu items successfully");
 
             ISettingsSection.RegisterSection("General", new Settings.General());
             ISettingsSection.RegisterSection("Appearance", new Settings.Appearance());

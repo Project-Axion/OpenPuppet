@@ -19,8 +19,6 @@ namespace OpenPuppet.Preferences
 
         public static void SubscribeToEvents()
         {
-            Global.MainPlugin.Logger.WriteLine("Subscribed to events");
-
             SDK.Events.WindowEvents.OnWindowOpened += OnWindowOpened;
             SDK.Events.WindowEvents.OnWindowClosed += OnWindowClosed;
             SDK.Events.PluginEvents.OnFinishedLoading += OnFinishedLoading;
@@ -28,8 +26,6 @@ namespace OpenPuppet.Preferences
 
         public static void UnsubscribeToEvents()
         {
-            Global.MainPlugin.Logger.WriteLine("Unsubscribed to events");
-
             SDK.Events.WindowEvents.OnWindowOpened -= OnWindowOpened;
             SDK.Events.WindowEvents.OnWindowClosed -= OnWindowClosed;
             SDK.Events.PluginEvents.OnFinishedLoading -= OnFinishedLoading;
@@ -37,16 +33,12 @@ namespace OpenPuppet.Preferences
 
         public static void OnWindowOpened(object? sender, SDK.Events.WindowEvents.WindowOpenedArgs args)
         {
-            Global.MainPlugin.Logger.WriteLine("Window opened: " + args.Window);
-
             if(!OpenWindows.Contains(args.Window))
                 OpenWindows.Add(args.Window);
         }
 
         public static void OnWindowClosed(object? sender, SDK.Events.WindowEvents.WindowClosedArgs args)
         {
-            Global.MainPlugin.Logger.WriteLine("Window closed: " + args.Window);
-
             if (OpenWindows.Contains(args.Window))
                 OpenWindows.Remove(args.Window);
         }
@@ -72,20 +64,19 @@ namespace OpenPuppet.Preferences
                     string[]? data = JsonSerializer.Deserialize<string[]>(File.ReadAllText(WindowsFile));
                     if (data == null)
                     {
-                        Global.MainPlugin.Logger.WriteLine(SDK.Logger.ILogger.Level.Error, "Failed to load last opened windows");
+                        Global.MainPlugin.Logger.WriteLine(Logger.ILogger.Level.Error, "Failed to load last opened windows");
                         SavePreviousWindows();
                     }
                     else
                     {
                         for (int i = 0; i < data.Length; i++)
                         {
-                            Global.MainPlugin.Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Opening window " + data[i]);
-                            SDK.IUIWindow.Open(data[i].Split("#")[0]);
+                            IUIWindow.Open(data[i].Split("#")[0]);
                         }
                     }
                 } catch(Exception ex)
                 {
-                    Global.MainPlugin.Logger.WriteLine(SDK.Logger.ILogger.Level.Error, "Failed to load last opened windows: " + ex.Message);
+                    Global.MainPlugin.Logger.WriteLine(Logger.ILogger.Level.Error, "Failed to load last opened windows: " + ex.Message);
                     SavePreviousWindows();
                 }
             }

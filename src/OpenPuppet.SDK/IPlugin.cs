@@ -151,13 +151,10 @@ namespace OpenPuppet
 
             // Remove the logs once fixed
 
-            SDK.SDK.logger.WriteLine($"Loading assembly {path}");
             RegisteredPlugins[registry].LoadContext = new PluginLoadContext(path);
             Assembly asm = RegisteredPlugins[registry].LoadContext!.LoadFromAssemblyPath(path);
-            SDK.SDK.logger.WriteLine($"Initializing Plugin {registry}");
             asm.DefinedTypes.Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass).ToList().ForEach(t =>
             {
-                SDK.SDK.logger.WriteLine($"Found IPlugin in Plugin {registry}");
                 RegisteredPlugins[registry].Assembly = (IPlugin)Activator.CreateInstance(t.AsType())!;
                 RegisteredPlugins[registry].Assembly!.OnInitialized();
                 SDK.SDK.logger.WriteLine($"Initialized Plugin {registry}");
