@@ -89,15 +89,13 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetUniformLocation(string uniform)
         {
-            if (_uniformToLocation.TryGetValue(uniform, out int location) == false)
+            if (!_uniformToLocation.TryGetValue(uniform, out int location))
             {
                 location = _gl.GetUniformLocation(Program, uniform);
                 _uniformToLocation.Add(uniform, location);
 
                 if (location == -1)
-                {
                     Debug.Print($"The uniform '{uniform}' does not exist in the shader!");
-                }
             }
 
             return location;
@@ -106,15 +104,13 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetAttribLocation(string attrib)
         {
-            if (_attribLocation.TryGetValue(attrib, out int location) == false)
+            if (!_attribLocation.TryGetValue(attrib, out int location))
             {
                 location = _gl.GetAttribLocation(Program, attrib);
                 _attribLocation.Add(attrib, location);
 
                 if (location == -1)
-                {
                     Debug.Print($"The attrib '{attrib}' does not exist in the shader!");
-                }
             }
 
             return location;

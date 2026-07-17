@@ -52,6 +52,7 @@ namespace OpenPuppet.SDK.TimelineTracks
         IMutator<T> Mutator = IMutator<T>.GetMutator();
 
         public Dictionary<TimeSpan, bool> SelectedKeyframes { get; set; } = new();
+        public Dictionary<TimeSpan, Easing> KeyframeEasings { get; set; } = new();
         public SortedList<TimeSpan, T> Keyframes { get; set; } = new();
 
         public void AddKeyframe(TimeSpan timestamp) => Keyframes.Add(timestamp, GetValue());
@@ -61,6 +62,12 @@ namespace OpenPuppet.SDK.TimelineTracks
         public void MoveKeyframe(TimeSpan timestamp, TimeSpan newFrame)
         {
             if (!Keyframes.TryGetValue(timestamp, out var keyframeValue)) return;
+
+            if (KeyframeEasings.ContainsKey(timestamp))
+            {
+                KeyframeEasings[newFrame] = KeyframeEasings[timestamp];
+                KeyframeEasings.Remove(timestamp);
+            }
 
             if (SelectedKeyframes.ContainsKey(timestamp))
             {
@@ -72,13 +79,20 @@ namespace OpenPuppet.SDK.TimelineTracks
             Keyframes.Remove(timestamp);
         }
 
-        public List<TimeSpan> GetSelectedKeyframes() => 
-            SelectedKeyframes.Keys.Where(x => SelectedKeyframes[x]).ToList();
+        public List<(TimeSpan,Easing)> GetSelectedKeyframes() => 
+            SelectedKeyframes.Keys.Where(x => SelectedKeyframes[x]).Select(x=> (x,GetEasing(x))).ToList();
 
-        public List<(TimeSpan frame, bool selected)> GetKeyframes() => 
-            Keyframes.Keys.Select(x => (x, GetKeyframeSelection(x))).ToList();
+        public List<(TimeSpan frame, bool selected, Easing easing)> GetKeyframes() => 
+            Keyframes.Keys.Select(x => (x, GetKeyframeSelection(x), GetEasing(x))).ToList();
 
         public bool IsKeyframeSelected(TimeSpan keyframe) => GetKeyframeSelection(keyframe);
+
+        Easing GetEasing(TimeSpan keyframe)
+        {
+            if (!KeyframeEasings.ContainsKey(keyframe)) KeyframeEasings.Add(keyframe, new(null!));
+
+            return KeyframeEasings[keyframe];
+        }
 
         bool GetKeyframeSelection(TimeSpan kf)
         {
@@ -99,7 +113,10 @@ namespace OpenPuppet.SDK.TimelineTracks
             else SetValue(
                 Mutator.Mutate(
                     Keyframes[prev!.Value], Keyframes[next!.Value], 
-                    (timestamp - prev.Value) / (next.Value - prev.Value)
+                    IEasingMode.Ease(
+                        GetEasing(prev!.Value),
+                        (timestamp - prev.Value) / (next.Value - prev.Value)
+                    )
                 )
             );
         }

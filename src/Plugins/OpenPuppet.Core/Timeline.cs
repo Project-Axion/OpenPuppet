@@ -128,10 +128,8 @@ namespace OpenPuppet.Core
                 if (!shiftHeld && hitSelected) pendingSimpleClick = true;
                 else
                 {
-                    if (!shiftHeld)
-                        track.DeselectAll();
-                    if (hitKeyframe)
-                        track.ToggleSelectKeyframe(kf);
+                    if (!shiftHeld) track.DeselectAll();
+                    if (hitKeyframe) track.ToggleSelectKeyframe(kf);
                     pendingSimpleClick = false;
                 }
 
@@ -151,10 +149,10 @@ namespace OpenPuppet.Core
                         var selected = track.GetSelectedKeyframes().ToList();
                         foreach (var item in selected)
                         {
-                            var off = item + kdelta;
+                            var off = item.frame + kdelta;
 
                             if (!track.KeyframeExists(off))
-                                track.MoveKeyframe(item, off);
+                                track.MoveKeyframe(item.frame, off);
                         }
                     }
                 }
