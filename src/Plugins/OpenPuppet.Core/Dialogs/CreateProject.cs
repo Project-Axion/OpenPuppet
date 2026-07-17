@@ -23,15 +23,9 @@ namespace OpenPuppet.Core.Dialogs
         private static string path = string.Empty;
         private static bool openDisabled = true;
 
-        public void OnLoad()
-        {
-            
-        }
+        public void OnLoad() {}
 
-        public void OnPreRender()
-        {
-            
-        }
+        public void OnPreRender() {}
 
         public void OnRender()
         {
@@ -76,9 +70,6 @@ namespace OpenPuppet.Core.Dialogs
             if (openDisabled) ImGui.EndDisabled();
         }
 
-        public void OnClose()
-        {
-
-        }
+        public void OnClose() {}
     }
 }

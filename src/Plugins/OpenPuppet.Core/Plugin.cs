@@ -2,7 +2,9 @@
 using Newtonsoft.Json;
 using OpenPuppet.Core.Dialogs;
 using OpenPuppet.Core.Mutators;
+using OpenPuppet.Core.PropertyDrawers;
 using OpenPuppet.SDK;
+using OpenPuppet.SDK.Easings;
 using OpenPuppet.SDK.Events;
 using OpenPuppet.SDK.Projects;
 using System.Numerics;
@@ -26,6 +28,9 @@ namespace OpenPuppet.Core
             IMutator<Vector3>.RegisterMutator(typeof(Vec3Mutator));
             IMutator<Vector2>.RegisterMutator(typeof(Vec2Mutator));
 
+            IMutator<Color3>.RegisterMutator(typeof(Color3Mutator));
+            IMutator<Color4>.RegisterMutator(typeof(Color4Mutator));
+
             if (!File.Exists(Path.Combine(SDK.SDK.DataPath,"projcache")))
                 File.WriteAllText(Path.Combine(SDK.SDK.DataPath, "projcache"), "");
 
@@ -47,6 +52,18 @@ namespace OpenPuppet.Core
 
             IUIDialog.Register("openpuppet.core.createproject", typeof(CreateProject));
             IUIDialog.Register("openpuppet.core.welcome", typeof(WelcomeDialog));
+
+            IEasingMode.Register("openpuppet.core.linear", new LinearEasing());
+
+            IPropertyDrawer.Register(typeof(Vector3),new Vector3Drawer());
+            IPropertyDrawer.Register(typeof(Vector2),new Vector2Drawer());
+            IPropertyDrawer.Register(typeof(Vector4),new Vector4Drawer());
+
+            IPropertyDrawer.Register(typeof(Color3),new Color3Drawer());
+            IPropertyDrawer.Register(typeof(Color4),new Color4Drawer());
+
+            IPropertyDrawer.Register(typeof(float),new FloatDrawer());
+            IPropertyDrawer.Register(typeof(int),new IntDrawer());
 
             ContextMenu.AddMenuItem("File.Save", () =>
             {

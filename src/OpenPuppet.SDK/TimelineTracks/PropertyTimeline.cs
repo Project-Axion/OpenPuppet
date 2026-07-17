@@ -51,6 +51,7 @@ namespace OpenPuppet.SDK.TimelineTracks
 
         IMutator<T> Mutator = IMutator<T>.GetMutator();
 
+        [JsonIgnore]
         public Dictionary<TimeSpan, bool> SelectedKeyframes { get; set; } = new();
         public Dictionary<TimeSpan, Easing> KeyframeEasings { get; set; } = new();
         public SortedList<TimeSpan, T> Keyframes { get; set; } = new();
@@ -58,6 +59,17 @@ namespace OpenPuppet.SDK.TimelineTracks
         public void AddKeyframe(TimeSpan timestamp) => Keyframes.Add(timestamp, GetValue());
         public void UpdateKeyframe(TimeSpan timestamp) => Keyframes[timestamp] = GetValue();
         public bool KeyframeExists(TimeSpan keyframe) => Keyframes.ContainsKey(keyframe);
+
+        public bool RemoveKeyframe(TimeSpan timestamp)
+        {
+            KeyframeEasings.Remove(timestamp);
+            SelectedKeyframes.Remove(timestamp);
+
+            return Keyframes.Remove(timestamp);
+        }
+
+        public void SetKeyframeEasing(TimeSpan timestamp, Easing easing) =>
+            KeyframeEasings[timestamp] = easing;
 
         public void MoveKeyframe(TimeSpan timestamp, TimeSpan newFrame)
         {
@@ -106,13 +118,12 @@ namespace OpenPuppet.SDK.TimelineTracks
             var (prev, next) = ITimelineTrack.GetSurroundingKeyframes(timestamp, Keyframes.Keys);
 
             if (!prev.HasValue && !next.HasValue) return;
-            if (!prev.HasValue && next.HasValue) prev = next;
-            if (prev.HasValue && !next.HasValue) next = prev;
 
-            if (Mutator == null) SetValue(Keyframes[prev!.Value]);
+            if (Mutator == null || !next.HasValue) SetValue(Keyframes[prev!.Value]);
+            else if (!prev.HasValue) SetValue(Keyframes[next!.Value]);
             else SetValue(
                 Mutator.Mutate(
-                    Keyframes[prev!.Value], Keyframes[next!.Value], 
+                    Keyframes[prev!.Value], Keyframes[next!.Value],
                     IEasingMode.Ease(
                         GetEasing(prev!.Value),
                         (timestamp - prev.Value) / (next.Value - prev.Value)

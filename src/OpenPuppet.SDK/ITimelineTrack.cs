@@ -16,7 +16,9 @@ namespace OpenPuppet.SDK
 
         public void AddKeyframe(TimeSpan timestamp);
         public void UpdateKeyframe(TimeSpan timestamp);
+        public bool RemoveKeyframe(TimeSpan timestamp);
         public void MoveKeyframe(TimeSpan timestamp, TimeSpan newFrame);
+        public void SetKeyframeEasing(TimeSpan timestamp, Easing easing);
         public List<(TimeSpan frame, bool selected, Easing easing)> GetKeyframes();
         public List<(TimeSpan frame, Easing easing)> GetSelectedKeyframes();
 

@@ -119,7 +119,11 @@ namespace OpenPuppet.Core
                 if (
                     ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left) &&
                     !track.KeyframeInRange(kpos, out _, 5f / (float)zoom)
-                ) track.AddKeyframe(kpos);
+                )
+                {
+                    track.AddKeyframe(kpos);
+                    track.SetKeyframeEasing(kpos,new("openpuppet.core.linear"));
+                }
 
                 bool shiftHeld = ImGui.IsKeyDown(ImGuiKey.LeftShift) || ImGui.IsKeyDown(ImGuiKey.RightShift);
                 bool hitKeyframe = track.KeyframeInRange(kpos, out var kf, padding.Y / (float)zoom);
@@ -175,6 +179,12 @@ namespace OpenPuppet.Core
                 }
 
                 if (isInDrag) isInDrag = false;
+            }
+
+            if (ImGui.IsKeyReleased(ImGuiKey.Delete))
+            {
+                var selected = track.GetSelectedKeyframes().ToList();
+                foreach (var item in selected) track.RemoveKeyframe(item.frame);
             }
 
             ImGui.SetCursorScreenPos(new Vector2(pos.X + sidebarsize, pos.Y));

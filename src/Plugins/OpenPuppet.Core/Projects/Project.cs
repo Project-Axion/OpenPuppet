@@ -63,7 +63,7 @@ namespace OpenPuppet.Core
             proj.Scenes[0].AnimationScene.Add(ISceneGameObject.Scene.ID, new());
 
             proj.Scenes[0].AnimationScene[ISceneGameObject.Scene.ID].Add(
-                new PropertyTimeline<Vector3>(
+                new PropertyTimeline<Color3>(
                     ISceneGameObject.Scene.ID,
                     proj.Scenes[0],
                     "Letterbox color",
@@ -72,8 +72,13 @@ namespace OpenPuppet.Core
                 {
                     Keyframes = new()
                     {
-                            {new(0,0,0),Vector3.Zero},
-                            {new(0,0,1),Vector3.One},
+                        {new(0,0,0),Vector3.Zero},
+                        {new(0,0,1),Vector3.One},
+                    },
+                    KeyframeEasings = new()
+                    {
+                        {new(0,0,0),new("openpuppet.core.linear")},
+                        {new(0,0,1),new("openpuppet.core.linear")},
                     }
                 }
             );
