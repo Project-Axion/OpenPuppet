@@ -407,8 +407,8 @@ namespace OpenPuppet
             ContextMenu.Root.Nodes.Clear();
             IUIWindow.CloseAll();
             IUIDialog.Close();
-            IUIWindow.RegisteredWindows.Clear();
-            IUIDialog.RegisteredWindows.Clear();
+            IUIWindow.DeregisterAll();
+            IUIDialog.DeregisterAll();
 
             foreach (var plugin in IPlugin.RegisteredPlugins.ToList())
             {

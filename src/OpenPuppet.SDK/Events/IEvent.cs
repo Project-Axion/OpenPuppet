@@ -9,7 +9,7 @@ namespace OpenPuppet.SDK.Events
 {
     public interface IEvent<T>
     {
-        public static Dictionary<string, Action<object?, T>> RegisteredEvents { get; } = new();
+        private static Dictionary<string, Action<object?, T>> RegisteredEvents { get; } = new();
 
         void OnLoad();
         void OnFired(object? sender, T e);
@@ -39,6 +39,11 @@ namespace OpenPuppet.SDK.Events
                 else
                     RegisteredEvents[registry] = existing;
             }
+        }
+
+        public static void Clear()
+        {
+            RegisteredEvents.Clear();
         }
     }
 }

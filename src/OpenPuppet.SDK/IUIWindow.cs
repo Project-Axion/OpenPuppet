@@ -13,7 +13,7 @@ namespace OpenPuppet.SDK
 {
     public interface IUIWindow
     {
-        public static Dictionary<string,Type> RegisteredWindows { get; } = new();
+        private static Dictionary<string, Type> RegisteredWindows { get; } = new();
         public static List<IUIWindow> ActiveWindows { get; } = new();
 
         public uint InstanceIndex { get; protected set; }
@@ -39,7 +39,7 @@ namespace OpenPuppet.SDK
 
         public static string RegistryFromType(Type t)
         {
-            var dat = RegisteredWindows.FirstOrDefault(x => x.Value == t,new("null",null!));
+            var dat = RegisteredWindows.FirstOrDefault(x => x.Value == t,new("null", null!));
 
             if (dat.Value != null) return dat.Key;
 
@@ -51,9 +51,9 @@ namespace OpenPuppet.SDK
 
         public static IUIWindow SpawnFromRegistry(string registry)
         {
-            if (RegisteredWindows.ContainsKey(registry))
+            if (RegisteredWindows.TryGetValue(registry, out Type? item))
             {
-                var win = (IUIWindow)Activator.CreateInstance(RegisteredWindows[registry])!;
+                var win = (IUIWindow)Activator.CreateInstance(item)!;
                 win.InstanceIndex = (uint)ActiveWindows.Where(w => w.GetType() == win.GetType()).Count();
 
                 WindowEvents.InvokeOnWindowOpened(null, new(registry + "##" + win.InstanceIndex));
@@ -96,12 +96,12 @@ namespace OpenPuppet.SDK
 
         public static void CloseAll()
         {
-            ActiveWindows.ToList().ForEach(w =>
-            {
-                // Temporary, use Close instead
-                w.OnClose();
-                ActiveWindows.Remove(w);
-            });
+            ActiveWindows.ToList().ForEach(Close);
+        }
+
+        public static void DeregisterAll()
+        {
+            RegisteredWindows.Clear();
         }
     }
 }

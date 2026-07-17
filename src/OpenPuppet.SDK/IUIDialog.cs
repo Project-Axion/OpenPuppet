@@ -10,7 +10,7 @@ namespace OpenPuppet.SDK
 {
     public interface IUIDialog
     {
-        public static Dictionary<string, Type> RegisteredWindows { get; } = new();
+        private static Dictionary<string, Type> RegisteredWindows { get; } = new();
         public static IUIDialog? ActiveDialog { get; internal set; }
 
         public string Title { get; set; }
@@ -40,9 +40,9 @@ namespace OpenPuppet.SDK
 
         public static IUIDialog SpawnFromRegistry(string registry)
         {
-            if (RegisteredWindows.ContainsKey(registry))
+            if (RegisteredWindows.TryGetValue(registry, out Type? item))
             {
-                var win = (IUIDialog)Activator.CreateInstance(RegisteredWindows[registry])!;
+                var win = (IUIDialog)Activator.CreateInstance(item)!;
 
                 return win;
             }
@@ -63,6 +63,11 @@ namespace OpenPuppet.SDK
         {
             ActiveDialog?.OnClose();
             ActiveDialog = null;
+        }
+
+        public static void DeregisterAll()
+        {
+            RegisteredWindows.Clear();
         }
     }
 }
