@@ -29,7 +29,7 @@ namespace OpenPuppet
         {
             if (RegisteredPlugins.ContainsKey(registry))
             {
-                if (RegisteredPlugins[registry].Assembly != null) return;
+                if (RegisteredPlugins[registry].Plugin != null) return;
 
                 string item = RegisteredPlugins[registry].Path;
 
@@ -47,7 +47,7 @@ namespace OpenPuppet
         {
             if (RegisteredPlugins.ContainsKey(registry))
             {
-                if (RegisteredPlugins[registry].Assembly == null) return;
+                if (RegisteredPlugins[registry].Plugin == null) return;
 
                 //RegisteredPlugins[registry].Assembly!.OnShutdown();
                 RegisteredPlugins[registry].Enabled = false; // Temporary, move to unloading method
@@ -76,7 +76,7 @@ namespace OpenPuppet
                 if (!RegisteredPlugins.TryGetValue(registry, out var plugin))
                     throw new ArgumentException($"Plugin with the ID of \"{registry}\" has not been registered");
 
-                if (plugin.Assembly == null ||
+                if (plugin.Plugin == null ||
                     plugin.LoadContext == null ||
                     plugin.WeakReference == null)
                 {
@@ -94,7 +94,7 @@ namespace OpenPuppet
 
                 try
                 {
-                    plugin.Assembly.OnShutdown();
+                    plugin.Plugin.OnShutdown();
                 }
                 catch (Exception ex)
                 {
@@ -105,7 +105,7 @@ namespace OpenPuppet
                 }
                 finally
                 {
-                    plugin.Assembly = null;
+                    plugin.Plugin = null;
                 }
 
                 try
@@ -139,7 +139,8 @@ namespace OpenPuppet
                         IEvent<EventArgs>.Invoke("openpuppet.unstable", null, EventArgs.Empty);
                 }
 
-                RegisteredPlugins.Remove(registry);
+                //RegisteredPlugins.Remove(registry);
+                plugin.Enabled = false;
                 return !leaked;
             }
         }
@@ -152,11 +153,15 @@ namespace OpenPuppet
             // Remove the logs once fixed
 
             RegisteredPlugins[registry].LoadContext = new PluginLoadContext(path);
+            RegisteredPlugins[registry].WeakReference = new(
+                RegisteredPlugins[registry].LoadContext//,
+                //trackResurrection: true
+            );
             Assembly asm = RegisteredPlugins[registry].LoadContext!.LoadFromAssemblyPath(path);
             asm.DefinedTypes.Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass).ToList().ForEach(t =>
             {
-                RegisteredPlugins[registry].Assembly = (IPlugin)Activator.CreateInstance(t.AsType())!;
-                RegisteredPlugins[registry].Assembly!.OnInitialized();
+                RegisteredPlugins[registry].Plugin = (IPlugin)Activator.CreateInstance(t.AsType())!;
+                RegisteredPlugins[registry].Plugin!.OnInitialized();
                 SDK.SDK.logger.WriteLine($"Initialized Plugin {registry}");
             });
             /*foreach(Type t in asm.GetTypes())
@@ -169,10 +174,6 @@ namespace OpenPuppet
                     SDK.SDK.logger.WriteLine($"Initialised Plugin {registry}");
                 }
             }*/
-            RegisteredPlugins[registry].WeakReference = new(
-                RegisteredPlugins[registry].LoadContext,
-                trackResurrection: true
-            );
 
             /*var asm = Assembly.LoadFrom(path);
             asm.DefinedTypes.Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass).ToList().ForEach(t =>
@@ -250,7 +251,7 @@ namespace OpenPuppet
         public string Path { get; set; }
         public PluginLoadContext? LoadContext { get; set; }
         public WeakReference? WeakReference { get; set; }
-        public IPlugin? Assembly { get; set; }
+        public IPlugin? Plugin { get; set; }
         public bool Enabled { get; set; }
 
         public RegisteredPlugin(
@@ -265,7 +266,7 @@ namespace OpenPuppet
             Path = path;
             LoadContext = loadContext;
             WeakReference = weakReference;
-            Assembly = assembly;
+            Plugin = assembly;
             Enabled = enabled;
         }
     }

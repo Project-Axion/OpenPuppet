@@ -348,7 +348,7 @@ namespace OpenPuppet
             {
                 try
                 {
-                    plugin.Value.Assembly?.OnShutdown();
+                    plugin.Value.Plugin?.OnShutdown();
                 } catch (Exception ex)
                 {
                     logger.WriteLine(
