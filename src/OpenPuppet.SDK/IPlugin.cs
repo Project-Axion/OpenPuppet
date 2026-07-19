@@ -40,7 +40,7 @@ namespace OpenPuppet.SDK
                             not be loaded again
         */
 
-        static Dictionary<string, RegisteredPlugin> RegisteredPlugins { get; } = new();
+        public static Dictionary<string, RegisteredPlugin> RegisteredPlugins { get; } = [];
 
         static readonly object _pluginLock = new();
         static int MaxUnloadGCAttempts = 10;
@@ -184,7 +184,7 @@ namespace OpenPuppet.SDK
                 ?? throw new ArgumentException($"Metadata in \"{meta}\" is invalid");
             RegisterPlugin(metadata, path, enabled: enabled);
             // TODO: Add further check to see if the plugin is invalid or not
-            if (enabled) LoadPlugin(metadata.ID, path);
+            if (enabled) EnablePlugin(metadata.ID);
         }
 
         public static void InstallPlugin(Plugin.LocalInstallSource source)
@@ -277,6 +277,8 @@ namespace OpenPuppet.SDK
                 }
 
                 SavePluginList(plugins);
+                foreach (var plugin in plugins)
+                    LoadPluginDirectory(plugin.Value.Path, plugin.Value.Enabled);
             }
 
             if (File.Exists(PluginListPath))
