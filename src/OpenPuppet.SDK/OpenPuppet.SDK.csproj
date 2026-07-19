@@ -7,6 +7,16 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="IPlugin.old.cs" />
+    <Compile Remove="Plugins\Manager.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="IPlugin.old.cs" />
+    <None Include="Plugins\Manager.cs" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="NativeFileDialogSharp" Version="0.6.0-alpha" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.5-beta1" />

@@ -1,5 +1,4 @@
 using ImGuiNET;
-using OpenPuppet.Plugins;
 using OpenPuppet.rendering;
 using OpenPuppet.rendering.VertexTypes;
 using OpenPuppet.SDK;
@@ -61,6 +60,9 @@ namespace OpenPuppet
                     Environment.Exit(0);
                 }
             }
+
+            if (IPlugin.InstallPath == null)
+                throw new Exception("\"Plugin.InstallPath\" is null");
 
             startupSW = new();
             startupSW.Start();
@@ -343,7 +345,7 @@ namespace OpenPuppet
             //for (int i = 0; i < PluginManager.LoadedPlugins.Count; i++)
             //    PluginManager.LoadedPlugins[i].OnShutdown();
 
-            PluginManager.SavePluginList();
+            IPlugin.SavePluginList();
             foreach (var plugin in IPlugin.RegisteredPlugins)
             {
                 try
@@ -368,9 +370,13 @@ namespace OpenPuppet
 
         static void LoadPlugins()
         {
-            PluginManager.LoadPluginList();
+            IPlugin.LoadPluginList();
+
+            // TODO: Clean up below, make sure that nothing important is left
+            /*
+
             List<string> errors = new();
-            /*foreach (var item in Directory.GetDirectories(PluginsPath.PluginPath!))
+            \*foreach (var item in Directory.GetDirectories(PluginsPath.PluginPath!))
             {
                 try
                 {
@@ -381,7 +387,7 @@ namespace OpenPuppet
                     errors.Add(ex.Message);
                     logger.WriteLine(ex.Message);
                 }
-            }*/
+            }*\
 
             foreach(var item in PluginManager.Plugins)
             {
@@ -398,6 +404,7 @@ namespace OpenPuppet
             logger.WriteLine(Logger.ILogger.Level.Warn, $"{errors.Count} plugins failed to load");
 
             PluginEvents.InvokeFinishedLoading(null);
+            */
         }
 
         static void SoftRestart()

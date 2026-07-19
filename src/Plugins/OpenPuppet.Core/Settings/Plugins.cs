@@ -1,5 +1,4 @@
 ﻿using ImGuiNET;
-using OpenPuppet.Plugins;
 using OpenPuppet.SDK;
 using OpenPuppet.SDK.Events;
 using System;
@@ -30,7 +29,7 @@ namespace OpenPuppet.Core.Settings
                 foreach (var plugin in IPlugin.RegisteredPlugins)
                 {
                     if (plugin.Key == "com.openpuppet.core") continue;
-                    PluginManager.SetPluginEnabled(plugin.Key, true);
+                    IPlugin.SetPluginEnabled(plugin.Key, true);
                 }
             }
             ImGui.SameLine();
@@ -39,7 +38,7 @@ namespace OpenPuppet.Core.Settings
                 foreach (var plugin in IPlugin.RegisteredPlugins)
                 {
                     if (plugin.Key == "com.openpuppet.core") continue;
-                    PluginManager.SetPluginEnabled(plugin.Key, false);
+                    IPlugin.SetPluginEnabled(plugin.Key, false);
                     WarnRestart = true;
                 }
             }
@@ -49,7 +48,7 @@ namespace OpenPuppet.Core.Settings
                 foreach (var plugin in IPlugin.RegisteredPlugins)
                 {
                     if (plugin.Key == "com.openpuppet.core") continue;
-                    PluginManager.UninstallPlugin(plugin.Key);
+                    IPlugin.UninstallPlugin(plugin.Key);
                     WarnRestart = true;
                 }
             }
@@ -90,6 +89,7 @@ namespace OpenPuppet.Core.Settings
             foreach (var plugin in IPlugin.RegisteredPlugins)
             {
                 bool disabled = plugin.Key == "com.openpuppet.core";
+                PluginState state = plugin.Value.State;
                 bool enabled = plugin.Value.Enabled;
                 //ImGui.BeginChild("Plugins-" + plugin.Key);
                 ImGui.Columns(2);
@@ -105,13 +105,13 @@ namespace OpenPuppet.Core.Settings
                     ImGui.BeginDisabled(true);
                 if(ImGui.Button((enabled ? "Disable" : "Enable") + $"##{plugin.Key}") && !disabled)
                 {
-                    PluginManager.SetPluginEnabled(plugin.Key, !enabled);
+                    IPlugin.SetPluginEnabled(plugin.Key, !enabled);
                     if(enabled) WarnRestart = true;
                 }
                 ImGui.SameLine();
                 if(ImGui.Button("Uninstall##" + plugin.Key) && !disabled)
                 {
-                    PluginManager.UninstallPlugin(plugin.Key);
+                    IPlugin.UninstallPlugin(plugin.Key);
                     WarnRestart = true;
                 }
                 if(disabled)

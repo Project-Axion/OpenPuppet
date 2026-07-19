@@ -25,13 +25,13 @@ namespace OpenPuppet.SDK
         {
             public static string RequestPluginLogFile(string pluginName)
             {
-                if(!Directory.Exists(Path.Combine(LogPath!, OpenPuppet.Plugins.PluginsPath.SafePluginName(pluginName)))) {
-                    Directory.CreateDirectory(Path.Combine(LogPath!, OpenPuppet.Plugins.PluginsPath.SafePluginName(pluginName)));
+                if(!Directory.Exists(Path.Combine(LogPath!, IPlugin.SafePluginName(pluginName)))) {
+                    Directory.CreateDirectory(Path.Combine(LogPath!, IPlugin.SafePluginName(pluginName)));
                 }
 
                 string path = Path.Combine(
                     LogPath!,
-                    OpenPuppet.Plugins.PluginsPath.SafePluginName(pluginName),
+                    IPlugin.SafePluginName(pluginName),
                     DateTime.Now.ToString("dd'-'MM'-'yyyy'.txt'")
                 );
 
