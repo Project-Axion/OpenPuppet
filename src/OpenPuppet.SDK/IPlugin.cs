@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using Newtonsoft.Json;
+using OpenPuppet.SDK.Events;
 using OpenPuppet.SDK.Plugin;
 using OpenPuppet.SDK.Plugins;
 using System.ComponentModel.Design;
@@ -133,7 +134,75 @@ namespace OpenPuppet.SDK
         {
             lock(_pluginLock)
             {
+                if(!RegisteredPlugins.TryGetValue(id, out var plugin))
+                    throw new ArgumentException($"Plugin with the ID of \"{plugin}\" has not been registered");
 
+                if(plugin.State == PluginState.Loaded &&
+                    plugin.Plugin != null &&
+                    plugin.LoadContext != null &&
+                    plugin.WeakReference != null)
+                {
+                    var weakRef = plugin.WeakReference;
+                    var loadContext = plugin.LoadContext;
+
+                    try
+                    {
+                        plugin.Plugin.OnShutdown();
+                        plugin.Plugin.Dispose();
+                    }
+                    catch (Exception ex)
+                    {
+                        SDK.logger.WriteLine(
+                            ILogger.Level.Error,
+                            $"Plugin \"{id}\" threw an exception during OnShutdown: {ex}"
+                        );
+                    }
+                    finally
+                    {
+                        plugin.Plugin = null;
+                    }
+
+                    try
+                    {
+                        loadContext.Unload();
+                    }
+                    finally
+                    {
+                        plugin.LoadContext = null;
+                        loadContext = null;
+                    }
+
+                    for (int i = 0; weakRef.IsAlive && i < MaxUnloadGCAttempts; i++)
+                    {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        GC.Collect();
+                    }
+
+                    bool leaked = weakRef.IsAlive;
+                    weakRef = null;
+
+                    if (leaked)
+                    {
+                        SDK.logger.WriteLine(
+                            ILogger.Level.Warn,
+                            $"Could not unload Plugin \"{id}\", possible reference leak"
+                        );
+
+                        if (soft)
+                            IEvent<bool>.Invoke("openpuppet.restart", null, false);
+                        else
+                            IEvent<EventArgs>.Invoke("openpuppet.unstable", null, EventArgs.Empty);
+                    }
+
+                    plugin.State = leaked ? PluginState.Unloaded : PluginState.Ready;
+                } else
+                {
+                    SDK.logger.WriteLine(
+                        ILogger.Level.Log,
+                        $"Plugin with the ID of \"{id}\" cannot be unloaded, as it is not in an unloadable state"
+                    );
+                }
             }
         }
 
