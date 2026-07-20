@@ -101,6 +101,26 @@ namespace OpenPuppet.Core.Settings
                 ImGui.TextWrapped($"Description: {plugin.Value.Metadata.Description}");
                 ImGui.Text($"Version: {plugin.Value.Metadata.Version}");
                 ImGui.Text($"Author: {plugin.Value.Metadata.Author}");
+                ImGui.Text("State:");
+                ImGui.SameLine();
+                switch (state)
+                {
+                    case PluginState.Unknown:
+                        ImGui.TextDisabled("Unknown");
+                        break;
+                    case PluginState.Ready:
+                        ImGui.TextColored(new(0, 0.5f, 0, 1), "Ready");
+                        break;
+                    case PluginState.Loaded:
+                        ImGui.TextColored(new(0, 1, 0, 1), "Loaded");
+                        break;
+                    case PluginState.Unloaded:
+                        ImGui.TextColored(new(1, 1, 0, 1), "Failed to unload");
+                        break;
+                    case PluginState.Invalid:
+                        ImGui.TextColored(new(1, 0, 0, 1), "Invalid plugin");
+                        break;
+                }
                 if (disabled)
                     ImGui.BeginDisabled(true);
                 if(ImGui.Button((enabled ? "Disable" : "Enable") + $"##{plugin.Key}") && !disabled)
