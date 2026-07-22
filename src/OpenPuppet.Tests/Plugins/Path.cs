@@ -1,5 +1,4 @@
-using OpenPuppet.Plugins;
-using System.Xml.Linq;
+using OpenPuppet.SDK;
 
 namespace OpenPuppet.Tests.Plugins
 {
@@ -10,7 +9,7 @@ namespace OpenPuppet.Tests.Plugins
         {
             Assert.NotEqual(
                 "a-b-c-d",
-                PluginsPath.SafePluginName(
+                IPlugin.SafePluginName(
                     @"a B
 `¦¬!" + '"' + @"@£$%^&*()_+-=[]{};:'@#~,./<>?\| C d"
                 )
@@ -21,8 +20,8 @@ namespace OpenPuppet.Tests.Plugins
         public void TestPluginPath()
         {
             Assert.Equal(
-                System.IO.Path.Combine(PluginsPath.PluginPath!, PluginsPath.SafePluginName("a-b-c-d")),
-                PluginsPath.GetPluginPath(
+                System.IO.Path.Combine(IPlugin.PluginPath!, IPlugin.SafePluginName("a-b-c-d")),
+                IPlugin.GetPluginPath(
                     @"a B
 `¦¬!" + '"' + @"@£$%^&*()_+-=[]{};:'@#~,./<>?\| C d"
                 )

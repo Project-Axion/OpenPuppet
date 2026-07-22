@@ -508,12 +508,12 @@ namespace OpenPuppet.SDK
 
         public class LocalInstallSource
         {
-
+            public static string Path { get; set; }
         }
 
         public class InternetInstallSource
         {
-
+            public static string URL { get; set; }
         }
     }
 }
