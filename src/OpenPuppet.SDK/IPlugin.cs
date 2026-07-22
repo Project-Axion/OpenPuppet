@@ -1,10 +1,7 @@
-﻿using Microsoft.Win32;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using OpenPuppet.SDK.Events;
 using OpenPuppet.SDK.Plugin;
 using OpenPuppet.SDK.Plugins;
-using System.ComponentModel.Design;
-using System.Numerics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -298,7 +295,7 @@ namespace OpenPuppet.SDK
                     SavePluginList();
                 }
             }
-            else throw new ArgumentException($"Plugin with the ID of \"{plugin}\" has not been registered");
+            else throw new ArgumentException($"Plugin with the ID of \"{id}\" has not been registered");
         }
 
         static string SafePluginName(string name)
