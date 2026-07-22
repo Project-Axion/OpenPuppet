@@ -253,12 +253,12 @@ namespace OpenPuppet.SDK
             if (enabled) EnablePlugin(metadata.ID);
         }
 
-        public static void InstallPlugin(Plugin.LocalInstallSource source)
+        public static void InstallPlugin(LocalInstallSource source)
         {
             // TODO
         }
 
-        public static void InstallPlugin(Plugin.InternetInstallSource source)
+        public static void InstallPlugin(InternetInstallSource source)
         {
             // TODO
         }
@@ -502,18 +502,37 @@ namespace OpenPuppet.SDK
         public class PluginItem
         {
             public string Path { get; set; }
-
             public bool Enabled { get; set; }
         }
 
         public class LocalInstallSource
         {
-            public static string Path { get; set; }
+            public string Path { get; set; }
+            public bool IsArchive { get; set; }
+
+            public LocalInstallSource(string path, bool isArchive = false)
+            {
+                Path = path;
+                IsArchive = isArchive;
+            }
+
+            public LocalInstallSource(InternetInstallSource IIS)
+            {
+                Path = IIS.Path;
+                IsArchive = true;
+            }
         }
 
         public class InternetInstallSource
         {
-            public static string URL { get; set; }
+            public string URL { get; set; }
+            public string Path { get; set; }
+
+            public InternetInstallSource(string url, string path)
+            {
+                URL = url;
+                Path = path;
+            }
         }
     }
 }

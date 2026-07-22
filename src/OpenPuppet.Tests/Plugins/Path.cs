@@ -33,5 +33,18 @@ namespace OpenPuppet.Tests.Plugins
                 )
             );
         }
+
+        [Fact]
+        public void TestInternetSourceToLocalSourceConversion()
+        {
+            SDK.Plugin.InternetInstallSource internet = new(
+                "https://example.com/plugin.zip",
+                "plugin.zip"
+            );
+
+            SDK.Plugin.LocalInstallSource local = new(internet);
+
+            Assert.Equal(internet.Path, local.Path);
+        }
     }
 }
