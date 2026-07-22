@@ -5,6 +5,12 @@ namespace OpenPuppet.Tests.Plugins
     public class Path
     {
         [Fact]
+        public void TestIPluginPluginPath()
+        {
+            Assert.NotNull(IPlugin.PluginPath);
+        }
+
+        [Fact]
         public void TestPluginName()
         {
             Assert.NotEqual(
