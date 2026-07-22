@@ -258,12 +258,12 @@ namespace OpenPuppet.SDK
 
         public static void InstallPlugin(Plugin.LocalInstallSource source)
         {
-
+            // TODO
         }
 
         public static void InstallPlugin(Plugin.InternetInstallSource source)
         {
-
+            // TODO
         }
 
         public static void UninstallPlugin(string id)

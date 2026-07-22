@@ -371,6 +371,7 @@ namespace OpenPuppet
         static void LoadPlugins()
         {
             IPlugin.LoadPluginList();
+            PluginEvents.InvokeFinishedLoading(null);
 
             // TODO: Clean up below, make sure that nothing important is left
             /*
