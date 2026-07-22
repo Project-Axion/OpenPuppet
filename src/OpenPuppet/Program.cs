@@ -361,10 +361,6 @@ namespace OpenPuppet
 
             SDK.SDK.DestroyLogger();
             logger.Dispose();
-
-            // Some plugins may still be loaded if there were reference leaks,
-            // so just forcefully exit
-            Environment.Exit(0);
         }
 
         static void LoadPlugins()
