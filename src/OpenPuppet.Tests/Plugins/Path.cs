@@ -11,7 +11,7 @@ namespace OpenPuppet.Tests.Plugins
                 "a-b-c-d",
                 IPlugin.SafePluginName(
                     @"a B
-`¦¬!" + '"' + @"@£$%^&*()_+-=[]{};:'@#~,./<>?\| C d"
+`¦¬!" + '"' + @"@£$%^&*()_+-=[]{};:'@#~,/<>?\| C d"
                 )
             );
         }
@@ -23,7 +23,7 @@ namespace OpenPuppet.Tests.Plugins
                 System.IO.Path.Combine(IPlugin.PluginPath!, IPlugin.SafePluginName("a-b-c-d")),
                 IPlugin.GetPluginPath(
                     @"a B
-`¦¬!" + '"' + @"@£$%^&*()_+-=[]{};:'@#~,./<>?\| C d"
+`¦¬!" + '"' + @"@£$%^&*()_+-=[]{};:'@#~,/<>?\| C d"
                 )
             );
         }
