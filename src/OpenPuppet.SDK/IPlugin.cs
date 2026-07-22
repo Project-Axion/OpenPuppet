@@ -87,7 +87,7 @@ namespace OpenPuppet.SDK
 
                 LoadPlugin(id, plugin.Path);
             }
-            else throw new ArgumentException($"Plugin with the ID of \"{plugin}\" has not been registered");
+            else throw new ArgumentException($"Plugin with the ID of \"{id}\" has not been registered");
         }
 
         public static void DisablePlugin(string id)
@@ -98,7 +98,7 @@ namespace OpenPuppet.SDK
                 SavePluginList();
                 UnloadPlugin(id);
             }
-            else throw new ArgumentException($"Plugin with the ID of \"{plugin}\" has not been registered");
+            else throw new ArgumentException($"Plugin with the ID of \"{id}\" has not been registered");
         }
 
         public static void SetPluginEnabled(string ID, bool enabled)
@@ -135,7 +135,7 @@ namespace OpenPuppet.SDK
             lock(_pluginLock)
             {
                 if(!RegisteredPlugins.TryGetValue(id, out var plugin))
-                    throw new ArgumentException($"Plugin with the ID of \"{plugin}\" has not been registered");
+                    throw new ArgumentException($"Plugin with the ID of \"{id}\" has not been registered");
 
                 if(plugin.State == PluginState.Loaded &&
                     plugin.Plugin != null &&
@@ -209,7 +209,7 @@ namespace OpenPuppet.SDK
         static void LoadAssembly(string path, string id)
         {
             if (!RegisteredPlugins.TryGetValue(id, out var plugin))
-                throw new ArgumentException($"Plugin with the ID of \"{plugin}\" hsa not been registered");
+                throw new ArgumentException($"Plugin with the ID of \"{id}\" hsa not been registered");
 
             plugin.LoadContext = new PluginLoadContext(path);
             plugin.WeakReference = new(plugin.LoadContext);
