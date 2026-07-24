@@ -1,5 +1,4 @@
 ﻿using ImGuiNET;
-using OpenPuppet.Plugins;
 using OpenPuppet.SDK;
 using OpenPuppet.SDK.Events;
 using System;
@@ -30,7 +29,7 @@ namespace OpenPuppet.Core.Settings
                 foreach (var plugin in IPlugin.RegisteredPlugins)
                 {
                     if (plugin.Key == "com.openpuppet.core") continue;
-                    PluginManager.SetPluginEnabled(plugin.Key, true);
+                    IPlugin.SetPluginEnabled(plugin.Key, true);
                 }
             }
             ImGui.SameLine();
@@ -39,7 +38,7 @@ namespace OpenPuppet.Core.Settings
                 foreach (var plugin in IPlugin.RegisteredPlugins)
                 {
                     if (plugin.Key == "com.openpuppet.core") continue;
-                    PluginManager.SetPluginEnabled(plugin.Key, false);
+                    IPlugin.SetPluginEnabled(plugin.Key, false);
                     WarnRestart = true;
                 }
             }
@@ -49,7 +48,7 @@ namespace OpenPuppet.Core.Settings
                 foreach (var plugin in IPlugin.RegisteredPlugins)
                 {
                     if (plugin.Key == "com.openpuppet.core") continue;
-                    PluginManager.UninstallPlugin(plugin.Key);
+                    IPlugin.UninstallPlugin(plugin.Key);
                     WarnRestart = true;
                 }
             }
@@ -90,6 +89,7 @@ namespace OpenPuppet.Core.Settings
             foreach (var plugin in IPlugin.RegisteredPlugins)
             {
                 bool disabled = plugin.Key == "com.openpuppet.core";
+                PluginState state = plugin.Value.State;
                 bool enabled = plugin.Value.Enabled;
                 //ImGui.BeginChild("Plugins-" + plugin.Key);
                 ImGui.Columns(2);
@@ -101,17 +101,37 @@ namespace OpenPuppet.Core.Settings
                 ImGui.TextWrapped($"Description: {plugin.Value.Metadata.Description}");
                 ImGui.Text($"Version: {plugin.Value.Metadata.Version}");
                 ImGui.Text($"Author: {plugin.Value.Metadata.Author}");
+                ImGui.Text("State:");
+                ImGui.SameLine();
+                switch (state)
+                {
+                    case PluginState.Unknown:
+                        ImGui.TextDisabled("Unknown");
+                        break;
+                    case PluginState.Ready:
+                        ImGui.TextColored(new(0, 0.5f, 0, 1), "Ready");
+                        break;
+                    case PluginState.Loaded:
+                        ImGui.TextColored(new(0, 1, 0, 1), "Loaded");
+                        break;
+                    case PluginState.Unloaded:
+                        ImGui.TextColored(new(1, 1, 0, 1), "Failed to unload");
+                        break;
+                    case PluginState.Invalid:
+                        ImGui.TextColored(new(1, 0, 0, 1), "Invalid plugin");
+                        break;
+                }
                 if (disabled)
                     ImGui.BeginDisabled(true);
                 if(ImGui.Button((enabled ? "Disable" : "Enable") + $"##{plugin.Key}") && !disabled)
                 {
-                    PluginManager.SetPluginEnabled(plugin.Key, !enabled);
+                    IPlugin.SetPluginEnabled(plugin.Key, !enabled);
                     if(enabled) WarnRestart = true;
                 }
                 ImGui.SameLine();
                 if(ImGui.Button("Uninstall##" + plugin.Key) && !disabled)
                 {
-                    PluginManager.UninstallPlugin(plugin.Key);
+                    IPlugin.UninstallPlugin(plugin.Key);
                     WarnRestart = true;
                 }
                 if(disabled)
