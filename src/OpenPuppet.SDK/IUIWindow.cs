@@ -8,6 +8,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using OpenPuppet.SDK.Exceptions;
 
 namespace OpenPuppet.SDK
 {
@@ -78,13 +79,13 @@ namespace OpenPuppet.SDK
         /// </summary>
         /// <param name="registry">The registry key</param>
         /// <param name="t">The window class</param>
-        /// <exception cref="ArgumentException">If the window class provided does not implement the IUIWindow interface</exception>
+        /// <exception cref="NotImplementedInterfaceException">If the window class provided does not implement the IUIWindow interface</exception>
         public static void Register(string registry, Type t)
         {
             if (t.IsAssignableTo(typeof(IUIWindow)) && t.IsClass)
                 RegisteredWindows.Add(registry, t);
             else
-                throw new ArgumentException($"{t.FullName} is not a class that implements the IUIWindow interface.");
+                throw new NotImplementedInterfaceException($"{t.FullName} is not a class that implements the IUIWindow interface.");
         }
 
         /// <summary>
@@ -113,7 +114,7 @@ namespace OpenPuppet.SDK
         /// </summary>
         /// <param name="registry">The window ID in the registry (provided in Register)</param>
         /// <returns></returns>
-        /// <exception cref="ArgumentException">If there is no dialog with the ID provided</exception>
+        /// <exception cref="NotRegisteredException">If there is no dialog with the ID provided</exception>
         public static IUIWindow SpawnFromRegistry(string registry)
         {
             if (RegisteredWindows.TryGetValue(registry, out Type? item))
@@ -125,7 +126,7 @@ namespace OpenPuppet.SDK
 
                 return win;
             }
-            else throw new ArgumentException($"No window registered under the registry: '{registry}'.");
+            else throw new NotRegisteredException($"No window registered under the registry: '{registry}'.");
         }
 
         /// <summary>

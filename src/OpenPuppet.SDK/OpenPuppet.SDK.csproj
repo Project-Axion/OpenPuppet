@@ -18,4 +18,8 @@
 		<PackageReference Include="Twizzle.ImGui.NET" Version="1.89.4" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Exceptions\Plugins\" />
+	</ItemGroup>
+
 </Project>

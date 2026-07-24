@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using OpenPuppet.SDK.Exceptions;
 
 namespace OpenPuppet.SDK
 {
@@ -58,7 +59,7 @@ namespace OpenPuppet.SDK
         /// </summary>
         /// <param name="registry">The registry key</param>
         /// <param name="t">The dialog class</param>
-        /// <exception cref="ArgumentException">If the dialog class provided does not implement the IUIDialog interface</exception>
+        /// <exception cref="NotImplementedInterfaceException">If the dialog class provided does not implement the IUIDialog interface</exception>
         public static void Register(string registry, Type t)
         {
             if (t.IsAssignableTo(typeof(IUIDialog)) && t.IsClass)
@@ -71,7 +72,7 @@ namespace OpenPuppet.SDK
 
                 RegisteredWindows[registry] = t;
             }
-            else throw new ArgumentException($"{t.FullName} is not a class that implements the IUIDialog interface.");
+            else throw new NotImplementedInterfaceException($"{t.FullName} is not a class that implements the IUIDialog interface.");
         }
 
         /// <summary>
@@ -79,7 +80,7 @@ namespace OpenPuppet.SDK
         /// </summary>
         /// <param name="registry">The dialog ID in the registry (provided in Register)</param>
         /// <returns></returns>
-        /// <exception cref="ArgumentException">If there is no dialog with the ID provided</exception>
+        /// <exception cref="NotRegisteredException">If there is no dialog with the ID provided</exception>
         public static IUIDialog SpawnFromRegistry(string registry)
         {
             if (RegisteredWindows.TryGetValue(registry, out Type? item))
@@ -88,7 +89,7 @@ namespace OpenPuppet.SDK
 
                 return win;
             }
-            else throw new ArgumentException($"No dialog registered under the registry: '{registry}'.");
+            else throw new NotRegisteredException($"No dialog registered under the registry: '{registry}'.");
         }
 
         /// <summary>
