@@ -76,15 +76,15 @@ namespace OpenPuppet.SDK.TimelineTracks
         {
             if (!Keyframes.TryGetValue(timestamp, out var keyframeValue)) return;
 
-            if (KeyframeEasings.ContainsKey(timestamp))
+            if(KeyframeEasings.TryGetValue(timestamp, out var val))
             {
-                KeyframeEasings[newFrame] = KeyframeEasings[timestamp];
+                KeyframeEasings[newFrame] = val;
                 KeyframeEasings.Remove(timestamp);
             }
 
-            if (SelectedKeyframes.ContainsKey(timestamp))
+            if (SelectedKeyframes.TryGetValue(timestamp, out var val1))
             {
-                SelectedKeyframes[newFrame] = SelectedKeyframes[timestamp];
+                SelectedKeyframes[newFrame] = val1;
                 SelectedKeyframes.Remove(timestamp);
             }
 
@@ -109,7 +109,7 @@ namespace OpenPuppet.SDK.TimelineTracks
 
         bool GetKeyframeSelection(TimeSpan kf)
         {
-            if (!SelectedKeyframes.ContainsKey(kf)) SelectedKeyframes.Add(kf, false);
+            SelectedKeyframes.TryAdd(kf, false);
 
             return SelectedKeyframes[kf];
         }
@@ -149,9 +149,8 @@ namespace OpenPuppet.SDK.TimelineTracks
 
         public void ToggleSelectKeyframe(TimeSpan timestamp)
         {
-            if (!SelectedKeyframes.ContainsKey(timestamp)) return;
-
-            SelectedKeyframes[timestamp] = !SelectedKeyframes[timestamp];
+            if (SelectedKeyframes.TryGetValue(timestamp, out var val))
+                SelectedKeyframes[timestamp] = !val;
         }
 
         public void DeselectAll()
