@@ -282,7 +282,7 @@ namespace OpenPuppet.SDK
 
                 try
                 {
-                    Directory.Delete(id);
+                    Directory.Delete(plugin.Path);
                 } catch(Exception ex)
                 {
                     SDK.logger.WriteLine(
@@ -490,6 +490,7 @@ namespace OpenPuppet.SDK
             Metadata = metadata;
             Path = path;
             State = PluginState.Unknown;
+            Enabled = enabled;
 
             LoadContext = loadContext;
             WeakReference = weakReference;
