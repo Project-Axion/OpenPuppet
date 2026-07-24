@@ -15,7 +15,7 @@ namespace OpenPuppet.rendering
         public readonly VertexMesh<T> Mesh;
         public readonly uint IndexCount;
 
-        readonlyuint vbo = 0;
+        readonly uint vbo = 0;
         readonly uint vao = 0;
         readonly uint ebo = 0;
 
