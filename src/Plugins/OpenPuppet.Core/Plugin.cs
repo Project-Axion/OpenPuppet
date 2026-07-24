@@ -103,6 +103,10 @@ namespace OpenPuppet.Core
             Events.Unsubscribe();
             Logger.Dispose();
             shutdown = true;
+
+            // See if this maybe works?
+            Global.MainPlugin.Logger = null;
+            Global.MainPlugin = null;
         }
 
         public void Dispose()

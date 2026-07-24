@@ -31,11 +31,7 @@ namespace OpenPuppet.SVG
         public void OnShutdown()
         {
             if (shutdown) return;
-            try
-            {
-                ContextMenu.Remove("File.Import.SVG");
-            }
-            catch { }
+            ContextMenu.Remove("File.Import.SVG");
             Logger.Dispose();
             shutdown = true;
         }

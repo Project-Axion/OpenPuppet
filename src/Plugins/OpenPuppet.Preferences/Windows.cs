@@ -12,9 +12,9 @@ namespace OpenPuppet.Preferences
 {
     public static class Windows
     {
-        private static List<string> OpenWindows = new();
-        private static string WindowsFile = Path.Combine(SDK.SDK.DataPath, "Preferences", "last_windows.json");
-        private static string LayoutDir = Path.Combine(SDK.SDK.DataPath, "Preferences", "layouts");
+        private static readonly List<string> OpenWindows = new();
+        private static readonly string WindowsFile = Path.Combine(SDK.SDK.DataPath, "Preferences", "last_windows.json");
+        private static readonly string LayoutDir = Path.Combine(SDK.SDK.DataPath, "Preferences", "layouts");
         private static bool IsLoaded = false; // This fixes the event handling running twice
 
         public static void SubscribeToEvents()

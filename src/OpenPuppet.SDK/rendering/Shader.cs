@@ -12,7 +12,7 @@ namespace OpenPuppet.rendering
 {
     public class Shader
     {
-        uint shader;
+        readonly uint shader;
 
         public Shader(GL gl, string vtx, string frag)
         {

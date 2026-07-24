@@ -50,7 +50,7 @@ namespace OpenPuppet.SDK.TimelineTracks
             this(holder, scene, name, GetPropertyPath(property))
         { }
 
-        IMutator<T> Mutator = IMutator<T>.GetMutator();
+        readonly IMutator<T> Mutator = IMutator<T>.GetMutator();
 
         [JsonIgnore]
         public Dictionary<TimeSpan, bool> SelectedKeyframes { get; set; } = new();

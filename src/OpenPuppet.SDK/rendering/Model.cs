@@ -15,9 +15,9 @@ namespace OpenPuppet.rendering
         public readonly VertexMesh<T> Mesh;
         public readonly uint IndexCount;
 
-        uint vbo = 0;
-        uint vao = 0;
-        uint ebo = 0;
+        readonlyuint vbo = 0;
+        readonly uint vao = 0;
+        readonly uint ebo = 0;
 
         public unsafe Model(GL gl, VertexMesh<T> mesh)
         {

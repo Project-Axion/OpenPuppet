@@ -32,7 +32,7 @@ namespace OpenPuppet
             API = new GraphicsAPI(ContextAPI.OpenGL, new APIVersion(3, 3))
         };
 
-        static IWindow window = Window.Create(windowOptions);
+        static readonly IWindow window = Window.Create(windowOptions);
         static IInputContext inputContext = null!;
         static GL gl = null!;
 

@@ -20,13 +20,13 @@ namespace OpenPuppet.Core
 
         static Timer timer = null!;
         static DateTime start = DateTime.Now;
-        TimeSpan scroll = TimeSpan.Zero;
+        readonly TimeSpan scroll = TimeSpan.Zero;
         static TimeSpan ellapsed = TimeSpan.Zero;
         static bool playing = false;
 
         float sidebarsize = 200;
 
-        double zoom = 1d / 10d;
+        readonly double zoom = 1d / 10d;
 
         bool isInDrag = false;
 

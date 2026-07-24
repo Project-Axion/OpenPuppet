@@ -8,7 +8,7 @@ namespace OpenPuppet.SDK
 {
     public static class SDK
     {
-        internal static Logger.PluginLogger logger = Logger.LogManager.RequestPluginLogger("com.openpuppet.sdk");
+        internal static readonly Logger.PluginLogger logger = Logger.LogManager.RequestPluginLogger("com.openpuppet.sdk");
 
         public static void DestroyLogger() => logger?.Dispose();
 

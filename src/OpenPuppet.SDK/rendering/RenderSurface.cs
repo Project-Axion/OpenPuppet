@@ -19,7 +19,7 @@ namespace OpenPuppet.rendering
         public Camera Camera { get; set; }
 
         uint _glTex;
-        uint _fbo;
+        readonly uint _fbo;
         uint _rbo;
 
         public RenderSurface(Camera camera)
