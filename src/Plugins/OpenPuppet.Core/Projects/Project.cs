@@ -45,7 +45,7 @@ namespace OpenPuppet.Core
         {
             string dir = Path.Combine(path, name);
             int i = 0;
-            while(Directory.Exists(dir))
+            while (Directory.Exists(dir))
             {
                 i++;
                 dir = Path.Combine(path, name + $"({i})");

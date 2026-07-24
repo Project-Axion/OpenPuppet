@@ -42,14 +42,14 @@ namespace OpenPuppet
 
         static Model<ColorVertex> testmdl = null;
 
-        public static Logger.PluginLogger logger = Logger.LogManager.RequestPluginLogger("openpuppet");
+        public static readonly Logger.PluginLogger logger = Logger.LogManager.RequestPluginLogger("openpuppet");
 
         // Just so we can see how long it takes for it to start up
         internal static Stopwatch startupSW;
 
         static void Main(string[] args)
         {
-            if(args.Length > 0)
+            if (args.Length > 0)
             {
                 if (args[0] == "clean")
                 {
@@ -84,7 +84,7 @@ namespace OpenPuppet
                 "openpuppet.restart",
                 (object sender, bool soft) =>
                 {
-                    if(soft) SoftRestart();
+                    if (soft) SoftRestart();
                     else
                     {
                         logger.WriteLine($"Launching {Assembly.GetExecutingAssembly().Location.Replace(".dll", ".exe")}");
@@ -102,14 +102,15 @@ namespace OpenPuppet
             try
             {
                 window.Run();
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 logger.WriteLine(
                     Logger.ILogger.Level.Error,
                     $"Exception occurred while running main window: {ex.Message} ({ex.GetType()})"
                 );
 
-                if(ex.GetType() == typeof(Silk.NET.GLFW.GlfwException))
+                if (ex.GetType() == typeof(Silk.NET.GLFW.GlfwException))
                 {
                     // Temporary message
                     logger.WriteLine(
@@ -123,7 +124,7 @@ namespace OpenPuppet
             }
         }
 
-        static void Load() 
+        static void Load()
         {
             gl = window.CreateOpenGL();
             inputContext = window.CreateInput();
@@ -214,7 +215,7 @@ namespace OpenPuppet
             foreach (var item in IUIWindow.ActiveWindows)
                 item.OnUpdate(deltaSeconds);
         }
-        static unsafe void Render(double deltaSeconds) 
+        static unsafe void Render(double deltaSeconds)
         {
             gl.ClearColor(0f, 0f, 0f, 1f);
 
@@ -225,7 +226,7 @@ namespace OpenPuppet
             foreach (var item in RenderSurface.Surfaces)
             {
                 item.Bind();
-                gl.Viewport(0,0,(uint)item.Camera.Resolution.X, (uint)item.Camera.Resolution.Y);
+                gl.Viewport(0, 0, (uint)item.Camera.Resolution.X, (uint)item.Camera.Resolution.Y);
 
                 gl.Clear(ClearBufferMask.ColorBufferBit);
 
@@ -235,12 +236,12 @@ namespace OpenPuppet
                 gl.DrawElements(GLEnum.Triangles, testmdl.IndexCount, GLEnum.UnsignedInt, (void*)0);
             }
 
-            gl.BindFramebuffer(FramebufferTarget.Framebuffer,0);
+            gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             gl.Viewport(window.FramebufferSize);
 
             ImGui.DockSpaceOverViewport();
 
-            if(ImGui.BeginMainMenuBar())
+            if (ImGui.BeginMainMenuBar())
             {
                 void RenderMenuNode(IContextMenuNode node)
                 {
@@ -290,7 +291,7 @@ namespace OpenPuppet
                 }
             }
 
-            if(IUIDialog.ActiveDialog != null)
+            if (IUIDialog.ActiveDialog != null)
             {
                 var dialog = IUIDialog.ActiveDialog;
 
@@ -325,18 +326,18 @@ namespace OpenPuppet
                     ImGui.EndPopup();
                 }
 
-                if(!open) IUIDialog.Close();
+                if (!open) IUIDialog.Close();
             }
 
             //ImGui.ShowDemoWindow();
 
             cont.Render(window);
         }
-        static void Resize(Vector2D<int> newSize) 
+        static void Resize(Vector2D<int> newSize)
         {
             PlaybackCamera.Resolution = (Vector2)newSize;
         }
-        static void Closing() 
+        static void Closing()
         {
             shader.Dispose(gl);
             testmdl.Dispose(gl);
@@ -350,7 +351,8 @@ namespace OpenPuppet
                 try
                 {
                     plugin.Value.Plugin?.OnShutdown();
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     logger.WriteLine(
                         Logger.ILogger.Level.Warn,

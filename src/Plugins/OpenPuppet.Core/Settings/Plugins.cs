@@ -15,7 +15,7 @@ namespace OpenPuppet.Core.Settings
 
         public void OnOpened()
         {
-            
+
         }
 
         public void OnRender(double deltaTime)
@@ -24,7 +24,7 @@ namespace OpenPuppet.Core.Settings
             ImGui.Button("Install plugin");
             ImGui.EndDisabled();
             ImGui.SameLine();
-            if(ImGui.Button("Enable all"))
+            if (ImGui.Button("Enable all"))
             {
                 foreach (var plugin in IPlugin.RegisteredPlugins)
                 {
@@ -33,7 +33,7 @@ namespace OpenPuppet.Core.Settings
                 }
             }
             ImGui.SameLine();
-            if(ImGui.Button("Disable all"))
+            if (ImGui.Button("Disable all"))
             {
                 foreach (var plugin in IPlugin.RegisteredPlugins)
                 {
@@ -43,7 +43,7 @@ namespace OpenPuppet.Core.Settings
                 }
             }
             ImGui.SameLine();
-            if(ImGui.Button("Uninstall all"))
+            if (ImGui.Button("Uninstall all"))
             {
                 foreach (var plugin in IPlugin.RegisteredPlugins)
                 {
@@ -56,19 +56,19 @@ namespace OpenPuppet.Core.Settings
             ImGui.Separator();
             ImGui.Spacing();
 
-            if(WarnRestart)
+            if (WarnRestart)
             {
                 ImGui.TextColored(
                     System.Numerics.Vector4.Create(255, 255, 0, 255),
                     "You have made changes that require a restart to take full effect. " +
                     "Please restart now."
                 );
-                if(ImGui.Button("Restart"))
+                if (ImGui.Button("Restart"))
                 {
                     IEvent<bool>.Invoke("openpuppet.restart", this, false);
                 }
                 ImGui.SameLine();
-                if(ImGui.Button("Soft Restart (Experimental)"))
+                if (ImGui.Button("Soft Restart (Experimental)"))
                 {
                     IEvent<bool>.Invoke("openpuppet.restart", this, true);
                 }
@@ -123,18 +123,18 @@ namespace OpenPuppet.Core.Settings
                 }
                 if (disabled)
                     ImGui.BeginDisabled(true);
-                if(ImGui.Button((enabled ? "Disable" : "Enable") + $"##{plugin.Key}") && !disabled)
+                if (ImGui.Button((enabled ? "Disable" : "Enable") + $"##{plugin.Key}") && !disabled)
                 {
                     IPlugin.SetPluginEnabled(plugin.Key, !enabled);
-                    if(enabled) WarnRestart = true;
+                    if (enabled) WarnRestart = true;
                 }
                 ImGui.SameLine();
-                if(ImGui.Button("Uninstall##" + plugin.Key) && !disabled)
+                if (ImGui.Button("Uninstall##" + plugin.Key) && !disabled)
                 {
                     IPlugin.UninstallPlugin(plugin.Key);
                     WarnRestart = true;
                 }
-                if(disabled)
+                if (disabled)
                 {
                     ImGui.EndDisabled();
                     ImGui.SameLine();

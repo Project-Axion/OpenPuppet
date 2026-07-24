@@ -129,12 +129,12 @@ namespace OpenPuppet.SDK
 
         public static void UnloadPlugin(string id, bool soft = false)
         {
-            lock(_pluginLock)
+            lock (_pluginLock)
             {
-                if(!RegisteredPlugins.TryGetValue(id, out var plugin))
+                if (!RegisteredPlugins.TryGetValue(id, out var plugin))
                     throw new ArgumentException($"Plugin with the ID of \"{id}\" has not been registered");
 
-                if(plugin.State == PluginState.Loaded &&
+                if (plugin.State == PluginState.Loaded &&
                     plugin.Plugin != null &&
                     plugin.LoadContext != null &&
                     plugin.WeakReference != null)
@@ -193,7 +193,8 @@ namespace OpenPuppet.SDK
                     }
 
                     plugin.State = leaked ? PluginState.Unloaded : PluginState.Ready;
-                } else
+                }
+                else
                 {
                     SDK.logger.WriteLine(
                         ILogger.Level.Log,
@@ -227,7 +228,9 @@ namespace OpenPuppet.SDK
 
                     plugin.OnInitialized();
                 });*/
-            } catch(Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 SDK.logger.WriteLine(
                     ILogger.Level.Warn,
                     $"Failed to load plugin with ID \"{id}\": {ex.Message}"
@@ -264,9 +267,9 @@ namespace OpenPuppet.SDK
 
         public static void UninstallPlugin(string id)
         {
-            if(RegisteredPlugins.TryGetValue(id, out var plugin))
+            if (RegisteredPlugins.TryGetValue(id, out var plugin))
             {
-                switch(plugin.State)
+                switch (plugin.State)
                 {
                     case PluginState.Unknown:
                     case PluginState.Invalid:
@@ -282,13 +285,15 @@ namespace OpenPuppet.SDK
                 try
                 {
                     Directory.Delete(plugin.Path);
-                } catch(Exception ex)
+                }
+                catch (Exception ex)
                 {
                     SDK.logger.WriteLine(
                         ILogger.Level.Warn,
                         $"Could not fully uninstall plugin with the ID \"{id}\": {ex.Message}"
                     );
-                } finally
+                }
+                finally
                 {
                     RegisteredPlugins.Remove(id);
                     SavePluginList();
@@ -330,7 +335,7 @@ namespace OpenPuppet.SDK
 
                     PluginMetadata? metadata = JsonConvert.DeserializeObject<PluginMetadata>(File.ReadAllText(meta))
                         ?? throw new ArgumentException($"Metadata in \"{meta}\" is invalid");
-                    
+
                     plugins.Add(
                         metadata.ID,
                         new PluginItem
@@ -371,7 +376,8 @@ namespace OpenPuppet.SDK
                         foreach (var plugin in plugins)
                             LoadPluginDirectory(plugin.Value.Path, plugin.Value.Enabled);
                     }
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     SDK.logger.WriteLine(
                         ILogger.Level.Error,

@@ -17,13 +17,13 @@ namespace OpenPuppet.SDK
 
         public class OpenFileResult
         {
-            public string? Path            { get; private set; } = null;
-            public string[]? Paths         { get; private set; } = null;
-            public bool IsOk               { get; private set; } = true;
-            public bool IsError            { get; private set; } = false;
-            public bool Cancelled          { get; private set; } = false;
-            public bool MultiplePaths      { get; private set; } = false;
-            public string? ErrorMessage    { get; private set; } = null;
+            public string? Path { get; private set; } = null;
+            public string[]? Paths { get; private set; } = null;
+            public bool IsOk { get; private set; } = true;
+            public bool IsError { get; private set; } = false;
+            public bool Cancelled { get; private set; } = false;
+            public bool MultiplePaths { get; private set; } = false;
+            public string? ErrorMessage { get; private set; } = null;
 
             public OpenFileResult
             (
@@ -33,7 +33,8 @@ namespace OpenPuppet.SDK
                 bool isError,
                 bool cancelled,
                 string? errorMessage
-            ) {
+            )
+            {
                 Path = path;
                 Paths = paths;
                 if (Paths != null && Paths?.Length > 0) MultiplePaths = true;

@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 namespace OpenPuppet.SDK
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public class InspectorPublicAttribute : Attribute {}
+    public class InspectorPublicAttribute : Attribute { }
 }

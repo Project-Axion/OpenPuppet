@@ -32,16 +32,16 @@ namespace OpenPuppet.Core.Dialogs
 
         public void OnPreRender()
         {
-            
+
         }
 
         public void OnRender()
         {
-            if (ImGui.BeginChild("projectview", ImGui.GetContentRegionAvail() / new Vector2(1,1.2f)))
+            if (ImGui.BeginChild("projectview", ImGui.GetContentRegionAvail() / new Vector2(1, 1.2f)))
             {
-                var cardsize = ImGui.GetWindowSize() / new Vector2(4f,2f);
+                var cardsize = ImGui.GetWindowSize() / new Vector2(4f, 2f);
 
-                if (ImGui.Button("+",cardsize))
+                if (ImGui.Button("+", cardsize))
                     IUIDialog.Open("openpuppet.core.createproject", false);
 
                 ImGui.SameLine();
@@ -101,11 +101,11 @@ namespace OpenPuppet.Core.Dialogs
                 ImGui.EndChild();
             }
 
-            ImGui.PushStyleColor(ImGuiCol.Button,0);
+            ImGui.PushStyleColor(ImGuiCol.Button, 0);
 
             ImGui.SetCursorPos(
-                ImGui.GetContentRegionMax() - 
-                (ImGui.CalcTextSize(NoProjString) + new Vector2(5,5))
+                ImGui.GetContentRegionMax() -
+                (ImGui.CalcTextSize(NoProjString) + new Vector2(5, 5))
             );
 
             if (ImGui.Button(NoProjString))
@@ -119,7 +119,7 @@ namespace OpenPuppet.Core.Dialogs
 
         public void OnClose()
         {
-            if (ProjectManager.ActiveProject == null && !NoProjectMode) 
+            if (ProjectManager.ActiveProject == null && !NoProjectMode)
                 IEvent<EventArgs>.Invoke("openpuppet.quit", this, null!);
 
             if (!NoProjectMode) ContextMenu.SetEnabledAll(true);

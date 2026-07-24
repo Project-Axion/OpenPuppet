@@ -33,7 +33,7 @@ namespace OpenPuppet.Preferences
 
         public static void OnWindowOpened(object? sender, SDK.Events.WindowEvents.WindowOpenedArgs args)
         {
-            if(!OpenWindows.Contains(args.Window))
+            if (!OpenWindows.Contains(args.Window))
                 OpenWindows.Add(args.Window);
         }
 
@@ -54,10 +54,11 @@ namespace OpenPuppet.Preferences
 
         public static void OpenPreviousWindows()
         {
-            if(!File.Exists(WindowsFile))
+            if (!File.Exists(WindowsFile))
             {
                 SavePreviousWindows();
-            } else
+            }
+            else
             {
                 try
                 {
@@ -74,7 +75,8 @@ namespace OpenPuppet.Preferences
                             IUIWindow.Open(data[i].Split("#")[0]);
                         }
                     }
-                } catch(Exception ex)
+                }
+                catch (Exception ex)
                 {
                     Global.MainPlugin.Logger.WriteLine(Logger.ILogger.Level.Error, "Failed to load last opened windows: " + ex.Message);
                     SavePreviousWindows();
@@ -109,7 +111,8 @@ namespace OpenPuppet.Preferences
                 ImGui.LoadIniSettingsFromMemory(file);
 
                 return true;
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Global.MainPlugin.Logger.WriteLine(SDK.Logger.ILogger.Level.Error, "Failed to load ImGui layout: " + ex.Message);
                 return false;

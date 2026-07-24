@@ -11,7 +11,7 @@ namespace OpenPuppet.Core
     {
         public static void Subscribe()
         {
-            
+
         }
 
         public static void Unsubscribe() { }

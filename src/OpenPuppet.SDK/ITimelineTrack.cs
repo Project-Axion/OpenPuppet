@@ -22,7 +22,7 @@ namespace OpenPuppet.SDK
         public List<(TimeSpan frame, bool selected, Easing easing)> GetKeyframes();
         public List<(TimeSpan frame, Easing easing)> GetSelectedKeyframes();
 
-        public bool KeyframeInRange(TimeSpan range,out TimeSpan keyframe, float radius = 12);
+        public bool KeyframeInRange(TimeSpan range, out TimeSpan keyframe, float radius = 12);
         public bool KeyframeExists(TimeSpan keyframe);
         public bool IsKeyframeSelected(TimeSpan keyframe);
 

@@ -30,9 +30,9 @@ namespace OpenPuppet.Core
 
         bool isInDrag = false;
 
-        public void OnLoad() {}
+        public void OnLoad() { }
 
-        public void OnUpdate(double deltaTime) {}
+        public void OnUpdate(double deltaTime) { }
 
         public void OnPreRender(double deltaTime) { }
 
@@ -67,7 +67,7 @@ namespace OpenPuppet.Core
                             foreach (var item1 in item.Value)
                                 item1.Mutate(ellapsed);
                         }
-                    },null,0,16);
+                    }, null, 0, 16);
 
                     playing = true;
                 }
@@ -89,7 +89,7 @@ namespace OpenPuppet.Core
 
         public void OnPostRender(double deltaTime) { }
 
-        public void OnClose() {}
+        public void OnClose() { }
 
         void DrawTrack(ITimelineTrack track)
         {
@@ -122,7 +122,7 @@ namespace OpenPuppet.Core
                 )
                 {
                     track.AddKeyframe(kpos);
-                    track.SetKeyframeEasing(kpos,new("openpuppet.core.linear"));
+                    track.SetKeyframeEasing(kpos, new("openpuppet.core.linear"));
                 }
 
                 bool shiftHeld = ImGui.IsKeyDown(ImGuiKey.LeftShift) || ImGui.IsKeyDown(ImGuiKey.RightShift);
@@ -191,8 +191,8 @@ namespace OpenPuppet.Core
 
             ImGui.InvisibleButton("##splitter" + InstanceIndex, new(4, rectSize.Y));
 
-            if (ImGui.IsItemActive()) 
-                sidebarsize = Math.Max(Math.Min(ImGui.GetIO().MousePos.X - pos.X, rectSize.X - 10),10);
+            if (ImGui.IsItemActive())
+                sidebarsize = Math.Max(Math.Min(ImGui.GetIO().MousePos.X - pos.X, rectSize.X - 10), 10);
 
             ImGui.SetCursorPos(rpos);
 
@@ -229,7 +229,7 @@ namespace OpenPuppet.Core
             );
 
             drawList.PushClipRect(
-                new Vector2(pos.X + sidebarsize, pos.Y), 
+                new Vector2(pos.X + sidebarsize, pos.Y),
                 new Vector2(pos.X + rectSize.X, pos.Y + rectSize.Y)
             );
 
@@ -238,14 +238,14 @@ namespace OpenPuppet.Core
                 var ngonpos = new Vector2(pos.X + sidebarsize + (float)((item.frame - scroll).TotalMilliseconds * zoom), keyframeY);
 
                 if (
-                    ngonpos.X < pos.X + sidebarsize - padding.Y || 
+                    ngonpos.X < pos.X + sidebarsize - padding.Y ||
                     ngonpos.X > pos.X + rectSize.X + padding.Y
                 ) continue;
 
                 var cola = ImGui.GetColorU32(item.selected ? ImGuiCol.FrameBgHovered : ImGuiCol.TableHeaderBg);
                 var colb = ImGui.GetColorU32(item.selected ? ImGuiCol.FrameBgActive : ImGuiCol.Border);
 
-                drawList.AddNgonFilled(ngonpos,padding.Y, cola, 4);
+                drawList.AddNgonFilled(ngonpos, padding.Y, cola, 4);
                 drawList.AddNgon(ngonpos, padding.Y - 2, colb, 4);
             }
 

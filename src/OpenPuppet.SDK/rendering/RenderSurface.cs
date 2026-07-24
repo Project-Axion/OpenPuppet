@@ -22,7 +22,7 @@ namespace OpenPuppet.rendering
         uint _fbo;
         uint _rbo;
 
-        public RenderSurface(Camera camera) 
+        public RenderSurface(Camera camera)
         {
             Camera = camera;
 
@@ -50,9 +50,9 @@ namespace OpenPuppet.rendering
             _gl.BindTexture(TextureTarget.Texture2D, _glTex);
 
             _gl.TexImage2D(
-                TextureTarget.Texture2D,0,InternalFormat.Rgba,
-                (uint)size.X, (uint)size.Y,0,
-                PixelFormat.Rgba,GLEnum.UnsignedByte,null
+                TextureTarget.Texture2D, 0, InternalFormat.Rgba,
+                (uint)size.X, (uint)size.Y, 0,
+                PixelFormat.Rgba, GLEnum.UnsignedByte, null
             );
 
             _gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)GLEnum.Linear);

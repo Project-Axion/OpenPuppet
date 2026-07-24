@@ -19,7 +19,7 @@ namespace OpenPuppet.Core.PropertyDrawers
 
             ImGui.SameLine();
 
-            if (ImGui.DragFloat3("##" + name,ref vecdata))
+            if (ImGui.DragFloat3("##" + name, ref vecdata))
             {
                 data = vecdata;
                 return true;

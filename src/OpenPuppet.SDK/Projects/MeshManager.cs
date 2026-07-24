@@ -21,10 +21,11 @@ namespace OpenPuppet.SDK.Projects
         {
             if (RegisteredMeshes.TryGetValue(registry, out var mesh))
             {
-                if(mesh is VertexMesh<T> typedMesh)
+                if (mesh is VertexMesh<T> typedMesh)
                 {
                     return typedMesh;
-                } else
+                }
+                else
                 {
                     throw new ArgumentException($"Mesh registered under the registry '{registry}' is not {typeof(T).Name}.");
                 }
@@ -45,7 +46,7 @@ namespace OpenPuppet.SDK.Projects
 
         public static void LoadAll(Dictionary<string, object> meshes)
         {
-            foreach(var mesh in meshes)
+            foreach (var mesh in meshes)
                 RegisteredMeshes.Add(mesh.Key, mesh.Value);
         }
 

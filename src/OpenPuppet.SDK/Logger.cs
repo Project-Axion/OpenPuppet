@@ -25,7 +25,8 @@ namespace OpenPuppet.SDK
         {
             public static string RequestPluginLogFile(string pluginName)
             {
-                if(!Directory.Exists(Path.Combine(LogPath!, IPlugin.SafePluginName(pluginName)))) {
+                if (!Directory.Exists(Path.Combine(LogPath!, IPlugin.SafePluginName(pluginName))))
+                {
                     Directory.CreateDirectory(Path.Combine(LogPath!, IPlugin.SafePluginName(pluginName)));
                 }
 
@@ -35,7 +36,7 @@ namespace OpenPuppet.SDK
                     DateTime.Now.ToString("dd'-'MM'-'yyyy'.txt'")
                 );
 
-                if(!File.Exists(path)) File.WriteAllText(path, null);
+                if (!File.Exists(path)) File.WriteAllText(path, null);
                 return path;
             }
 
@@ -105,7 +106,7 @@ namespace OpenPuppet.SDK
             public void WriteLine(string message, bool write = true)
             {
                 string msg = $"[{PluginName}] ({DateTime.Now:dd'-'MM'-'yyyy HH':'mm':'ss}) {message}";
-                if(write) FileWriter.WriteLine(msg);
+                if (write) FileWriter.WriteLine(msg);
                 Console.WriteLine(msg);
                 Debug.WriteLine(msg);
 
@@ -124,7 +125,7 @@ namespace OpenPuppet.SDK
                 FileWriter.WriteLine();
                 FileWriter.Flush();
 
-                if(dispose) Dispose();
+                if (dispose) Dispose();
             }
 
             public void Dispose()

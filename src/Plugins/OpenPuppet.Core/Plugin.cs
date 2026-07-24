@@ -31,7 +31,7 @@ namespace OpenPuppet.Core
             IMutator<Color3>.RegisterMutator(typeof(Color3Mutator));
             IMutator<Color4>.RegisterMutator(typeof(Color4Mutator));
 
-            if (!File.Exists(Path.Combine(SDK.SDK.DataPath,"projcache")))
+            if (!File.Exists(Path.Combine(SDK.SDK.DataPath, "projcache")))
                 File.WriteAllText(Path.Combine(SDK.SDK.DataPath, "projcache"), "");
 
             Projects.RecentProjects = File.ReadAllLines(Path.Combine(SDK.SDK.DataPath, "projcache")).ToList();
@@ -55,19 +55,19 @@ namespace OpenPuppet.Core
 
             IEasingMode.Register("openpuppet.core.linear", new LinearEasing());
 
-            IPropertyDrawer.Register(typeof(Vector3),new Vector3Drawer());
-            IPropertyDrawer.Register(typeof(Vector2),new Vector2Drawer());
-            IPropertyDrawer.Register(typeof(Vector4),new Vector4Drawer());
+            IPropertyDrawer.Register(typeof(Vector3), new Vector3Drawer());
+            IPropertyDrawer.Register(typeof(Vector2), new Vector2Drawer());
+            IPropertyDrawer.Register(typeof(Vector4), new Vector4Drawer());
 
-            IPropertyDrawer.Register(typeof(Color3),new Color3Drawer());
-            IPropertyDrawer.Register(typeof(Color4),new Color4Drawer());
+            IPropertyDrawer.Register(typeof(Color3), new Color3Drawer());
+            IPropertyDrawer.Register(typeof(Color4), new Color4Drawer());
 
-            IPropertyDrawer.Register(typeof(float),new FloatDrawer());
-            IPropertyDrawer.Register(typeof(int),new IntDrawer());
+            IPropertyDrawer.Register(typeof(float), new FloatDrawer());
+            IPropertyDrawer.Register(typeof(int), new IntDrawer());
 
             ContextMenu.AddMenuItem("File.Save", () =>
             {
-                IEvent<EventArgs>.Invoke("project.save",this,EventArgs.Empty);
+                IEvent<EventArgs>.Invoke("project.save", this, EventArgs.Empty);
 
                 File.WriteAllText(
                     Path.Combine(ProjectManager.ActiveProject!.Directory, ProjectManager.ActiveProject.Name + ".opp"),
@@ -93,7 +93,7 @@ namespace OpenPuppet.Core
 
             Events.Subscribe();
 
-            if(ProjectManager.ActiveProject == null)
+            if (ProjectManager.ActiveProject == null)
                 IUIDialog.Open("openpuppet.core.welcome");
         }
 

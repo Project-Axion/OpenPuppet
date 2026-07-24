@@ -30,10 +30,10 @@ namespace OpenPuppet.SVG
             ImGui.InputText("", ref path, 1024);
             openDisabled = string.IsNullOrEmpty(path) || !File.Exists(path);
             ImGui.SameLine();
-            if(ImGui.Button("Browse..."))
+            if (ImGui.Button("Browse..."))
             {
                 NativeDialogs.OpenFileResult result = NativeDialogs.OpenFileDialog(null, openDisabled ? null : path);
-                if(NativeDialogs.OpenFileDialogResultHasPath(result))
+                if (NativeDialogs.OpenFileDialogResultHasPath(result))
                 {
                     path = result.Path ?? "";
                 }
@@ -46,10 +46,10 @@ namespace OpenPuppet.SVG
             ImGui.SetCursorPosX(200);
             if (ImGui.Button("Cancel")) { ImGui.CloseCurrentPopup(); IUIDialog.Close(); }
             ImGui.SameLine();
-            if(openDisabled) ImGui.BeginDisabled();
-            if(ImGui.Button("Open") && !openDisabled)
+            if (openDisabled) ImGui.BeginDisabled();
+            if (ImGui.Button("Open") && !openDisabled)
             {
-                
+
             }
             if (openDisabled) ImGui.EndDisabled();
         }

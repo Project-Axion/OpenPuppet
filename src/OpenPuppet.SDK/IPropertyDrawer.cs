@@ -10,8 +10,8 @@ namespace OpenPuppet.SDK
     {
         public static Dictionary<Type, IPropertyDrawer> Drawers { get; } = new();
 
-        public bool Draw(string name,ref object data);
+        public bool Draw(string name, ref object data);
 
-        public static void Register(Type key,IPropertyDrawer drawer) => Drawers[key] = drawer;
+        public static void Register(Type key, IPropertyDrawer drawer) => Drawers[key] = drawer;
     }
 }

@@ -50,7 +50,7 @@ namespace OpenPuppet.Core
 
             var scene = ProjectManager.ActiveProject.Scenes[ProjectManager.ActiveProject!.ActiveScene];
 
-            var type = scene.SelectedObject < 0 ? scene.GetType() : 
+            var type = scene.SelectedObject < 0 ? scene.GetType() :
                        scene.SceneObjects[scene.SelectedObject].GetType();
 
             object actor = scene.SelectedObject < 0 ? scene :
@@ -72,7 +72,7 @@ namespace OpenPuppet.Core
                 {
                     var data = Getters[i](actor);
 
-                    if (drawer.Draw(properties[i].Name, ref data)) 
+                    if (drawer.Draw(properties[i].Name, ref data))
                         Setters[i](actor, data);
                 }
             }

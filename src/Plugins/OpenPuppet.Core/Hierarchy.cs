@@ -24,7 +24,7 @@ namespace OpenPuppet.Core
 
         public void OnRender(double deltaTime)
         {
-            if(SDK.Projects.ProjectManager.ActiveProject == null)
+            if (SDK.Projects.ProjectManager.ActiveProject == null)
             {
                 ImGui.Text("Not available in no project mode");
             }

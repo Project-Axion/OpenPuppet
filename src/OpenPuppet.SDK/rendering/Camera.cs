@@ -44,9 +44,9 @@ namespace OpenPuppet.rendering
             float halfWidth = halfHeight * _aspect;
 
             _proj = Matrix4x4.CreateOrthographicOffCenter(
-                -halfWidth,  halfWidth, 
+                -halfWidth, halfWidth,
                 -halfHeight, halfHeight,
-                0.01f,1000f
+                0.01f, 1000f
             );
         }
 

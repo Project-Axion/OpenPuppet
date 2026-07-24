@@ -21,7 +21,7 @@ namespace OpenPuppet.Core
         RenderSurface surface = null!;
         Camera camera = null!;
 
-        public void OnLoad() 
+        public void OnLoad()
         {
             camera = new Camera(Vector2.One);
 
@@ -29,10 +29,10 @@ namespace OpenPuppet.Core
             RenderSurface.Register(surface);
         }
 
-        public void OnUpdate(double deltaTime) 
+        public void OnUpdate(double deltaTime)
         {
             if (
-                ProjectManager.ActiveProject != null && 
+                ProjectManager.ActiveProject != null &&
                 ProjectManager.ActiveProject!.ActiveScene < ProjectManager.ActiveProject!.Scenes.Count
             )
             {
@@ -50,7 +50,7 @@ namespace OpenPuppet.Core
             }
         }
 
-        public void OnPreRender(double deltaTime) 
+        public void OnPreRender(double deltaTime)
         {
             ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, Vector2.Zero);
 
@@ -58,7 +58,7 @@ namespace OpenPuppet.Core
                 ProjectManager.ActiveProject != null &&
                 ProjectManager.ActiveProject!.ActiveScene < ProjectManager.ActiveProject!.Scenes.Count
             ) ImGui.PushStyleColor(
-                ImGuiCol.WindowBg, 
+                ImGuiCol.WindowBg,
                 new Vector4(
                     ProjectManager.ActiveProject!.Scenes[ProjectManager.ActiveProject!.ActiveScene].LetterboxColor,
                     1
@@ -69,9 +69,9 @@ namespace OpenPuppet.Core
         public void OnRender(double deltaTime)
         {
             if (
-                ProjectManager.ActiveProject == null || 
+                ProjectManager.ActiveProject == null ||
                 ProjectManager.ActiveProject!.ActiveScene >= ProjectManager.ActiveProject!.Scenes.Count
-            ) 
+            )
             {
                 ImGui.SetCursorPos(ImGui.GetContentRegionAvail() / 2 - ImGui.CalcTextSize("No active scene") / 2);
 
@@ -88,10 +88,10 @@ namespace OpenPuppet.Core
 
             ImGui.SetCursorPos(contentRegion / 2 - size / 2);
 
-            ImGui.Image(surface.GetImage(), size, new(0,1), new(1, 0));
+            ImGui.Image(surface.GetImage(), size, new(0, 1), new(1, 0));
         }
 
-        public void OnPostRender(double deltaTime) 
+        public void OnPostRender(double deltaTime)
         {
             ImGui.PopStyleVar();
             ImGui.PopStyleColor();

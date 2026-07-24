@@ -96,7 +96,7 @@ namespace OpenPuppet.vector
                 last = item;
             }
 
-            return new(T.FromVec3(prototype.Positions),idx);
+            return new(T.FromVec3(prototype.Positions), idx);
         }
     }
 }

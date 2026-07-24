@@ -30,7 +30,7 @@ namespace OpenPuppet.Preferences
 
         public void OnShutdown()
         {
-            if(shutdown) return;
+            if (shutdown) return;
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Saving current window layout");
             Windows.SavePreviousWindows();
             Windows.SaveLayout("default");

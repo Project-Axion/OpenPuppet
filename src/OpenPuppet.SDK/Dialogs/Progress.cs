@@ -19,7 +19,7 @@ namespace OpenPuppet.SDK.Dialogs
 
         internal CancellationTokenSource? cancellationTokenSource;
         internal float progressValue = 0;
-        
+
         public void Setup(
             string title,
             Progress<float> progress,
@@ -41,7 +41,7 @@ namespace OpenPuppet.SDK.Dialogs
 
         public void Cancel()
         {
-            if(cancellationTokenSource != null)
+            if (cancellationTokenSource != null)
                 cancellationTokenSource.Cancel();
         }
 
@@ -60,9 +60,9 @@ namespace OpenPuppet.SDK.Dialogs
             ImGui.Spacing();
             ImGui.ProgressBar(progressValue);
             ImGui.Spacing();
-            if(cancellationTokenSource != null)
+            if (cancellationTokenSource != null)
             {
-                if(ImGui.Button("Cancel##openpuppet.progressdialog.cancel"))
+                if (ImGui.Button("Cancel##openpuppet.progressdialog.cancel"))
                 {
                     cancellationTokenSource.Cancel();
                     IUIDialog.Close();
@@ -78,11 +78,12 @@ namespace OpenPuppet.SDK.Dialogs
 
         public void Dispose(bool everything = false)
         {
-            if(everything)
+            if (everything)
             {
-                if(cancellationTokenSource != null)
+                if (cancellationTokenSource != null)
                     cancellationTokenSource.Dispose();
-            } else
+            }
+            else
             {
                 cancellationTokenSource = null;
             }
@@ -96,7 +97,7 @@ namespace OpenPuppet.SDK.Dialogs
         )
         {
             IUIDialog.Open("openpuppet.sdk.progressdialog");
-            if(IUIDialog.ActiveDialog!.GetType() == typeof(ProgressDialog))
+            if (IUIDialog.ActiveDialog!.GetType() == typeof(ProgressDialog))
             {
                 ((ProgressDialog)IUIDialog.ActiveDialog).Setup(
                     title,

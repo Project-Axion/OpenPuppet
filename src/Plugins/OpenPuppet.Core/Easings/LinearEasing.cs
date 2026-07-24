@@ -10,6 +10,6 @@ namespace OpenPuppet.SDK.Easings
     {
         public string Name { get; } = "Linear";
 
-        public double Ease(double input,EasingDirection direction = EasingDirection.InOut) => input;
+        public double Ease(double input, EasingDirection direction = EasingDirection.InOut) => input;
     }
 }

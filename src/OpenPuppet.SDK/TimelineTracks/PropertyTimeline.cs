@@ -47,7 +47,8 @@ namespace OpenPuppet.SDK.TimelineTracks
         }
 
         public PropertyTimeline(Guid holder, SceneMetadata scene, string name, Expression<Func<T>> property) :
-            this(holder, scene, name, GetPropertyPath(property)) { }
+            this(holder, scene, name, GetPropertyPath(property))
+        { }
 
         IMutator<T> Mutator = IMutator<T>.GetMutator();
 
@@ -91,10 +92,10 @@ namespace OpenPuppet.SDK.TimelineTracks
             Keyframes.Remove(timestamp);
         }
 
-        public List<(TimeSpan,Easing)> GetSelectedKeyframes() => 
-            SelectedKeyframes.Keys.Where(x => SelectedKeyframes[x]).Select(x=> (x,GetEasing(x))).ToList();
+        public List<(TimeSpan, Easing)> GetSelectedKeyframes() =>
+            SelectedKeyframes.Keys.Where(x => SelectedKeyframes[x]).Select(x => (x, GetEasing(x))).ToList();
 
-        public List<(TimeSpan frame, bool selected, Easing easing)> GetKeyframes() => 
+        public List<(TimeSpan frame, bool selected, Easing easing)> GetKeyframes() =>
             Keyframes.Keys.Select(x => (x, GetKeyframeSelection(x), GetEasing(x))).ToList();
 
         public bool IsKeyframeSelected(TimeSpan keyframe) => GetKeyframeSelection(keyframe);
@@ -156,7 +157,7 @@ namespace OpenPuppet.SDK.TimelineTracks
 
         public void DeselectAll()
         {
-            foreach (var item in SelectedKeyframes.Keys) 
+            foreach (var item in SelectedKeyframes.Keys)
                 SelectedKeyframes[item] = false;
         }
 
@@ -168,7 +169,7 @@ namespace OpenPuppet.SDK.TimelineTracks
 
         (Func<T> getter, Action<T> setter) ResolveLocal()
         {
-            if (Scene == null) return (null!,null!);
+            if (Scene == null) return (null!, null!);
 
             object root = HolderID == Guid.Empty ? Scene : Scene.SceneObjects.First(x => x.ID == HolderID);
 

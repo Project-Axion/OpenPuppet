@@ -34,7 +34,8 @@ namespace OpenPuppet.SVG
             try
             {
                 ContextMenu.Remove("File.Import.SVG");
-            } catch { }
+            }
+            catch { }
             Logger.Dispose();
             shutdown = true;
         }

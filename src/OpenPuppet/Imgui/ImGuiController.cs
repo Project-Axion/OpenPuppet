@@ -222,7 +222,7 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
             var io = ImGuiNET.ImGui.GetIO();
             var imGuiKey = TranslateInputKeyToImGuiKey(keycode);
             io.AddKeyEvent(imGuiKey, down);
-            io.SetKeyEventNativeData(imGuiKey, (int) keycode, scancode);
+            io.SetKeyEventNativeData(imGuiKey, (int)keycode, scancode);
         }
 
         public void OnKeyChar(IKeyboard arg1, char arg2)
@@ -264,7 +264,7 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
                     window.GLContext.MakeCurrent();
                 }
 
-                RenderImDrawData(_gl,ImGuiNET.ImGui.GetDrawData());
+                RenderImDrawData(_gl, ImGuiNET.ImGui.GetDrawData());
 
                 if (oldCtx != Context)
                 {
@@ -491,7 +491,7 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
             };
         }
 
-        private unsafe void SetupRenderState(GL _gl,ImDrawDataPtr drawDataPtr, int framebufferWidth, int framebufferHeight)
+        private unsafe void SetupRenderState(GL _gl, ImDrawDataPtr drawDataPtr, int framebufferWidth, int framebufferHeight)
         {
             // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, polygon fill
             _gl.Enable(GLEnum.Blend);
@@ -535,18 +535,18 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
             // Bind vertex/index buffers and setup attributes for ImDrawVert
             _gl.BindBuffer(GLEnum.ArrayBuffer, _vboHandle);
             _gl.BindBuffer(GLEnum.ElementArrayBuffer, _elementsHandle);
-            _gl.EnableVertexAttribArray((uint) _attribLocationVtxPos);
-            _gl.EnableVertexAttribArray((uint) _attribLocationVtxUV);
-            _gl.EnableVertexAttribArray((uint) _attribLocationVtxColor);
-            _gl.VertexAttribPointer((uint) _attribLocationVtxPos, 2, GLEnum.Float, false, (uint) sizeof(ImDrawVert), (void*) 0);
-            _gl.VertexAttribPointer((uint) _attribLocationVtxUV, 2, GLEnum.Float, false, (uint) sizeof(ImDrawVert), (void*) 8);
-            _gl.VertexAttribPointer((uint) _attribLocationVtxColor, 4, GLEnum.UnsignedByte, true, (uint) sizeof(ImDrawVert), (void*) 16);
+            _gl.EnableVertexAttribArray((uint)_attribLocationVtxPos);
+            _gl.EnableVertexAttribArray((uint)_attribLocationVtxUV);
+            _gl.EnableVertexAttribArray((uint)_attribLocationVtxColor);
+            _gl.VertexAttribPointer((uint)_attribLocationVtxPos, 2, GLEnum.Float, false, (uint)sizeof(ImDrawVert), (void*)0);
+            _gl.VertexAttribPointer((uint)_attribLocationVtxUV, 2, GLEnum.Float, false, (uint)sizeof(ImDrawVert), (void*)8);
+            _gl.VertexAttribPointer((uint)_attribLocationVtxColor, 4, GLEnum.UnsignedByte, true, (uint)sizeof(ImDrawVert), (void*)16);
         }
 
         private unsafe void RenderImDrawData(GL _gl, ImDrawDataPtr drawDataPtr)
         {
-            int framebufferWidth = (int) (drawDataPtr.DisplaySize.X * drawDataPtr.FramebufferScale.X);
-            int framebufferHeight = (int) (drawDataPtr.DisplaySize.Y * drawDataPtr.FramebufferScale.Y);
+            int framebufferWidth = (int)(drawDataPtr.DisplaySize.X * drawDataPtr.FramebufferScale.X);
+            int framebufferHeight = (int)(drawDataPtr.DisplaySize.Y * drawDataPtr.FramebufferScale.Y);
             if (framebufferWidth <= 0 || framebufferHeight <= 0)
                 return;
 
@@ -602,9 +602,9 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
 
                 // Upload vertex/index buffers
 
-                _gl.BufferData(GLEnum.ArrayBuffer, (nuint) (cmdListPtr.VtxBuffer.Size * sizeof(ImDrawVert)), (void*) cmdListPtr.VtxBuffer.Data, GLEnum.StreamDraw);
+                _gl.BufferData(GLEnum.ArrayBuffer, (nuint)(cmdListPtr.VtxBuffer.Size * sizeof(ImDrawVert)), (void*)cmdListPtr.VtxBuffer.Data, GLEnum.StreamDraw);
                 _gl.CheckGlError($"Data Vert {n}");
-                _gl.BufferData(GLEnum.ElementArrayBuffer, (nuint) (cmdListPtr.IdxBuffer.Size * sizeof(ushort)), (void*) cmdListPtr.IdxBuffer.Data, GLEnum.StreamDraw);
+                _gl.BufferData(GLEnum.ElementArrayBuffer, (nuint)(cmdListPtr.IdxBuffer.Size * sizeof(ushort)), (void*)cmdListPtr.IdxBuffer.Data, GLEnum.StreamDraw);
                 _gl.CheckGlError($"Data Idx {n}");
 
                 for (int cmd_i = 0; cmd_i < cmdListPtr.CmdBuffer.Size; cmd_i++)
@@ -626,14 +626,14 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
                         if (clipRect.X < framebufferWidth && clipRect.Y < framebufferHeight && clipRect.Z >= 0.0f && clipRect.W >= 0.0f)
                         {
                             // Apply scissor/clipping rectangle
-                            _gl.Scissor((int) clipRect.X, (int) (framebufferHeight - clipRect.W), (uint) (clipRect.Z - clipRect.X), (uint) (clipRect.W - clipRect.Y));
+                            _gl.Scissor((int)clipRect.X, (int)(framebufferHeight - clipRect.W), (uint)(clipRect.Z - clipRect.X), (uint)(clipRect.W - clipRect.Y));
                             _gl.CheckGlError("Scissor");
 
                             // Bind texture, Draw
-                            _gl.BindTexture(GLEnum.Texture2D, (uint) cmdPtr.TextureId);
+                            _gl.BindTexture(GLEnum.Texture2D, (uint)cmdPtr.TextureId);
                             _gl.CheckGlError("Texture");
 
-                            _gl.DrawElementsBaseVertex(GLEnum.Triangles, cmdPtr.ElemCount, GLEnum.UnsignedShort, (void*) (cmdPtr.IdxOffset * sizeof(ushort)), (int) cmdPtr.VtxOffset);
+                            _gl.DrawElementsBaseVertex(GLEnum.Triangles, cmdPtr.ElemCount, GLEnum.UnsignedShort, (void*)(cmdPtr.IdxOffset * sizeof(ushort)), (int)cmdPtr.VtxOffset);
                             _gl.CheckGlError("Draw");
                         }
                     }
@@ -645,18 +645,18 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
             _vertexArrayObject = 0;
 
             // Restore modified GL state
-            _gl.UseProgram((uint) lastProgram);
-            _gl.BindTexture(GLEnum.Texture2D, (uint) lastTexture);
+            _gl.UseProgram((uint)lastProgram);
+            _gl.BindTexture(GLEnum.Texture2D, (uint)lastTexture);
 
-            _gl.BindSampler(0, (uint) lastSampler);
+            _gl.BindSampler(0, (uint)lastSampler);
 
-            _gl.ActiveTexture((GLEnum) lastActiveTexture);
+            _gl.ActiveTexture((GLEnum)lastActiveTexture);
 
-            _gl.BindVertexArray((uint) lastVertexArrayObject);
+            _gl.BindVertexArray((uint)lastVertexArrayObject);
 
-            _gl.BindBuffer(GLEnum.ArrayBuffer, (uint) lastArrayBuffer);
-            _gl.BlendEquationSeparate((GLEnum) lastBlendEquationRgb, (GLEnum) lastBlendEquationAlpha);
-            _gl.BlendFuncSeparate((GLEnum) lastBlendSrcRgb, (GLEnum) lastBlendDstRgb, (GLEnum) lastBlendSrcAlpha, (GLEnum) lastBlendDstAlpha);
+            _gl.BindBuffer(GLEnum.ArrayBuffer, (uint)lastArrayBuffer);
+            _gl.BlendEquationSeparate((GLEnum)lastBlendEquationRgb, (GLEnum)lastBlendEquationAlpha);
+            _gl.BlendFuncSeparate((GLEnum)lastBlendSrcRgb, (GLEnum)lastBlendDstRgb, (GLEnum)lastBlendSrcAlpha, (GLEnum)lastBlendDstAlpha);
 
             if (lastEnableBlend)
             {
@@ -713,10 +713,10 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
                 _gl.Disable(GLEnum.PrimitiveRestart);
             }
 
-            _gl.PolygonMode(GLEnum.FrontAndBack, (GLEnum) lastPolygonMode[0]);
+            _gl.PolygonMode(GLEnum.FrontAndBack, (GLEnum)lastPolygonMode[0]);
 #endif
 
-            _gl.Scissor(lastScissorBox[0], lastScissorBox[1], (uint) lastScissorBox[2], (uint) lastScissorBox[3]);
+            _gl.Scissor(lastScissorBox[0], lastScissorBox[1], (uint)lastScissorBox[2], (uint)lastScissorBox[3]);
         }
 
         public void DrawImData(GL gl, ImDrawDataPtr drawDataPtr) => RenderImDrawData(gl, drawDataPtr);
@@ -829,10 +829,10 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
             RecreateFontDeviceTexture();
 
             // Restore modified GL state
-            _gl.BindTexture(GLEnum.Texture2D, (uint) lastTexture);
-            _gl.BindBuffer(GLEnum.ArrayBuffer, (uint) lastArrayBuffer);
+            _gl.BindTexture(GLEnum.Texture2D, (uint)lastTexture);
+            _gl.BindBuffer(GLEnum.ArrayBuffer, (uint)lastArrayBuffer);
 
-            _gl.BindVertexArray((uint) lastVertexArray);
+            _gl.BindVertexArray((uint)lastVertexArray);
 
             _gl.CheckGlError("End of ImGui setup");
         }
@@ -855,10 +855,10 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
             _fontTexture.SetMinFilter(TextureMinFilter.Linear);
 
             // Store our identifier
-            io.Fonts.SetTexID((IntPtr) _fontTexture.GlTexture);
+            io.Fonts.SetTexID((IntPtr)_fontTexture.GlTexture);
 
             // Restore state
-            _gl.BindTexture(GLEnum.Texture2D, (uint) lastTexture);
+            _gl.BindTexture(GLEnum.Texture2D, (uint)lastTexture);
         }
 
         /// <summary>

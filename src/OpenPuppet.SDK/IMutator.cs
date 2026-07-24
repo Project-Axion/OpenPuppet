@@ -27,6 +27,6 @@ namespace OpenPuppet.SDK
             return null!;
         }
 
-        public T Mutate(T a,T b, double factor);
+        public T Mutate(T a, T b, double factor);
     }
 }

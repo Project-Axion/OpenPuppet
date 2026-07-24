@@ -27,7 +27,7 @@ namespace OpenPuppet.Core
 
         Vector2 size = Vector2.Zero;
 
-        public void OnLoad() 
+        public void OnLoad()
         {
             camera = new Camera(Vector2.One);
 
@@ -35,10 +35,10 @@ namespace OpenPuppet.Core
             RenderSurface.Register(surface);
         }
 
-        public void OnUpdate(double deltaTime) 
+        public void OnUpdate(double deltaTime)
         {
             if (
-                ProjectManager.ActiveProject != null && 
+                ProjectManager.ActiveProject != null &&
                 ProjectManager.ActiveProject!.ActiveScene < ProjectManager.ActiveProject!.Scenes.Count
             )
             {
@@ -50,7 +50,7 @@ namespace OpenPuppet.Core
             }
         }
 
-        public void OnPreRender(double deltaTime) 
+        public void OnPreRender(double deltaTime)
         {
             ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, Vector2.Zero);
         }
@@ -58,9 +58,9 @@ namespace OpenPuppet.Core
         public void OnRender(double deltaTime)
         {
             if (
-                ProjectManager.ActiveProject == null || 
+                ProjectManager.ActiveProject == null ||
                 ProjectManager.ActiveProject!.ActiveScene >= ProjectManager.ActiveProject!.Scenes.Count
-            ) 
+            )
             {
                 ImGui.SetCursorPos(ImGui.GetContentRegionAvail() / 2 - ImGui.CalcTextSize("No active scene") / 2);
 
@@ -74,7 +74,7 @@ namespace OpenPuppet.Core
 
             if (ImGui.IsWindowFocused())
             {
-                zoom += ImGui.GetIO().MouseWheel * (0.1f * Math.Min((float)Math.Pow(camera.Zoom, 2),1));
+                zoom += ImGui.GetIO().MouseWheel * (0.1f * Math.Min((float)Math.Pow(camera.Zoom, 2), 1));
 
                 if (ImGui.IsMouseDragging(ImGuiMouseButton.Middle))
                 {
@@ -86,7 +86,7 @@ namespace OpenPuppet.Core
 
                 var units = Camera.CAMERA_UNITS_BASIS / theoreticalSize.Y;
 
-                worldPan = pan * new Vector3(units,-units,1);
+                worldPan = pan * new Vector3(units, -units, 1);
             }
 
             var contentRegion = ImGui.GetContentRegionAvail();
@@ -103,7 +103,7 @@ namespace OpenPuppet.Core
 
             surface.Active = !ImGui.IsWindowCollapsed();
 
-            ImGui.Image(surface.GetImage(), camera.Resolution, new(0,1), new(1, 0));
+            ImGui.Image(surface.GetImage(), camera.Resolution, new(0, 1), new(1, 0));
 
             var drawlist = ImGui.GetWindowDrawList();
 
@@ -112,7 +112,7 @@ namespace OpenPuppet.Core
             drawlist.AddRect(min, min + theoreticalSize, ImGui.GetColorU32(ImGuiCol.Border, 0.7f), 1.0f);
         }
 
-        public void OnPostRender(double deltaTime) 
+        public void OnPostRender(double deltaTime)
         {
             ImGui.PopStyleVar();
         }

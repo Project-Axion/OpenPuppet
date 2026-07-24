@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OpenPuppet.SDK
 {
-    public struct Color3(float r,float g,float b)
+    public struct Color3(float r, float g, float b)
     {
         public float X = r, Y = g, Z = b;
 
@@ -20,10 +20,10 @@ namespace OpenPuppet.SDK
 
     public struct Color4(float r, float g, float b, float a)
     {
-        public float X = r, Y = g, Z = b,W = a;
+        public float X = r, Y = g, Z = b, W = a;
 
         public static implicit operator Vector4(Color4 v)
-        => new(v.X, v.Y, v.Z,v.W);
+        => new(v.X, v.Y, v.Z, v.W);
 
         public static implicit operator Color4(Vector4 v)
         => new(v.X, v.Y, v.Z, v.W);

@@ -27,6 +27,6 @@ namespace OpenPuppet.SDK
 
         public string Name { get; set; } = "Scene";
 
-        public void Draw(GL gl) {}
+        public void Draw(GL gl) { }
     }
 }

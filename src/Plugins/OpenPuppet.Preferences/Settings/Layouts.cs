@@ -14,12 +14,12 @@ namespace OpenPuppet.Preferences.Settings
 
         public void OnRender(double deltaTime)
         {
-            if(ImGui.Button("New layout"))
+            if (ImGui.Button("New layout"))
             {
                 IUIDialog.Open("openpuppet.layouts.new_layout");
             }
             ImGui.SameLine();
-            if(ImGui.Button("Import layout"))
+            if (ImGui.Button("Import layout"))
             {
 
             }

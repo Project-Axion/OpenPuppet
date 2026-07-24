@@ -23,7 +23,7 @@ namespace OpenPuppet.rendering.VertexTypes
         {
             List<ColorVertex> vtx = new();
 
-            foreach (var item in vecs) vtx.Add(new(item,Vector4.One));
+            foreach (var item in vecs) vtx.Add(new(item, Vector4.One));
 
             return vtx;
         }

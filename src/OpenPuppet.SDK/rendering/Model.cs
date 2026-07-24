@@ -19,7 +19,7 @@ namespace OpenPuppet.rendering
         uint vao = 0;
         uint ebo = 0;
 
-        public unsafe Model(GL gl,VertexMesh<T> mesh) 
+        public unsafe Model(GL gl, VertexMesh<T> mesh)
         {
             Mesh = mesh;
 
@@ -31,7 +31,7 @@ namespace OpenPuppet.rendering
             fixed (void* ptr = &MemoryMarshal.GetReference(vertexData))
                 gl.BufferData(
                     BufferTargetARB.ArrayBuffer,
-                    (nuint)(T.Size * vertexData.Length), 
+                    (nuint)(T.Size * vertexData.Length),
                     ptr, BufferUsageARB.StaticDraw
                 );
 
@@ -43,9 +43,9 @@ namespace OpenPuppet.rendering
             for (int i = 0; i < T.PropLayers.Length; i++)
             {
                 gl.VertexAttribPointer(
-                    (uint)i, T.PropLayers[i].Count, 
-                    T.PropLayers[i].Type, 
-                    T.PropLayers[i].Normalize, 
+                    (uint)i, T.PropLayers[i].Count,
+                    T.PropLayers[i].Type,
+                    T.PropLayers[i].Normalize,
                     T.Size, (void*)off
                 );
                 gl.EnableVertexAttribArray((uint)i);

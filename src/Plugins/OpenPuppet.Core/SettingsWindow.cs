@@ -24,7 +24,7 @@ namespace OpenPuppet.Core
 
         public void OnUpdate(double deltaTime) { }
 
-        public void OnPreRender(double deltaTime) {}
+        public void OnPreRender(double deltaTime) { }
 
         public void OnRender(double deltaTime)
         {
@@ -32,7 +32,7 @@ namespace OpenPuppet.Core
 
             float rowHeight = ImGui.GetFontSize() * 2;
 
-            ImGui.BeginChild("Sidebar##sidebar" + InstanceIndex, new(sidebarsize, 0),false);
+            ImGui.BeginChild("Sidebar##sidebar" + InstanceIndex, new(sidebarsize, 0), false);
             for (int i = 0; i < cats.Length; i++)
             {
                 bool isSelected = (selected == cats[i]);
@@ -87,7 +87,7 @@ namespace OpenPuppet.Core
             ImGui.EndChild();
         }
 
-        public void OnPostRender(double deltaTime) {}
+        public void OnPostRender(double deltaTime) { }
 
         public void OnClose() { }
     }

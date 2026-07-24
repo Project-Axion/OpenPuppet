@@ -15,17 +15,17 @@ namespace OpenPuppet.SDK
         public double Ease(double input, EasingDirection direction = EasingDirection.InOut);
 
         public static void Register(string registry, IEasingMode mode) => EasingModes[registry] = mode;
-        public static double Ease(string registry,double input, EasingDirection direction)
+        public static double Ease(string registry, double input, EasingDirection direction)
         {
             if (registry == null || !EasingModes.ContainsKey(registry)) return 0;
 
-            return EasingModes[registry].Ease(input,direction);
+            return EasingModes[registry].Ease(input, direction);
         }
 
-        public static double Ease(Easing easing, double input) => Ease(easing.Mode,input,easing.Direction);
+        public static double Ease(Easing easing, double input) => Ease(easing.Mode, input, easing.Direction);
     }
 
-    public struct Easing(string mode,EasingDirection direction = EasingDirection.InOut)
+    public struct Easing(string mode, EasingDirection direction = EasingDirection.InOut)
     {
         public string Mode { get; set; } = mode;
         public EasingDirection Direction { get; set; } = direction;

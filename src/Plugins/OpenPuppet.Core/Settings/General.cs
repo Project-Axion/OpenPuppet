@@ -20,7 +20,7 @@ namespace OpenPuppet.Core.Settings
             ImGui.Separator();
             ImGui.Spacing();
             ImGui.TextColored(new(1, 0.25f, 0.25f, 1), "Actions");
-            if(ImGui.Button("Restart"))
+            if (ImGui.Button("Restart"))
             {
                 IEvent<bool>.Invoke("openpuppet.restart", this, false);
             }
@@ -30,7 +30,7 @@ namespace OpenPuppet.Core.Settings
                 IEvent<bool>.Invoke("openpuppet.restart", this, true);
             }
             ImGui.SameLine();
-            if(ImGui.Button("Reset"))
+            if (ImGui.Button("Reset"))
             {
 
             }

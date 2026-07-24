@@ -33,12 +33,12 @@ namespace OpenPuppet.SDK.Projects
 
     public class SceneMetadata
     {
-        [InspectorPublic] public Camera SceneCamera { get; set; } = new Camera(new(2160,1080));
-        [InspectorPublic] public Color3 LetterboxColor { get; set; } = new Color3(0,0,0);
+        [InspectorPublic] public Camera SceneCamera { get; set; } = new Camera(new(2160, 1080));
+        [InspectorPublic] public Color3 LetterboxColor { get; set; } = new Color3(0, 0, 0);
 
         public List<ISceneGameObject> SceneObjects { get; set; } = new();
 
-        public Dictionary<Guid,List<ITimelineTrack>> AnimationScene { get; set; } = new();
+        public Dictionary<Guid, List<ITimelineTrack>> AnimationScene { get; set; } = new();
 
         public int SelectedObject { get; set; } = -1;
     }

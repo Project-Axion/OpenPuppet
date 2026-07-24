@@ -16,7 +16,7 @@ namespace silkgltriangle.Imgui
 {
     public static class ImPlatform
     {
-        public static Dictionary<uint,ImGuiWindow> windows = new();
+        public static Dictionary<uint, ImGuiWindow> windows = new();
 
         public static ImGuiController platformController;
 
@@ -30,8 +30,8 @@ namespace silkgltriangle.Imgui
         };
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)] public unsafe delegate void Viewport_Del(ImGuiViewportPtr vp);
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)] public unsafe delegate void ViewportString_Del(ImGuiViewportPtr vp,byte* str);
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)] public unsafe delegate void ViewportFloat_Del(ImGuiViewportPtr vp,float alpha);
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)] public unsafe delegate void ViewportString_Del(ImGuiViewportPtr vp, byte* str);
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)] public unsafe delegate void ViewportFloat_Del(ImGuiViewportPtr vp, float alpha);
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)] public unsafe delegate byte ByteViewport_Del(ImGuiViewportPtr vp);
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)] public unsafe delegate float FloatViewport_Del(ImGuiViewportPtr vp);
 
@@ -136,7 +136,7 @@ namespace silkgltriangle.Imgui
             viewport.PlatformHandleRaw = rawHandle;
             viewport.PlatformHandle = viewport.PlatformHandleRaw;
 
-            windows.Add(viewport.ID,window);
+            windows.Add(viewport.ID, window);
         }
         public static unsafe void ShowWindow(ImGuiViewportPtr viewport)
         {
@@ -159,7 +159,7 @@ namespace silkgltriangle.Imgui
             }
         }
 
-        public static unsafe Vector2* GetWindowPos(Vector2* outPos,ImGuiViewportPtr viewport)
+        public static unsafe Vector2* GetWindowPos(Vector2* outPos, ImGuiViewportPtr viewport)
         {
             if (windows.TryGetValue(viewport.ID, out var window))
             {
@@ -180,7 +180,7 @@ namespace silkgltriangle.Imgui
                 window.window.Position = new Silk.NET.Maths.Vector2D<int>((int)pos.X, (int)pos.Y);
         }
 
-        public static unsafe Vector2* GetWindowSize(Vector2* outSize,ImGuiViewportPtr viewport)
+        public static unsafe Vector2* GetWindowSize(Vector2* outSize, ImGuiViewportPtr viewport)
         {
             if (windows.TryGetValue(viewport.ID, out var window))
             {
@@ -209,7 +209,7 @@ namespace silkgltriangle.Imgui
 
                 window.gl.Viewport(window.window.FramebufferSize);
 
-                window.gl.ClearColor(0,0,0,0);
+                window.gl.ClearColor(0, 0, 0, 0);
                 window.gl.Clear(ClearBufferMask.ColorBufferBit);
 
                 platformController.DrawImData(window.gl, viewport.DrawData);
@@ -246,15 +246,15 @@ namespace silkgltriangle.Imgui
             return 0;
         }
 
-        public static unsafe void SetWindowTitle(ImGuiViewportPtr viewport,byte* str)
+        public static unsafe void SetWindowTitle(ImGuiViewportPtr viewport, byte* str)
         {
             if (windows.TryGetValue(viewport.ID, out var window))
                 window.window.Title = Marshal.PtrToStringAnsi((nint)str);
         }
 
-        public static unsafe void SetWindowAlpha(ImGuiViewportPtr viewport, float alpha) {}
+        public static unsafe void SetWindowAlpha(ImGuiViewportPtr viewport, float alpha) { }
 
-        public static unsafe void UpdateWindow(ImGuiViewportPtr viewport) 
+        public static unsafe void UpdateWindow(ImGuiViewportPtr viewport)
         {
             if (windows.TryGetValue(viewport.ID, out var window))
                 window.window.DoEvents();
@@ -262,7 +262,7 @@ namespace silkgltriangle.Imgui
 
         public static unsafe float GetWindowDpiScale(ImGuiViewportPtr viewport) { return 1; }
 
-        public static unsafe void OnChangedViewport(ImGuiViewportPtr viewport) 
+        public static unsafe void OnChangedViewport(ImGuiViewportPtr viewport)
         {
             if (!windows.TryGetValue(viewport.ID, out var window)) return;
 

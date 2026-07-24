@@ -29,17 +29,17 @@ namespace OpenPuppet.SDK
         void OnRender(double deltaTime);
         void OnPostRender(double deltaTime);
 
-        public static void Register(string registry,Type t)
+        public static void Register(string registry, Type t)
         {
             if (t.IsAssignableTo(typeof(IUIWindow)) && t.IsClass)
                 RegisteredWindows.Add(registry, t);
-            else 
+            else
                 throw new ArgumentException($"{t.FullName} is not a class that implements the IUIWindow interface.");
         }
 
         public static string RegistryFromType(Type t)
         {
-            var dat = RegisteredWindows.FirstOrDefault(x => x.Value == t,new("null", null!));
+            var dat = RegisteredWindows.FirstOrDefault(x => x.Value == t, new("null", null!));
 
             if (dat.Value != null) return dat.Key;
 
@@ -76,7 +76,7 @@ namespace OpenPuppet.SDK
             var item = ActiveWindows.Find(w => w.InstanceIndex == id);
             if (item == null)
                 throw new ArgumentException($"Window instance \"{registry}##{id}\" does not exist");
-            
+
             item.OnClose();
             ActiveWindows.Remove(item);
             WindowEvents.InvokeOnWindowClosed(null, new(RegistryFromType(item.GetType()) + "##" + item.InstanceIndex));

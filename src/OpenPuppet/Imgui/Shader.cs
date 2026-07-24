@@ -72,7 +72,7 @@ namespace Silk.NET.OpenGL.Legacy.Extensions.ImGui
 
             for (int i = 0; i < uniformCount; i++)
             {
-                string name = _gl.GetActiveUniform(Program, (uint) i, out int size, out UniformType type);
+                string name = _gl.GetActiveUniform(Program, (uint)i, out int size, out UniformType type);
 
                 UniformFieldInfo fieldInfo;
                 fieldInfo.Location = GetUniformLocation(name);

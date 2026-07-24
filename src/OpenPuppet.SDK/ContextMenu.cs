@@ -17,7 +17,8 @@ namespace OpenPuppet.SDK
             if (parts.Length == 1)
             {
                 currentNode.Nodes.Add(
-                    new ContextMenuItem {
+                    new ContextMenuItem
+                    {
                         Name = parts[0].ToSentenceCase(),
                         OnClick = onClick,
                         DisplayName = name ?? parts[0].ToSentenceCase(),
@@ -30,7 +31,8 @@ namespace OpenPuppet.SDK
                 var nextNode = currentNode.Nodes.OfType<ContextMenuList>().FirstOrDefault(n => n.Name == parts[0].ToSentenceCase());
                 if (nextNode == null)
                 {
-                    nextNode = new ContextMenuList {
+                    nextNode = new ContextMenuList
+                    {
                         Name = parts[0].ToSentenceCase(),
                         DisplayName = parts[0].ToSentenceCase()
                     };
@@ -48,20 +50,22 @@ namespace OpenPuppet.SDK
                 //if (separator)
                 //    currentNode.Nodes.Add(new ContextMenuSeparatorItem { Name = parts[0].ToSentenceCase() });
                 //else
-                    currentNode.Nodes.Add(
-                        new ContextMenuList {
-                            Name = parts[0].ToSentenceCase(),
-                            DisplayName = name ?? parts[0].ToSentenceCase(),
-                            Enabled = enabled
-                        }
-                    );
+                currentNode.Nodes.Add(
+                    new ContextMenuList
+                    {
+                        Name = parts[0].ToSentenceCase(),
+                        DisplayName = name ?? parts[0].ToSentenceCase(),
+                        Enabled = enabled
+                    }
+                );
             }
             else
             {
                 var nextNode = currentNode.Nodes.OfType<ContextMenuList>().FirstOrDefault(n => n.Name == parts[0].ToSentenceCase());
                 if (nextNode == null)
                 {
-                    nextNode = new ContextMenuList {
+                    nextNode = new ContextMenuList
+                    {
                         Name = parts[0].ToSentenceCase(),
                         DisplayName = parts[0].ToSentenceCase()
                     };
@@ -74,7 +78,7 @@ namespace OpenPuppet.SDK
         static void ProcessE(string path, ContextMenuList currentNode, bool enabled)
         {
             var parts = path.Split('.');
-            if(parts.Length == 1)
+            if (parts.Length == 1)
             {
                 IContextMenuNode? node = currentNode.Nodes.Find(m => m.Name == path);
                 if (node == null) throw new ArgumentException($"{path} does not exist on the context menu");

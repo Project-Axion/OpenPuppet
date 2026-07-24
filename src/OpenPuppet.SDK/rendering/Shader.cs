@@ -14,7 +14,7 @@ namespace OpenPuppet.rendering
     {
         uint shader;
 
-        public Shader(GL gl,string vtx, string frag)
+        public Shader(GL gl, string vtx, string frag)
         {
             uint vs = gl.CreateShader(ShaderType.VertexShader);
             gl.ShaderSource(vs, File.ReadAllText(vtx));
@@ -37,7 +37,7 @@ namespace OpenPuppet.rendering
 
         public void Use(GL gl) => gl.UseProgram(shader);
 
-        public void UniformMat4(GL gl,string uniform,Matrix4x4 mat)
+        public void UniformMat4(GL gl, string uniform, Matrix4x4 mat)
         {
             Use(gl);
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OpenPuppet.rendering
 {
-    public struct VertexPropLayer(int count, VertexAttribPointerType type,bool normalized)
+    public struct VertexPropLayer(int count, VertexAttribPointerType type, bool normalized)
     {
         public int Count { get; set; } = count;
         public VertexAttribPointerType Type { get; set; } = type;
