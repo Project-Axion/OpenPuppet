@@ -135,17 +135,16 @@ namespace OpenPuppet.SDK.TimelineTracks
 
         public bool KeyframeInRange(TimeSpan range, out TimeSpan keyframe, float radius = 12)
         {
-            foreach (var kvp in Keyframes)
+            var result = Keyframes.Where(k => Math.Abs((k.Key - range).TotalMilliseconds) <= radius);
+            if(result.Any())
             {
-                if (Math.Abs((kvp.Key - range).TotalMilliseconds) <= radius)
-                {
-                    keyframe = kvp.Key;
-                    return true;
-                }
+                keyframe = result.Single().Key;
+                return true;
+            } else
+            {
+                keyframe = default;
+                return false;
             }
-
-            keyframe = default;
-            return false;
         }
 
         public void ToggleSelectKeyframe(TimeSpan timestamp)

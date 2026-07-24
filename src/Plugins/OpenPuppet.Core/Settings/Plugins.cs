@@ -26,18 +26,14 @@ namespace OpenPuppet.Core.Settings
             ImGui.SameLine();
             if (ImGui.Button("Enable all"))
             {
-                foreach (var plugin in IPlugin.RegisteredPlugins)
-                {
-                    if (plugin.Key == "com.openpuppet.core") continue;
+                foreach (var plugin in IPlugin.RegisteredPlugins.Where(p => p.Key != "com.openpuppet.core"))
                     IPlugin.SetPluginEnabled(plugin.Key, true);
-                }
             }
             ImGui.SameLine();
             if (ImGui.Button("Disable all"))
             {
-                foreach (var plugin in IPlugin.RegisteredPlugins)
+                foreach (var plugin in IPlugin.RegisteredPlugins.Where(p => p.Key != "com.openpuppet.core"))
                 {
-                    if (plugin.Key == "com.openpuppet.core") continue;
                     IPlugin.SetPluginEnabled(plugin.Key, false);
                     WarnRestart = true;
                 }
@@ -45,9 +41,8 @@ namespace OpenPuppet.Core.Settings
             ImGui.SameLine();
             if (ImGui.Button("Uninstall all"))
             {
-                foreach (var plugin in IPlugin.RegisteredPlugins)
+                foreach (var plugin in IPlugin.RegisteredPlugins.Where(p => p.Key != "com.openpuppet.core"))
                 {
-                    if (plugin.Key == "com.openpuppet.core") continue;
                     IPlugin.UninstallPlugin(plugin.Key);
                     WarnRestart = true;
                 }

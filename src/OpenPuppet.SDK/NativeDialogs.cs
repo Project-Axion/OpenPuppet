@@ -37,7 +37,7 @@ namespace OpenPuppet.SDK
             {
                 Path = path;
                 Paths = paths;
-                if (Paths != null && Paths?.Length > 0) MultiplePaths = true;
+                if (Paths != null && Paths!.Length > 0) MultiplePaths = true;
                 IsOk = isOk;
                 IsError = isError;
                 Cancelled = cancelled;
@@ -78,7 +78,7 @@ namespace OpenPuppet.SDK
             {
                 Path = path;
                 Paths = paths;
-                if (Paths != null && Paths?.Length > 0) MultiplePaths = true;
+                if (Paths != null && Paths!.Length > 0) MultiplePaths = true;
                 IsOk = isOk;
                 IsError = isError;
                 Cancelled = cancelled;

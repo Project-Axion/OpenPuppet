@@ -80,11 +80,8 @@ namespace OpenPuppet.Core
                 ImGui.EndMenuBar();
             }
 
-            foreach (var item in scene.AnimationScene)
-            {
-                if (ImGui.CollapsingHeader(scene.SceneObjects.First(x => x.ID == item.Key).Name))
-                    foreach (var item1 in item.Value) DrawTrack(item1);
-            }
+            foreach (var item in scene.AnimationScene.Where(s => ImGui.CollapsingHeader(scene.SceneObjects.First(x => x.ID == s.Key).Name)))
+                foreach (var item1 in item.Value) DrawTrack(item1);
         }
 
         public void OnPostRender(double deltaTime) { }

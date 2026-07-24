@@ -9,8 +9,8 @@ namespace OpenPuppet.SDK
     [Flags]
     public enum EasingDirection
     {
-        In,
-        Out,
-        InOut = In & Out,
+        In = 1,
+        Out = 2,
+        InOut = In | Out,
     }
 }
