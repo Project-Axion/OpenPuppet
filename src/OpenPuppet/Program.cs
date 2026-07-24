@@ -97,8 +97,6 @@ namespace OpenPuppet
 
             IEvent<EventArgs>.Subscribe("openpuppet.quit", (_, _) => window.Close());
 
-            SDK.Dialogs.Dialogs.RegisterBuiltInDialogs();
-
             try
             {
                 window.Run();
@@ -432,8 +430,6 @@ namespace OpenPuppet
             }
 
             IPlugin.RegisteredPlugins.Clear();
-
-            SDK.Dialogs.Dialogs.RegisterBuiltInDialogs();
 
             LoadPlugins();
 
