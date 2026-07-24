@@ -228,7 +228,6 @@ namespace OpenPuppet.SDK
                     plugin.OnInitialized();
                 });*/
             } catch(Exception ex) {
-            {
                 SDK.logger.WriteLine(
                     ILogger.Level.Warn,
                     $"Failed to load plugin with ID \"{id}\": {ex.Message}"
