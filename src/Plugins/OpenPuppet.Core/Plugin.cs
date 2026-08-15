@@ -3,6 +3,8 @@ using Newtonsoft.Json;
 using OpenPuppet.Core.Dialogs;
 using OpenPuppet.Core.Mutators;
 using OpenPuppet.Core.PropertyDrawers;
+using OpenPuppet.rendering;
+using OpenPuppet.rendering.VertexTypes;
 using OpenPuppet.SDK;
 using OpenPuppet.SDK.Easings;
 using OpenPuppet.SDK.Events;
@@ -69,13 +71,7 @@ namespace OpenPuppet.Core
             {
                 IEvent<EventArgs>.Invoke("project.save", this, EventArgs.Empty);
 
-                File.WriteAllText(
-                    Path.Combine(ProjectManager.ActiveProject!.Directory, ProjectManager.ActiveProject.Name + ".opp"),
-                    JsonConvert.SerializeObject(ProjectManager.ActiveProject, new JsonSerializerSettings()
-                    {
-                        TypeNameHandling = TypeNameHandling.Auto
-                    })
-                );
+                Projects.SaveProject(ProjectManager.ActiveProject!);
             });
 
             ContextMenu.AddMenuItem("View.Timeline", () => IUIWindow.Open("openpuppet.core.timeline"));

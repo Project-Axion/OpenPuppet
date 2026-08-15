@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -7,9 +8,35 @@ using System.Threading.Tasks;
 
 namespace OpenPuppet.vector
 {
+    struct SerializedVectorAST
+    {
+        public IVectorASTComponent AST;
+    }
+
     public interface IVectorASTComponent
     {
         public VectorMeshPrototype Flatten(uint density);
+
+        public static IVectorASTComponent LoadFromDisk(string vectorAssetPath) => JsonConvert.DeserializeObject<SerializedVectorAST>
+        (
+            File.ReadAllText(vectorAssetPath),
+            new JsonSerializerSettings()
+            {
+                TypeNameHandling = TypeNameHandling.Auto
+            }
+        )!.AST;
+
+        public static void SaveToDisk(IVectorASTComponent component, string vectorAssetPath)
+        {
+            var sast = new SerializedVectorAST() { AST = component };
+
+            var json = JsonConvert.SerializeObject(sast, Formatting.Indented, new JsonSerializerSettings()
+            {
+                TypeNameHandling = TypeNameHandling.Auto
+            });
+
+            File.WriteAllText(vectorAssetPath, json);
+        }
     }
 
     public interface IVectorASTCommand

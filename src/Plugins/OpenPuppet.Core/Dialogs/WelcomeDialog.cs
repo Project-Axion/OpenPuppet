@@ -51,17 +51,7 @@ namespace OpenPuppet.Core.Dialogs
                     NativeDialogs.OpenFileResult result = NativeDialogs.OpenFileDialog("opp", null);
                     if (NativeDialogs.OpenFileDialogResultHasPath(result))
                     {
-                        var json = JsonConvert.DeserializeObject<ProjectMetadata>(
-                            File.ReadAllText(result.Path!),
-                            new JsonSerializerSettings()
-                            {
-                                TypeNameHandling = TypeNameHandling.Auto
-                            }
-                        )!;
-
-                        json.Directory = Directory.GetParent(result.Path!)!.FullName;
-
-                        Projects.OpenProject(json);
+                        Projects.OpenProject(result.Path!);
 
                         IUIDialog.Close();
                     }
@@ -79,17 +69,7 @@ namespace OpenPuppet.Core.Dialogs
                             continue;
                         }
 
-                        var json = JsonConvert.DeserializeObject<ProjectMetadata>(
-                            File.ReadAllText(item),
-                            new JsonSerializerSettings()
-                            {
-                                TypeNameHandling = TypeNameHandling.Auto
-                            }
-                        )!;
-
-                        json.Directory = Directory.GetParent(item)!.FullName;
-
-                        Projects.OpenProject(json);
+                        Projects.OpenProject(item);
 
                         IUIDialog.Close();
                     }
