@@ -10,6 +10,7 @@ using OpenPuppet.SDK.Easings;
 using OpenPuppet.SDK.Events;
 using OpenPuppet.SDK.Projects;
 using System.Numerics;
+using System.Reflection;
 using System.Xml.Linq;
 
 namespace OpenPuppet.Core
@@ -26,6 +27,8 @@ namespace OpenPuppet.Core
         {
             Global.MainPlugin = this;
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Hello Core");
+
+            SDK.SDK.JsonTypeBinder.AllowedAssemblies.Add(Assembly.GetExecutingAssembly());
 
             IMutator<Vector3>.RegisterMutator(typeof(Vec3Mutator));
             IMutator<Vector2>.RegisterMutator(typeof(Vec2Mutator));

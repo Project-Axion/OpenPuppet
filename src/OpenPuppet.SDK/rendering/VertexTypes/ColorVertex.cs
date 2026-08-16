@@ -27,5 +27,14 @@ namespace OpenPuppet.rendering.VertexTypes
 
             return vtx;
         }
+
+        public static List<ColorVertex> FromGeneralData(List<GeneralVertexData> vecs)
+        {
+            List<ColorVertex> vtx = new();
+
+            foreach (var item in vecs) vtx.Add(new(item.Position, item.Color));
+
+            return vtx;
+        }
     }
 }

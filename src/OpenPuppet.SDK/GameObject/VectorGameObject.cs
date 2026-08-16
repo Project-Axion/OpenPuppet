@@ -25,7 +25,7 @@ namespace OpenPuppet.SDK.GameObject
         public bool Visible { get; set; } = true;
 
         public string VectorAssetPath { get; set; } = string.Empty;
-        [JsonIgnore] public IVectorASTComponent VectorASTCache { get; set; }
+        [JsonIgnore] public UnifiedVector VectorASTCache { get; set; }
         [JsonIgnore] VertexMesh<vtx> MeshCache { get; set; }
         [JsonIgnore] Model<vtx> Model { get; set; } = null!;
 
@@ -38,7 +38,7 @@ namespace OpenPuppet.SDK.GameObject
 
             VectorASTCache = IVectorASTComponent.LoadFromDisk(vectorAssetPath);
 
-            MeshCache = VectorMesher.GenerateMesh<vtx>(VectorASTCache);
+            MeshCache = VectorMesher.GenerateUnifiedMesh<vtx>(VectorASTCache);
         }
 
         public unsafe void Draw(GL gl)

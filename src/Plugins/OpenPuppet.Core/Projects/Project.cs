@@ -6,6 +6,7 @@ using OpenPuppet.SDK.Events;
 using OpenPuppet.SDK.GameObject;
 using OpenPuppet.SDK.Projects;
 using OpenPuppet.SDK.TimelineTracks;
+using OpenPuppet.SDK.vector.ColorSamplers;
 using OpenPuppet.vector;
 using Silk.NET.OpenGL;
 using System;
@@ -54,7 +55,8 @@ namespace OpenPuppet.Core
                 Path.Combine(dir, meta.Name + ".opp"),
                 JsonConvert.SerializeObject(meta, new JsonSerializerSettings()
                 {
-                    TypeNameHandling = TypeNameHandling.Auto
+                    TypeNameHandling = TypeNameHandling.Auto,
+                    SerializationBinder = SDK.SDK.JsonTypeBinder
                 })
             );
         }
@@ -68,7 +70,8 @@ namespace OpenPuppet.Core
                 File.ReadAllText(path),
                 new JsonSerializerSettings()
                 {
-                    TypeNameHandling = TypeNameHandling.Auto
+                    TypeNameHandling = TypeNameHandling.Auto,
+                    SerializationBinder = SDK.SDK.JsonTypeBinder
                 }
             )!;
             json.Directory = Path.GetDirectoryName(path)!;
@@ -95,7 +98,7 @@ namespace OpenPuppet.Core
             };
 
             float NormX(float x) => x / 102f;
-            float NormY(float y) => 1 - y / 102f;
+            float NormY(float y) => y / 102f;
 
             // I'm sorry but i'm not going to manually recreate a vector path....
             // this is done by ai and is only test code... everything else tho,
@@ -155,7 +158,19 @@ namespace OpenPuppet.Core
                         end: new Vector2(NormX(45), NormY(0))
                     )
             ]);
-            IVectorASTComponent.SaveToDisk(vecpath,Path.Combine(dir, "Vectors", "vecpath.ovec"));
+
+            UnifiedVector vector = new([
+                new(
+                    new EllipseComponent(Vector2.One / 2f,Vector2.One / 2f),
+                    new VectorLinearGradientColorSampler(new(1,0,0,1),0,Vector4.One,1,0)
+                ),
+                new(
+                    vecpath,
+                    new VectorLinearGradientColorSampler(new(1,0,1,1),0,Vector4.One,1,0)
+                ),
+            ]);
+
+            IVectorASTComponent.SaveToDisk(vector, Path.Combine(dir, "Vectors", "vecpath.ovec"));
 
             proj.Scenes.Add(new());
 
@@ -191,7 +206,8 @@ namespace OpenPuppet.Core
                 JsonConvert.SerializeObject(ProjectManager.ActiveProject, new JsonSerializerSettings()
                 {
                     TypeNameHandling = TypeNameHandling.Auto,
-                    Formatting = Formatting.Indented
+                    Formatting = Formatting.Indented,
+                    SerializationBinder = SDK.SDK.JsonTypeBinder
                 })
             );
         }

@@ -1,4 +1,5 @@
 ﻿using OpenPuppet.rendering;
+using OpenPuppet.SDK.vector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,25 @@ namespace OpenPuppet.vector
 {
     public static class VectorMesher
     {
-        public static VertexMesh<T> GenerateMesh<T>(IVectorASTComponent ASTComponent) where T : IVertex<T>
+        public static VertexMesh<T> GenerateUnifiedMesh<T>(
+            UnifiedVector vector, uint density = 200
+        ) where T : IVertex<T>
         {
-            var prototype = ASTComponent.Flatten(200);
+            List<VertexMesh<T>> meshes = new();
+
+            for (int i = 0; i < vector.Components.Count; i++)
+                meshes.Add(GenerateMesh<T>(vector.Components[i].AST, vector.Components[i].ColorSampler, density));
+
+            return VertexMesh<T>.Unify(meshes);
+        }
+
+        public static VertexMesh<T> GenerateMesh<T>(
+            IVectorASTComponent ASTComponent, 
+            IVectorColorSampler colorSampler,
+            uint density = 200
+        ) where T : IVertex<T>
+        {
+            var prototype = ASTComponent.Flatten(density);
 
             List<int> idx = new();
 
@@ -96,7 +113,26 @@ namespace OpenPuppet.vector
                 last = item;
             }
 
-            return new(T.FromVec3(prototype.Positions), idx);
+            for (int i = 0; i < prototype.Positions.Count; i++)
+            {
+                var p = prototype.Positions[i];
+                prototype.Positions[i] = new Vector3(
+                    Math.Clamp(p.X, 0f, 1f),
+                    Math.Clamp(p.Y, 0f, 1f),
+                    p.Z
+                );
+            }
+
+            return new(
+                T.FromGeneralData(
+                    prototype.Positions.Select(
+                        x => new GeneralVertexData(
+                            x, Vector3.Zero, Vector2.Zero, 
+                            colorSampler.SampleColor(x)
+                        )
+                    ).ToList()
+                ), idx
+            );
         }
     }
 }

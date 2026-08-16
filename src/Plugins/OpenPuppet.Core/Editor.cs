@@ -86,7 +86,7 @@ namespace OpenPuppet.Core
 
                 var units = Camera.CAMERA_UNITS_BASIS / theoreticalSize.Y;
 
-                worldPan = pan * new Vector3(units, -units, 1);
+                worldPan = pan * new Vector3(units, units, 1);
             }
 
             var contentRegion = ImGui.GetContentRegionAvail();
@@ -103,7 +103,7 @@ namespace OpenPuppet.Core
 
             surface.Active = !ImGui.IsWindowCollapsed();
 
-            ImGui.Image(surface.GetImage(), camera.Resolution, new(0, 1), new(1, 0));
+            ImGui.Image(surface.GetImage(), camera.Resolution);
 
             var drawlist = ImGui.GetWindowDrawList();
 

@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using OpenPuppet.SDK;
+using OpenPuppet.SDK.vector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,31 +10,39 @@ using System.Threading.Tasks;
 
 namespace OpenPuppet.vector
 {
-    struct SerializedVectorAST
+    public struct UnifiedVector(List<ColoredVectorComponent> components)
     {
-        public IVectorASTComponent AST;
+        public uint FormatVersion { get; set; } = 1;
+
+        public List<ColoredVectorComponent> Components { get; set; } = components;
+    }
+
+    public struct ColoredVectorComponent(IVectorASTComponent ast, IVectorColorSampler colorSampler)
+    {
+        public IVectorASTComponent AST { get; set; } = ast;
+        public IVectorColorSampler ColorSampler { get; set; } = colorSampler;
     }
 
     public interface IVectorASTComponent
     {
         public VectorMeshPrototype Flatten(uint density);
 
-        public static IVectorASTComponent LoadFromDisk(string vectorAssetPath) => JsonConvert.DeserializeObject<SerializedVectorAST>
+        public static UnifiedVector LoadFromDisk(string vectorAssetPath) => JsonConvert.DeserializeObject<UnifiedVector>
         (
             File.ReadAllText(vectorAssetPath),
             new JsonSerializerSettings()
             {
-                TypeNameHandling = TypeNameHandling.Auto
+                TypeNameHandling = TypeNameHandling.Auto,
+                SerializationBinder = SDK.SDK.JsonTypeBinder
             }
-        )!.AST;
+        )!;
 
-        public static void SaveToDisk(IVectorASTComponent component, string vectorAssetPath)
+        public static void SaveToDisk(UnifiedVector component, string vectorAssetPath)
         {
-            var sast = new SerializedVectorAST() { AST = component };
-
-            var json = JsonConvert.SerializeObject(sast, Formatting.Indented, new JsonSerializerSettings()
+            var json = JsonConvert.SerializeObject(component, Formatting.Indented, new JsonSerializerSettings()
             {
-                TypeNameHandling = TypeNameHandling.Auto
+                TypeNameHandling = TypeNameHandling.Auto,
+                SerializationBinder = SDK.SDK.JsonTypeBinder
             });
 
             File.WriteAllText(vectorAssetPath, json);
@@ -101,6 +111,64 @@ namespace OpenPuppet.vector
                 AddScanline(currSample);
                 prevY = y;
                 prevSample = currSample;
+            }
+
+            return new(positions, flatMap);
+        }
+    }
+
+    public class EllipseComponent(Vector2 center, Vector2 radii) : IVectorASTComponent
+    {
+        public Vector2 Center { get; set; } = center;
+        public Vector2 Radii { get; set; } = radii;
+
+        public VectorMeshPrototype Flatten(uint density)
+        {
+            double step = 1d / density;
+            List<Vector3> positions = new();
+            List<List<int>> flatMap = new();
+
+            double deltaradiusY = 1 / (Radii.Y * Radii.Y);
+
+            for (uint i = 0; i <= density; i++)
+            {
+                double y = i == density ? 1d : i * step;
+
+                if (Math.Abs(y - Center.Y) > Radii.Y) continue;
+
+                double x = Math.Sqrt(Math.Max(0, 1 - (y - Center.Y) * (y - Center.Y) * deltaradiusY)) * Radii.X;
+
+                positions.Add(new((float)(Center.X - x), (float)y, 0f));
+                positions.Add(new((float)(Center.X + x), (float)y, 0f));
+
+                flatMap.Add([positions.Count - 2, positions.Count - 1]);
+            }
+
+            return new(positions, flatMap);
+        }
+    }
+
+    public class RectangleComponent(Vector2 position, Vector2 size) : IVectorASTComponent
+    {
+        public Vector2 Position { get; set; } = position;
+        public Vector2 Size { get; set; } = size;
+
+        public VectorMeshPrototype Flatten(uint density)
+        {
+            double step = 1d / density;
+            List<Vector3> positions = new();
+            List<List<int>> flatMap = new();
+
+            for (uint i = 0; i <= density; i++)
+            {
+                double y = i == density ? 1d : i * step;
+
+                if (y < Position.Y || y > Position.Y + Size.Y) continue;
+
+                positions.Add(new(Position.X, (float)y, 0f));
+                positions.Add(new(Position.X + Size.X, (float)y, 0f));
+
+                flatMap.Add([positions.Count - 2, positions.Count - 1]);
             }
 
             return new(positions, flatMap);

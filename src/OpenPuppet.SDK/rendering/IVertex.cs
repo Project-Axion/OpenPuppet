@@ -13,5 +13,21 @@ namespace OpenPuppet.rendering
         public static abstract VertexPropLayer[] PropLayers { get; set; }
 
         public static abstract List<TSelf> FromVec3(List<Vector3> vecs);
+        public static abstract List<TSelf> FromGeneralData(List<GeneralVertexData> vecs);
+    }
+
+    public struct GeneralVertexData
+    {
+        public Vector3 Position;
+        public Vector3 Normal;
+        public Vector2 UV;
+        public Vector4 Color;
+        public GeneralVertexData(Vector3 position, Vector3 normal, Vector2 uv, Vector4 color)
+        {
+            Position = position;
+            Normal = normal;
+            UV = uv;
+            Color = color;
+        }
     }
 }

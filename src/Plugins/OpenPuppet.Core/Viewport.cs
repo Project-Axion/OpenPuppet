@@ -88,7 +88,7 @@ namespace OpenPuppet.Core
 
             ImGui.SetCursorPos(contentRegion / 2 - size / 2);
 
-            ImGui.Image(surface.GetImage(), size, new(0, 1), new(1, 0));
+            ImGui.Image(surface.GetImage(), size);
         }
 
         public void OnPostRender(double deltaTime)

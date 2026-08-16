@@ -14,5 +14,7 @@ namespace OpenPuppet.SDK
 
         public static string LocalDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenPuppet");
         public static string DataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenPuppet");
+
+        public static SafeTypeBinder JsonTypeBinder { get; } = new();
     }
 }
