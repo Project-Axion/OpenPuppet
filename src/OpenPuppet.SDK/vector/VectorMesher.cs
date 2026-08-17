@@ -46,48 +46,80 @@ namespace OpenPuppet.vector
                 // Upbridge
                 if (item.Count > last.Count && last.Count > 0 && item.Count % 2 == 0 && last.Count % 2 == 0)
                 {
-                    var ypos = prototype.Positions[item[0]].Y;
-
-                    for (int i = 0; i < last.Count; i += 2)
+                    if (last.Count == 2)
                     {
-                        idx.Add(last[i]);
-                        idx.Add(prototype.Positions.Count);
-                        idx.Add(last[i + 1]);
-
-                        idx.Add(prototype.Positions.Count);
-                        idx.Add(prototype.Positions.Count + 1);
-                        idx.Add(last[i + 1]);
-
-                        prototype.Positions.AddRange([
-                            new(prototype.Positions[last[i]].X, ypos,0),
-                            new(prototype.Positions[last[i+1]].X, ypos,0),
-                        ]);
+                        int a = last[0];
+                        int b = last[1];
+                        for (int i = 0; i < item.Count - 1; i++)
+                        {
+                            idx.Add(a);
+                            idx.Add(item[i]);
+                            idx.Add(item[i + 1]);
+                        }
+                        if (a != b)
+                        {
+                            idx.Add(a);
+                            idx.Add(item[^1]);
+                            idx.Add(b);
+                        }
                     }
-
+                    else
+                    {
+                        var ypos = prototype.Positions[item[0]].Y;
+                        for (int i = 0; i < last.Count; i += 2)
+                        {
+                            idx.Add(last[i]);
+                            idx.Add(prototype.Positions.Count);
+                            idx.Add(last[i + 1]);
+                            idx.Add(prototype.Positions.Count);
+                            idx.Add(prototype.Positions.Count + 1);
+                            idx.Add(last[i + 1]);
+                            prototype.Positions.AddRange([
+                                new(prototype.Positions[last[i]].X, ypos,0),
+                                new(prototype.Positions[last[i+1]].X, ypos,0),
+                            ]);
+                        }
+                    }
                     last.Clear();
                 }
 
                 // Downbridge
                 if (item.Count < last.Count && item.Count > 0 && item.Count % 2 == 0 && last.Count % 2 == 0)
                 {
-                    var ypos = prototype.Positions[last[0]].Y;
-
-                    for (int i = 0; i < item.Count; i += 2)
+                    if (item.Count == 2)
                     {
-                        idx.Add(prototype.Positions.Count);
-                        idx.Add(prototype.Positions.Count + 1);
-                        idx.Add(item[i]);
-
-                        idx.Add(prototype.Positions.Count + 1);
-                        idx.Add(item[i + 1]);
-                        idx.Add(item[i]);
-
-                        prototype.Positions.AddRange([
-                            new(prototype.Positions[item[i]].X, ypos,0),
-                            new(prototype.Positions[item[i+1]].X, ypos,0),
-                        ]);
+                        int a = item[0];
+                        int b = item[1];
+                        for (int i = 0; i < last.Count - 1; i++)
+                        {
+                            idx.Add(a);
+                            idx.Add(last[i + 1]);
+                            idx.Add(last[i]);
+                        }
+                        if (a != b)
+                        {
+                            idx.Add(a);
+                            idx.Add(b);
+                            idx.Add(last[^1]);
+                        }
                     }
-
+                    else
+                    {
+                        var ypos = prototype.Positions[last[0]].Y;
+                        for (int i = 0; i < item.Count; i += 2)
+                        {
+                            idx.Add(prototype.Positions.Count);
+                            idx.Add(prototype.Positions.Count + 1);
+                            idx.Add(item[i]);
+                            idx.Add(prototype.Positions.Count + 1);
+                            idx.Add(item[i + 1]);
+                            idx.Add(item[i]);
+                            prototype.Positions.AddRange([
+                                new(prototype.Positions[item[i]].X, ypos,0),
+                                new(prototype.Positions[item[i+1]].X, ypos,0),
+                            ]);
+                        }
+                    }
                     last.Clear();
                 }
 

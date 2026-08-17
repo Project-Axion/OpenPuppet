@@ -27,6 +27,8 @@ namespace OpenPuppet.vector
     {
         public VectorMeshPrototype Flatten(uint density);
 
+        public List<(Vector3 point, Vector3 normal)> GetIntersectedPN(double y);
+
         public static UnifiedVector LoadFromDisk(string vectorAssetPath) => JsonConvert.DeserializeObject<UnifiedVector>
         (
             File.ReadAllText(vectorAssetPath),
@@ -52,11 +54,21 @@ namespace OpenPuppet.vector
     public interface IVectorASTCommand
     {
         public List<Vector3> Flatten(double Y);
+
+        public List<(Vector3 point, Vector3 normal)> FlattenN(double y);
     }
 
     public class VectorPathComponent(List<IVectorASTCommand> commands) : IVectorASTComponent
     {
         public List<IVectorASTCommand> Commands { get; } = commands;
+
+        public List<(Vector3 point, Vector3 normal)> GetIntersectedPN(double y)
+        {
+            var pts = new List<(Vector3 point, Vector3 normal)>();
+            foreach (var cmd in Commands)
+                pts.AddRange(cmd.FlattenN(y));
+            return pts.OrderBy(p => p.point.X).ToList();
+        }
 
         List<Vector3> SampleCommandsAt(double y)
         {
@@ -117,10 +129,128 @@ namespace OpenPuppet.vector
         }
     }
 
+    public class SolidifyComponent(IVectorASTComponent flat, float thicknessR) : IVectorASTComponent
+    {
+        public IVectorASTComponent FlatVector { get; set; } = flat;
+        public float LineThickness { get; set; } = thicknessR;
+
+        public List<(Vector3 point, Vector3 normal)> GetIntersectedPN(double y)
+        {
+            return null!;
+        }
+
+        List<(Vector3 point, Vector3 normal)> SampleAt(double y) => FlatVector.GetIntersectedPN(y);
+
+        double BisectTopologyChange(double y0, double y1, int countAt0, int iterations = 32)
+        {
+            for (int i = 0; i < iterations; i++)
+            {
+                double mid = (y0 + y1) * 0.5;
+                int c = SampleAt(mid).Count;
+                if (c == countAt0) y0 = mid;
+                else y1 = mid;
+            }
+            return (y0 + y1) * 0.5;
+        }
+
+        public VectorMeshPrototype Flatten(uint density)
+        {
+            double step = 1d / density;
+            List<Vector3> positions = new();
+            List<List<int>> flatMap = new();
+
+            void AddScanline(List<(Vector3 point, Vector3 normal)> points)
+            {
+                List<int> map = new();
+
+                foreach (var (point, normal) in points)
+                {
+                    int currentIndex = positions.Count;
+
+                    positions.Add(point + normal * LineThickness);
+                    positions.Add(point - normal * LineThickness);
+
+                    map.Add(currentIndex);
+                    map.Add(currentIndex + 1);
+                }
+
+                flatMap.Add(map);
+            }
+
+            double prevY = 0d;
+            var prevSample = SampleAt(prevY);
+            AddScanline(prevSample);
+
+            for (uint i = 1; i <= density; i++)
+            {
+                double y = i == density ? 1d : i * step;
+                var currSample = SampleAt(y);
+
+                if (currSample.Count != prevSample.Count)
+                {
+                    double tY = BisectTopologyChange(prevY, y, prevSample.Count);
+
+                    bool enteringFromEmpty = prevSample.Count == 0;
+                    bool leavingToEmpty = currSample.Count == 0;
+
+                    if (enteringFromEmpty || leavingToEmpty)
+                    {
+                        double dir = enteringFromEmpty ? 1e-9 : -1e-9;
+                        var boundarySample = SampleAt(tY);
+                        if (boundarySample.Count == 0)
+                            boundarySample = SampleAt(tY + dir);
+
+                        AddScanline(boundarySample);
+                    }
+                    else
+                    {
+                        AddScanline(SampleAt(tY - 1e-9));
+                        AddScanline(SampleAt(tY + 1e-9));
+                    }
+                }
+
+                AddScanline(currSample);
+                prevY = y;
+                prevSample = currSample;
+            }
+
+            return new(positions, flatMap);
+        }
+    }
+
+
     public class EllipseComponent(Vector2 center, Vector2 radii) : IVectorASTComponent
     {
         public Vector2 Center { get; set; } = center;
         public Vector2 Radii { get; set; } = radii;
+
+        public List<(Vector3 point, Vector3 normal)> GetIntersectedPN(double y)
+        {
+            if (Math.Abs(y - Center.Y) > Radii.Y) return [];
+
+            double deltaradiusY = 1 / (Radii.Y * Radii.Y);
+            double x = Math.Sqrt(Math.Max(0, 1 - (y - Center.Y) * (y - Center.Y) * deltaradiusY)) * Radii.X;
+
+            var left = new Vector3((float)(Center.X - x), (float)y, 0f);
+            var right = new Vector3((float)(Center.X + x), (float)y, 0f);
+
+            float rxSq = (float)(Radii.X * Radii.X);
+            float rySq = (float)(Radii.Y * Radii.Y);
+
+            Vector3 normalLeft = Vector3.Normalize(new Vector3(
+                (left.X - (float)Center.X) / rxSq,
+                (left.Y - (float)Center.Y) / rySq,
+                0f
+            ));
+
+            Vector3 normalRight = Vector3.Normalize(new Vector3(
+                (right.X - (float)Center.X) / rxSq,
+                (right.Y - (float)Center.Y) / rySq,
+                0f
+            ));
+
+            return [(left, normalLeft), (right, normalRight)];
+        }
 
         public VectorMeshPrototype Flatten(uint density)
         {
@@ -153,6 +283,16 @@ namespace OpenPuppet.vector
         public Vector2 Position { get; set; } = position;
         public Vector2 Size { get; set; } = size;
 
+        public List<(Vector3 point, Vector3 normal)> GetIntersectedPN(double y)
+        {
+            if (y < Position.Y || y > Position.Y + Size.Y) return [];
+            var left = new Vector3(Position.X, (float)y, 0f);
+            var right = new Vector3(Position.X + Size.X, (float)y, 0f);
+            var normalLeft = new Vector3(-1, 0, 0);
+            var normalRight = new Vector3(1, 0, 0);
+            return [(left, normalLeft), (right, normalRight)];
+        }
+
         public VectorMeshPrototype Flatten(uint density)
         {
             double step = 1d / density;
@@ -180,16 +320,23 @@ namespace OpenPuppet.vector
         public Vector2 Start { get; } = start;
         public Vector2 End { get; } = end;
 
-        public List<Vector3> Flatten(double Y)
+        public List<Vector3> Flatten(double Y) =>
+            FlattenN(Y).Select(x => x.point).ToList();
+
+        public List<(Vector3 point, Vector3 normal)> FlattenN(double Y)
         {
+            Vector2 dir = End - Start;
+            float len = dir.Length();
+            var n = new Vector3(-dir.Y / len, dir.X / len, 0f);
+
             if (Start.Y == End.Y)
             {
                 if (Math.Abs(Start.Y - Y) > double.Epsilon)
                     return [];
 
                 return [
-                    new(Start.X, (float)Y, 0f),
-                    new(End.X, (float)Y, 0f),
+                    (new(Start.X, (float)Y, 0f),n),
+                    (new(End.X, (float)Y, 0f),n),
                 ];
             }
 
@@ -199,7 +346,7 @@ namespace OpenPuppet.vector
                 return [];
 
             float x = (float)(Start.X + (End.X - Start.X) * t);
-            return [new(x, (float)Y, 0f)];
+            return [(new(x, (float)Y, 0f), n)];
         }
     }
 
@@ -294,9 +441,31 @@ namespace OpenPuppet.vector
             );
         }
 
-        public List<Vector3> Flatten(double Y)
+        private Vector3 EllipseNormal(double t)
         {
-            var results = new List<Vector3>();
+            double nxLocal = Math.Cos(t) / RadiusX;
+            double nyLocal = Math.Sin(t) / RadiusY;
+
+            double nx = _cosTeta * nxLocal - _sinTeta * nyLocal;
+            double ny = _sinTeta * nxLocal + _cosTeta * nyLocal;
+
+            if (SweepFlag)
+            {
+                nx = -nx;
+                ny = -ny;
+            }
+
+            double len = Math.Sqrt(nx * nx + ny * ny);
+            return new Vector3((float)(nx / len), (float)(ny / len), 0f);
+        }
+
+
+        public List<Vector3> Flatten(double Y) =>
+            FlattenN(Y).Select(x => x.point).ToList();
+
+        public List<(Vector3 point, Vector3 normal)> FlattenN(double Y)
+        {
+            var results = new List<(Vector3 point, Vector3 normal)>();
 
             double A = _sinTeta * RadiusX;
             double B = _cosTeta * RadiusY;
@@ -317,7 +486,7 @@ namespace OpenPuppet.vector
             {
                 if (!IsInArc(t)) continue;
                 var (px, _) = EllipsePoint(t);
-                results.Add(new Vector3((float)px, (float)Y, 0f));
+                results.Add((new Vector3((float)px, (float)Y, 0f), EllipseNormal(t)));
             }
 
             return results;
@@ -352,7 +521,10 @@ namespace OpenPuppet.vector
             Destination = destination;
         }
 
-        public List<Vector3> Flatten(double Y)
+        public List<Vector3> Flatten(double Y) =>
+            FlattenN(Y).Select(x => x.point).ToList();
+
+        public List<(Vector3 point, Vector3 normal)> FlattenN(double Y)
         {
             double p0 = Origin.Y, p1 = Control1.Y, p2 = Control2.Y, p3 = Destination.Y;
 
@@ -362,7 +534,7 @@ namespace OpenPuppet.vector
             double d = p0 - Y;
 
             var roots = SolveCubic(a, b, c, d);
-            var results = new List<Vector3>();
+            var results = new List<(Vector3 point, Vector3 normal)>();
 
             foreach (var t in roots)
             {
@@ -371,10 +543,39 @@ namespace OpenPuppet.vector
                          + 3 * Math.Pow(1 - t, 2) * t * Control1.X
                          + 3 * (1 - t) * t * t * Control2.X
                          + t * t * t * Destination.X;
-                results.Add(new Vector3((float)x, (float)Y, 0f));
+                results.Add((new Vector3((float)x, (float)Y, 0f), BezierNormal(t)));
             }
 
             return results;
+        }
+
+        private Vector2 BezierTangent(double t)
+        {
+            double ax = 3 * Math.Pow(1 - t, 2) * (Control1.X - Origin.X)
+                      + 6 * (1 - t) * t * (Control2.X - Control1.X)
+                      + 3 * t * t * (Destination.X - Control2.X);
+
+            double ay = 3 * Math.Pow(1 - t, 2) * (Control1.Y - Origin.Y)
+                      + 6 * (1 - t) * t * (Control2.Y - Control1.Y)
+                      + 3 * t * t * (Destination.Y - Control2.Y);
+
+            return new Vector2((float)ax, (float)ay);
+        }
+
+        private Vector3 BezierNormal(double t)
+        {
+            Vector2 tangent = BezierTangent(t);
+
+            if (tangent.LengthSquared() < 1e-12)
+            {
+                tangent = Destination - Origin;
+                if (tangent.LengthSquared() < 1e-12) tangent = new Vector2(1, 0);
+            }
+
+            Vector2 normal = new Vector2(-tangent.Y, tangent.X);
+            normal = Vector2.Normalize(normal);
+
+            return new Vector3(normal, 0f);
         }
 
         private static List<double> SolveCubic(double a, double b, double c, double d)
@@ -448,7 +649,10 @@ namespace OpenPuppet.vector
             Destination = destination;
         }
 
-        public List<Vector3> Flatten(double Y)
+        public List<Vector3> Flatten(double Y) =>
+            FlattenN(Y).Select(x => x.point).ToList();
+
+        public List<(Vector3 point, Vector3 normal)> FlattenN(double Y)
         {
             double p0 = Origin.Y, p1 = Control.Y, p2 = Destination.Y;
 
@@ -457,7 +661,7 @@ namespace OpenPuppet.vector
             double c = p0 - Y;
 
             var roots = SolveQuadratic(a, b, c);
-            var results = new List<Vector3>();
+            var results = new List<(Vector3 point, Vector3 normal)>();
 
             foreach (var t in roots)
             {
@@ -465,10 +669,37 @@ namespace OpenPuppet.vector
                 double x = Math.Pow(1 - t, 2) * Origin.X
                          + 2 * (1 - t) * t * Control.X
                          + t * t * Destination.X;
-                results.Add(new Vector3((float)x, (float)Y, 0f));
+                results.Add((new Vector3((float)x, (float)Y, 0f), QuadraticNormal(t)));
             }
 
             return results;
+        }
+
+        private Vector2 QuadraticTangent(double t)
+        {
+            Vector2 a = Control - Origin;
+            Vector2 b = Destination - Control;
+
+            double tx = 2 * (1 - t) * a.X + 2 * t * b.X;
+            double ty = 2 * (1 - t) * a.Y + 2 * t * b.Y;
+
+            return new Vector2((float)tx, (float)ty);
+        }
+
+        private Vector3 QuadraticNormal(double t)
+        {
+            Vector2 tangent = QuadraticTangent(t);
+
+            if (tangent.LengthSquared() < 1e-12)
+            {
+                tangent = Destination - Origin;
+                if (tangent.LengthSquared() < 1e-12) tangent = new Vector2(1, 0);
+            }
+
+            Vector2 normal = new Vector2(-tangent.Y, tangent.X);
+            normal = Vector2.Normalize(normal);
+
+            return new(normal, 0);
         }
 
         private static List<double> SolveQuadratic(double a, double b, double c)
