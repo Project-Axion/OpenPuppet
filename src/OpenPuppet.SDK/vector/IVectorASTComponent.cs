@@ -129,10 +129,11 @@ namespace OpenPuppet.vector
         }
     }
 
-    public class SolidifyComponent(IVectorASTComponent flat, float thicknessR) : IVectorASTComponent
+    public class SolidifyComponent(IVectorASTComponent flat, float thicknessIN, float thicknessOUT) : IVectorASTComponent
     {
         public IVectorASTComponent FlatVector { get; set; } = flat;
-        public float LineThickness { get; set; } = thicknessR;
+        public float LineThicknessIN { get; set; } = thicknessIN;
+        public float LineThicknessOUT { get; set; } = thicknessOUT;
 
         public List<(Vector3 point, Vector3 normal)> GetIntersectedPN(double y)
         {
@@ -167,8 +168,8 @@ namespace OpenPuppet.vector
                 {
                     int currentIndex = positions.Count;
 
-                    positions.Add(point + normal * LineThickness);
-                    positions.Add(point - normal * LineThickness);
+                    positions.Add(point + normal * LineThicknessOUT);
+                    positions.Add(point - normal * LineThicknessIN);
 
                     map.Add(currentIndex);
                     map.Add(currentIndex + 1);

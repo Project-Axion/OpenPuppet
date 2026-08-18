@@ -161,11 +161,11 @@ namespace OpenPuppet.Core
 
             UnifiedVector vector = new([
                 new(
-                    new SolidifyComponent(new EllipseComponent(Vector2.One / 2f,Vector2.One / 2f), 0.1f),
+                    new SolidifyComponent(new EllipseComponent(Vector2.One / 2f,Vector2.One / 2f), 0.05f, 0f),
                     new VectorLinearGradientColorSampler(new(1,0,0,1),0,Vector4.One,1,0)
                 ),
                 new(
-                    new SolidifyComponent(vecpath, 0.01f),
+                    new SolidifyComponent(vecpath, 0f, 0.01f),
                     new VectorLinearGradientColorSampler(new(1,0,1,1),0,Vector4.One,1,0)
                 ),
             ]);

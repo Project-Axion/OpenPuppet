@@ -1,5 +1,9 @@
 ﻿using ImGuiNET;
+using OpenPuppet.rendering.VertexTypes;
 using OpenPuppet.SDK;
+using OpenPuppet.SDK.GameObject;
+using OpenPuppet.SDK.Projects;
+using OpenPuppet.vector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +53,17 @@ namespace OpenPuppet.SVG
             if (openDisabled) ImGui.BeginDisabled();
             if (ImGui.Button("Open") && !openDisabled)
             {
+                var vector = SVGImporter.ImportSVG(path);
 
+                var scene = ProjectManager.ActiveProject!.Scenes[ProjectManager.ActiveProject.ActiveScene];
+
+                var vecpath = Path.Combine(
+                    ProjectManager.ActiveProject.Directory,
+                    "Vectors", $"{Path.GetFileNameWithoutExtension(path)}.ovec"
+                );
+
+                IVectorASTComponent.SaveToDisk(vector, vecpath);
+                scene.SceneObjects.Add(new VectorGameObject<ColorVertex>(vecpath));
             }
             if (openDisabled) ImGui.EndDisabled();
         }
