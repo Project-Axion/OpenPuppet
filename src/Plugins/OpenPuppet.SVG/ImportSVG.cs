@@ -57,7 +57,7 @@ namespace OpenPuppet.SVG
 
                 var scene = ProjectManager.ActiveProject!.Scenes[ProjectManager.ActiveProject.ActiveScene];
 
-                var vecpath = Path.Combine(
+                var vecpath = Path.Join(
                     ProjectManager.ActiveProject.Directory,
                     "Vectors", $"{Path.GetFileNameWithoutExtension(path)}.ovec"
                 );

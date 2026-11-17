@@ -9,7 +9,7 @@ namespace OpenPuppet.SDK
         {
             get
             {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenPuppet");
+                return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenPuppet");
             }
         }
 
@@ -17,7 +17,7 @@ namespace OpenPuppet.SDK
         {
             get
             {
-                return LocalPath != null ? Path.Combine(LocalPath, "Logs") : null;
+                return LocalPath != null ? Path.Join(LocalPath, "Logs") : null;
             }
         }
 
@@ -25,12 +25,12 @@ namespace OpenPuppet.SDK
         {
             public static string RequestPluginLogFile(string pluginName)
             {
-                if (!Directory.Exists(Path.Combine(LogPath!, IPlugin.SafePluginName(pluginName))))
+                if (!Directory.Exists(Path.Join(LogPath!, IPlugin.SafePluginName(pluginName))))
                 {
-                    Directory.CreateDirectory(Path.Combine(LogPath!, IPlugin.SafePluginName(pluginName)));
+                    Directory.CreateDirectory(Path.Join(LogPath!, IPlugin.SafePluginName(pluginName)));
                 }
 
-                string path = Path.Combine(
+                string path = Path.Join(
                     LogPath!,
                     IPlugin.SafePluginName(pluginName),
                     DateTime.Now.ToString("dd'-'MM'-'yyyy'.txt'")

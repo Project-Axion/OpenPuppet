@@ -12,8 +12,8 @@ namespace OpenPuppet.SDK
 
         public static void DestroyLogger() => logger?.Dispose();
 
-        public static string LocalDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenPuppet");
-        public static string DataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenPuppet");
+        public static string LocalDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenPuppet");
+        public static string DataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenPuppet");
 
         public static SafeTypeBinder JsonTypeBinder { get; } = new();
     }

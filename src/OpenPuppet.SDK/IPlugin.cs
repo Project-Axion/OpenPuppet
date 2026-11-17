@@ -53,14 +53,14 @@ namespace OpenPuppet.SDK
         {
             get
             {
-                return Path.Combine(InstallPath!, "Plugins");
+                return Path.Join(InstallPath!, "Plugins");
             }
         }
         static string PluginListPath
         {
             get
             {
-                return Path.Combine(PluginPath!, "plugins.json");
+                return Path.Join(PluginPath!, "plugins.json");
             }
         }
 
@@ -112,8 +112,8 @@ namespace OpenPuppet.SDK
 
         public static void LoadPlugin(string id, string path)
         {
-            string anycpu = Path.Combine(path, "anycpu.dll"),
-                    specific = Path.Combine(path, $"{RuntimeInformation.ProcessArchitecture}.dll");
+            string anycpu = Path.Join(path, "anycpu.dll"),
+                    specific = Path.Join(path, $"{RuntimeInformation.ProcessArchitecture}.dll");
 
             if (File.Exists(specific))
                 LoadAssembly(specific, id);
@@ -244,7 +244,7 @@ namespace OpenPuppet.SDK
             if (!Directory.Exists(path))
                 throw new ArgumentException($"\"{path}\" does not exist");
 
-            string meta = Path.Combine(path, "meta.inf");
+            string meta = Path.Join(path, "meta.inf");
             if (!File.Exists(meta))
                 throw new ArgumentException($"No metadata present in \"{path}\" (\"{meta}\" does not exist)");
 
@@ -313,7 +313,7 @@ namespace OpenPuppet.SDK
         static string GetPluginPath(string name)
         {
             if (PluginPath == null) return null!;
-            return Path.Combine(PluginPath, SafePluginName(name));
+            return Path.Join(PluginPath, SafePluginName(name));
         }
 
         static string GetPluginPath(PluginMetadata metadata)
@@ -329,7 +329,7 @@ namespace OpenPuppet.SDK
 
                 foreach (var item in Directory.GetDirectories(PluginPath))
                 {
-                    string meta = Path.Combine(item, "meta.inf");
+                    string meta = Path.Join(item, "meta.inf");
                     if (!File.Exists(meta))
                         throw new ArgumentException($"No metadata present in \"{item}\" (\"{meta}\" does not exist)");
 

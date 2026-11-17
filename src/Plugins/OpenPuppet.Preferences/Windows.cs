@@ -13,8 +13,8 @@ namespace OpenPuppet.Preferences
     public static class Windows
     {
         private static readonly List<string> OpenWindows = new();
-        private static readonly string WindowsFile = Path.Combine(SDK.SDK.DataPath, "Preferences", "last_windows.json");
-        private static readonly string LayoutDir = Path.Combine(SDK.SDK.DataPath, "Preferences", "layouts");
+        private static readonly string WindowsFile = Path.Join(SDK.SDK.DataPath, "Preferences", "last_windows.json");
+        private static readonly string LayoutDir = Path.Join(SDK.SDK.DataPath, "Preferences", "layouts");
         private static bool IsLoaded = false; // This fixes the event handling running twice
 
         public static void SubscribeToEvents()
@@ -103,11 +103,11 @@ namespace OpenPuppet.Preferences
 
         public static bool OpenLayout(string id)
         {
-            if (!File.Exists(Path.Combine(LayoutDir, $"{id}.ini"))) return false;
+            if (!File.Exists(Path.Join(LayoutDir, $"{id}.ini"))) return false;
 
             try
             {
-                string file = File.ReadAllText(Path.Combine(LayoutDir, $"{id}.ini"));
+                string file = File.ReadAllText(Path.Join(LayoutDir, $"{id}.ini"));
                 ImGui.LoadIniSettingsFromMemory(file);
 
                 return true;
@@ -124,7 +124,7 @@ namespace OpenPuppet.Preferences
             if (!Directory.Exists(LayoutDir))
                 Directory.CreateDirectory(LayoutDir);
 
-            File.WriteAllText(Path.Combine(LayoutDir, $"{id}.ini"), ImGui.SaveIniSettingsToMemory());
+            File.WriteAllText(Path.Join(LayoutDir, $"{id}.ini"), ImGui.SaveIniSettingsToMemory());
         }
     }
 }
