@@ -22,10 +22,9 @@ namespace OpenPuppet.SDK.Events
 
         public static void Subscribe(string registry, Action<object?, T> callback)
         {
-            if (RegisteredEvents.TryGetValue(registry, out var existing))
-                RegisteredEvents[registry] = existing + callback;
-            else
-                RegisteredEvents[registry] = callback;
+            RegisteredEvents[registry] = RegisteredEvents.TryGetValue(registry, out var existing)
+                ? existing + callback
+                : callback;
         }
 
         public static void Unsubscribe(string registry, Action<object?, T> callback)
