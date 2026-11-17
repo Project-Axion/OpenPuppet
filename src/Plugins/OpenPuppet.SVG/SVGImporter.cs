@@ -13,7 +13,7 @@ namespace OpenPuppet.SVG
 {
     public static class SVGImporter
     {
-        static Dictionary<string, Func<XElement, RectangleF, ColoredVectorComponent[]>> Importers = new()
+        static readonly Dictionary<string, Func<XElement, RectangleF, ColoredVectorComponent[]>> Importers = new()
         {
             {"rect",RectImporter},
             {"circle",CircleImporter},
