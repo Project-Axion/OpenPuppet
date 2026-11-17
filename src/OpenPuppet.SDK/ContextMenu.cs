@@ -103,8 +103,8 @@ namespace OpenPuppet.SDK
             }
             else
             {
-                foreach (var node in currentNode.Nodes.Where(p => p.Name == parts[0] && p is ContextMenuList))
-                    ProcessR(string.Join('.', parts.Skip(1)), node as ContextMenuList, name);
+                //foreach (var node in currentNode.Nodes.Where(p => p.Name == parts[0] && p is ContextMenuList))
+                //    ProcessR(string.Join('.', parts.Skip(1)), node as ContextMenuList, name);
 
                 foreach (var node in currentNode.Nodes)
                     if (node.Name == parts[0] && node is ContextMenuList li)
