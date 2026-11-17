@@ -57,9 +57,9 @@ namespace OpenPuppet.SVG
             {
                 var name = item.Name.LocalName.ToLowerInvariant();
 
-                if (Importers.ContainsKey(name))
+                if (Importers.TryGetValue(name, out Func<XElement, RectangleF, ColoredVectorComponent[]>? val))
                 {
-                    var imported = Importers[name](item, viewbox);
+                    var imported = val(item, viewbox);
                     Components.AddRange(imported);
                 }
             }
