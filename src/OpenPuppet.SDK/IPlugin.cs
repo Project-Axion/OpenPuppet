@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using OpenPuppet.SDK.Events;
 using OpenPuppet.SDK.Plugin;
 using OpenPuppet.SDK.Plugins;
@@ -432,7 +433,11 @@ namespace OpenPuppet.SDK
         /// - Registering dialogs<br />
         /// - Registering context menu items
         /// </summary>
-        abstract void OnInitialized();
+        /// <param name="services">
+        /// The IServiceCollection, all services provided by this plugin
+        /// must be registered through this.
+        /// </param>
+        abstract void OnInitialized(IServiceCollection services);
 
         /// <summary>
         /// OnShutdown is called when the plugin is unloaded.

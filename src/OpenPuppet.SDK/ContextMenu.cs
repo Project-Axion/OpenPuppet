@@ -9,7 +9,7 @@ namespace OpenPuppet.SDK
 {
     public static class ContextMenu
     {
-        public static ContextMenuList Root { get; } = new();
+        public static ContextMenuList Root { get; } = new() { Name = string.Empty, DisplayName = string.Empty };
 
         static void ProcessItem(string path, Action onClick, ContextMenuList currentNode, string? name, bool enabled)
         {
