@@ -1,7 +1,7 @@
 ﻿@echo off
 :: This script will be run after every build
 set "config=%1"
-set "base=..\..\bin\%config%\net9.0"
+set "base=..\..\bin\%config%\net10.0"
 set "plugins=%base%\Plugins"
 set "sources=..\Plugins"
 
@@ -28,11 +28,11 @@ FOR /D %%D IN ("%sources%\*") DO (
 	)
 
 	:: Copy all build output
-	xcopy "%%D\bin\%config%\net9.0" "%plugins%\%%~nxD" /E /I /Y >nul
+	xcopy "%%D\bin\%config%\net10.0" "%plugins%\%%~nxD" /E /I /Y >nul
 
 	:: Copy the plugin's main DLL renamed to anycpu.dll
-	if exist "%%D\bin\%config%\net9.0\%%~nxD.dll" (
-		copy /Y "%%D\bin\%config%\net9.0\%%~nxD.dll" "%plugins%\%%~nxD\anycpu.dll" >nul
+	if exist "%%D\bin\%config%\net10.0\%%~nxD.dll" (
+		copy /Y "%%D\bin\%config%\net10.0\%%~nxD.dll" "%plugins%\%%~nxD\anycpu.dll" >nul
 	) else (
 		echo WARNING: could not find %%~nxD.dll to copy as anycpu.dll
 	)
