@@ -3,7 +3,7 @@
   <PropertyGroup>
 	<OutputType Condition="'$(Configuration)' == 'Debug'">Exe</OutputType>
 	<OutputType Condition="'$(Configuration)' != 'Debug'">WinExe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
    <DefineConstants>GL</DefineConstants>
    <BaseOutputPath>..\..\bin</BaseOutputPath>
