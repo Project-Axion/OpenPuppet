@@ -437,7 +437,7 @@ namespace OpenPuppet.SDK
         /// The IServiceCollection, all services provided by this plugin
         /// must be registered through this.
         /// </param>
-        abstract void OnInitialized(IServiceCollection services);
+        abstract void OnInitialized(); // IServiceCollection services
 
         /// <summary>
         /// OnShutdown is called when the plugin is unloaded.
