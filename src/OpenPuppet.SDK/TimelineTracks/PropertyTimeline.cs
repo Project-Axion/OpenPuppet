@@ -76,7 +76,7 @@ namespace OpenPuppet.SDK.TimelineTracks
         {
             if (!Keyframes.TryGetValue(timestamp, out var keyframeValue)) return;
 
-            if(KeyframeEasings.TryGetValue(timestamp, out var val))
+            if (KeyframeEasings.TryGetValue(timestamp, out var val))
             {
                 KeyframeEasings[newFrame] = val;
                 KeyframeEasings.Remove(timestamp);
@@ -136,11 +136,12 @@ namespace OpenPuppet.SDK.TimelineTracks
         public bool KeyframeInRange(TimeSpan range, out TimeSpan keyframe, float radius = 12)
         {
             var result = Keyframes.Where(k => Math.Abs((k.Key - range).TotalMilliseconds) <= radius);
-            if(result.Any())
+            if (result.Any())
             {
                 keyframe = result.Single().Key;
                 return true;
-            } else
+            }
+            else
             {
                 keyframe = default;
                 return false;

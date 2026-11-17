@@ -14,7 +14,7 @@ namespace OpenPuppet.SDK.Exceptions
             Message = message;
         }
     }
-    
+
     public class NotRegisteredException : Exception
     {
         public override string Message { get; }

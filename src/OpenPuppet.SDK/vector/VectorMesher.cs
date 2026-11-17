@@ -24,7 +24,7 @@ namespace OpenPuppet.vector
         }
 
         public static VertexMesh<T> GenerateMesh<T>(
-            IVectorASTComponent ASTComponent, 
+            IVectorASTComponent ASTComponent,
             IVectorColorSampler colorSampler,
             uint density = 200
         ) where T : IVertex<T>
@@ -159,7 +159,7 @@ namespace OpenPuppet.vector
                 T.FromGeneralData(
                     prototype.Positions.Select(
                         x => new GeneralVertexData(
-                            x, Vector3.Zero, Vector2.Zero, 
+                            x, Vector3.Zero, Vector2.Zero,
                             colorSampler.SampleColor(x)
                         )
                     ).ToList()

@@ -47,7 +47,7 @@ namespace OpenPuppet.Core
         }
 
         public static void SaveProject(ProjectMetadata meta) => SaveProject(meta, meta.Directory);
-        public static void SaveProject(ProjectMetadata meta,string dir)
+        public static void SaveProject(ProjectMetadata meta, string dir)
         {
             meta.Directory = dir;
 
