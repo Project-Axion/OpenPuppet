@@ -483,9 +483,8 @@ namespace OpenPuppet.vector
 
             double[] candidates = { alpha + acos, alpha - acos };
 
-            foreach (var t in candidates)
+            foreach (var t in candidates.Where(IsInArc))
             {
-                if (!IsInArc(t)) continue;
                 var (px, _) = EllipsePoint(t);
                 results.Add((new Vector3((float)px, (float)Y, 0f), EllipseNormal(t)));
             }
@@ -537,9 +536,8 @@ namespace OpenPuppet.vector
             var roots = SolveCubic(a, b, c, d);
             var results = new List<(Vector3 point, Vector3 normal)>();
 
-            foreach (var t in roots)
+            foreach (var t in roots.Where((p) => !(p < 0 || p > 1)))
             {
-                if (t < 0 || t > 1) continue;
                 double x = Math.Pow(1 - t, 3) * Origin.X
                          + 3 * Math.Pow(1 - t, 2) * t * Control1.X
                          + 3 * (1 - t) * t * t * Control2.X
@@ -664,9 +662,8 @@ namespace OpenPuppet.vector
             var roots = SolveQuadratic(a, b, c);
             var results = new List<(Vector3 point, Vector3 normal)>();
 
-            foreach (var t in roots)
+            foreach (var t in roots.Where((p) => !(p < 0 || p > 1)))
             {
-                if (t < 0 || t > 1) continue;
                 double x = Math.Pow(1 - t, 2) * Origin.X
                          + 2 * (1 - t) * t * Control.X
                          + t * t * Destination.X;

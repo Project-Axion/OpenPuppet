@@ -17,7 +17,7 @@ namespace OpenPuppet.SDK
         public static void Register(string registry, IEasingMode mode) => EasingModes[registry] = mode;
         public static double Ease(string registry, double input, EasingDirection direction)
         {
-            return EasingModes.TryGetValue(registry, out var mode) 
+            return EasingModes.TryGetValue(registry, out var mode)
                 ? mode.Ease(input, direction)
                 : 0;
         }
