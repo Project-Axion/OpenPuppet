@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using OpenPuppet.Core.Dialogs;
 using OpenPuppet.Core.Mutators;
@@ -23,7 +24,7 @@ namespace OpenPuppet.Core
 
         private bool shutdown = false;
 
-        public void OnInitialized()
+        public void OnInitialized(IServiceCollection services)
         {
             Global.MainPlugin = this;
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Hello Core");
