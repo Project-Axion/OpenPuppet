@@ -1,4 +1,5 @@
-﻿using OpenPuppet.Preferences.Layouts;
+﻿using Microsoft.Extensions.DependencyInjection;
+using OpenPuppet.Preferences.Layouts;
 using OpenPuppet.SDK;
 
 namespace OpenPuppet.Preferences
@@ -11,7 +12,7 @@ namespace OpenPuppet.Preferences
 
         private bool shutdown = false;
 
-        public void OnInitialized()
+        public void OnInitialized(IServiceCollection services)
         {
             Global.MainPlugin = this;
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Hello Preferences Plugin");

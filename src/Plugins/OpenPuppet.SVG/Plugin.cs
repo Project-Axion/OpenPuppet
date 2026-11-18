@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using Microsoft.Extensions.DependencyInjection;
 using OpenPuppet;
 using OpenPuppet.SDK;
 using System;
@@ -17,7 +18,7 @@ namespace OpenPuppet.SVG
 
         private bool shutdown = false;
 
-        public void OnInitialized()
+        public void OnInitialized(IServiceCollection services)
         {
             bool hasProject = SDK.Projects.ProjectManager.ActiveProject != null;
 

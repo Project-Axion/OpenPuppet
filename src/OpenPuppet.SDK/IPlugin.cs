@@ -219,7 +219,7 @@ namespace OpenPuppet.SDK
                 var t = asm.DefinedTypes.Single(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract && t.IsAnsiClass);
                 plugin.Plugin = (IPlugin)Activator.CreateInstance(t.AsType())!;
                 plugin.State = PluginState.Loaded;
-                plugin.Plugin.OnInitialized();
+                plugin.Plugin.OnInitialized(SDK.Services);
                 /*asm.DefinedTypes.Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass).ToList().ForEach(t =>
                 {
                     var p = (IPlugin)Activator.CreateInstance(t.AsType())!;
@@ -437,7 +437,7 @@ namespace OpenPuppet.SDK
         /// The IServiceCollection, all services provided by this plugin
         /// must be registered through this.
         /// </param>
-        abstract void OnInitialized(); // IServiceCollection services
+        abstract void OnInitialized(IServiceCollection services);
 
         /// <summary>
         /// OnShutdown is called when the plugin is unloaded.
