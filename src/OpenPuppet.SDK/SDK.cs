@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,9 +13,11 @@ namespace OpenPuppet.SDK
 
         public static void DestroyLogger() => logger?.Dispose();
 
-        public static string LocalDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenPuppet");
-        public static string DataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenPuppet");
+        public static string LocalDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenPuppet");
+        public static string DataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenPuppet");
 
         public static SafeTypeBinder JsonTypeBinder { get; } = new();
+
+        internal static ServiceCollection Services { get; } = new ServiceCollection();
     }
 }

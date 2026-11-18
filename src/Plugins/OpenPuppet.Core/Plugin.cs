@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using OpenPuppet.Core.Dialogs;
 using OpenPuppet.Core.Mutators;
@@ -23,7 +24,7 @@ namespace OpenPuppet.Core
 
         private bool shutdown = false;
 
-        public void OnInitialized()
+        public void OnInitialized(IServiceCollection services)
         {
             Global.MainPlugin = this;
             Logger.WriteLine(SDK.Logger.ILogger.Level.Log, "Hello Core");
@@ -36,10 +37,10 @@ namespace OpenPuppet.Core
             IMutator<Color3>.RegisterMutator(typeof(Color3Mutator));
             IMutator<Color4>.RegisterMutator(typeof(Color4Mutator));
 
-            if (!File.Exists(Path.Combine(SDK.SDK.DataPath, "projcache")))
-                File.WriteAllText(Path.Combine(SDK.SDK.DataPath, "projcache"), "");
+            if (!File.Exists(Path.Join(SDK.SDK.DataPath, "projcache")))
+                File.WriteAllText(Path.Join(SDK.SDK.DataPath, "projcache"), "");
 
-            Projects.RecentProjects = File.ReadAllLines(Path.Combine(SDK.SDK.DataPath, "projcache")).ToList();
+            Projects.RecentProjects = File.ReadAllLines(Path.Join(SDK.SDK.DataPath, "projcache")).ToList();
 
             ContextMenu.AddMenuList("File");
             ContextMenu.AddMenuList("File.Import");

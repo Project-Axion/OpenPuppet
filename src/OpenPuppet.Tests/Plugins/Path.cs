@@ -26,7 +26,7 @@ namespace OpenPuppet.Tests.Plugins
         public void TestPluginPath()
         {
             Assert.Equal(
-                System.IO.Path.Combine(IPlugin.PluginPath!, IPlugin.SafePluginName("a-b-c-d")),
+                System.IO.Path.Join(IPlugin.PluginPath!, IPlugin.SafePluginName("a-b-c-d")),
                 IPlugin.GetPluginPath(
                     @"a B
 `¦¬!" + '"' + @"@£$%^&*()_+-=[]{};:'@#~,/<>?\| C d"

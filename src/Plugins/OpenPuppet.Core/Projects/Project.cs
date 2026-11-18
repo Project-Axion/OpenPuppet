@@ -32,14 +32,14 @@ namespace OpenPuppet.Core
 
             ProjectManager.ActiveProject = meta;
 
-            var projfile = Path.Combine(meta.Directory, meta.Name + ".opp");
+            var projfile = Path.Join(meta.Directory, meta.Name + ".opp");
 
             RecentProjects.Remove(projfile);
             RecentProjects.Insert(0, projfile);
 
             RecentProjects = RecentProjects.Take(25).ToList();
 
-            File.WriteAllLines(Path.Combine(SDK.SDK.DataPath, "projcache"), RecentProjects);
+            File.WriteAllLines(Path.Join(SDK.SDK.DataPath, "projcache"), RecentProjects);
 
             IEvent<string>.Invoke("openpuppet.window.modify.title", null, $"OpenPuppet - {meta.Name}");
 
@@ -47,12 +47,12 @@ namespace OpenPuppet.Core
         }
 
         public static void SaveProject(ProjectMetadata meta) => SaveProject(meta, meta.Directory);
-        public static void SaveProject(ProjectMetadata meta,string dir)
+        public static void SaveProject(ProjectMetadata meta, string dir)
         {
             meta.Directory = dir;
 
             File.WriteAllText(
-                Path.Combine(dir, meta.Name + ".opp"),
+                Path.Join(dir, meta.Name + ".opp"),
                 JsonConvert.SerializeObject(meta, new JsonSerializerSettings()
                 {
                     TypeNameHandling = TypeNameHandling.Auto,
@@ -83,13 +83,13 @@ namespace OpenPuppet.Core
 
         public static void Create(string name, string path)
         {
-            string dir = Path.Combine(path, name);
+            string dir = Path.Join(path, name);
 
             int i = 0;
-            for (; Directory.Exists(dir); i++) dir = Path.Combine(path, name + $"({i})");
+            for (; Directory.Exists(dir); i++) dir = Path.Join(path, name + $"({i})");
 
             Directory.CreateDirectory(dir);
-            Directory.CreateDirectory(Path.Combine(dir, "Vectors"));
+            Directory.CreateDirectory(Path.Join(dir, "Vectors"));
 
             var proj = new ProjectMetadata()
             {
@@ -170,7 +170,7 @@ namespace OpenPuppet.Core
                 ),
             ]);
 
-            IVectorASTComponent.SaveToDisk(vector, Path.Combine(dir, "Vectors", "vecpath.ovec"));
+            IVectorASTComponent.SaveToDisk(vector, Path.Join(dir, "Vectors", "vecpath.ovec"));
 
             proj.Scenes.Add(new());
 
@@ -199,10 +199,10 @@ namespace OpenPuppet.Core
             );
 
             OpenProject(proj);
-            proj.Scenes[0].SceneObjects.Add(new VectorGameObject<ColorVertex>(Path.Combine("Vectors", "vecpath.ovec")));
+            proj.Scenes[0].SceneObjects.Add(new VectorGameObject<ColorVertex>(Path.Join("Vectors", "vecpath.ovec")));
 
             File.WriteAllText(
-                Path.Combine(dir, proj.Name + ".opp"),
+                Path.Join(dir, proj.Name + ".opp"),
                 JsonConvert.SerializeObject(ProjectManager.ActiveProject, new JsonSerializerSettings()
                 {
                     TypeNameHandling = TypeNameHandling.Auto,

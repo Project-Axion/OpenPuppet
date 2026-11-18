@@ -24,10 +24,9 @@ namespace OpenPuppet.SDK.Plugins
                 return null;
 
             var path = _resolver.ResolveAssemblyToPath(assemblyName);
-            if (path != null)
-                return LoadFromAssemblyPath(path);
-            else
-                return null;
+            return path != null
+                ? LoadFromAssemblyPath(path)
+                : null;
             //return path is null ? null : LoadFromAssemblyPath(path);
         }
 

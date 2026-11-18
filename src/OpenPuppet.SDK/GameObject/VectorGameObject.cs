@@ -34,7 +34,7 @@ namespace OpenPuppet.SDK.GameObject
             this.VectorAssetPath = vectorAssetPath;
 
             if (ProjectManager.ActiveProject != null)
-                vectorAssetPath = Path.Combine(ProjectManager.ActiveProject.Directory, vectorAssetPath);
+                vectorAssetPath = Path.Join(ProjectManager.ActiveProject.Directory, vectorAssetPath);
 
             VectorASTCache = IVectorASTComponent.LoadFromDisk(vectorAssetPath);
 

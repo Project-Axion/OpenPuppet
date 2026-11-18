@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using OpenPuppet.SDK.Events;
 using OpenPuppet.SDK.Plugin;
 using OpenPuppet.SDK.Plugins;
@@ -53,14 +54,14 @@ namespace OpenPuppet.SDK
         {
             get
             {
-                return Path.Combine(InstallPath!, "Plugins");
+                return Path.Join(InstallPath!, "Plugins");
             }
         }
         static string PluginListPath
         {
             get
             {
-                return Path.Combine(PluginPath!, "plugins.json");
+                return Path.Join(PluginPath!, "plugins.json");
             }
         }
 
@@ -112,8 +113,8 @@ namespace OpenPuppet.SDK
 
         public static void LoadPlugin(string id, string path)
         {
-            string anycpu = Path.Combine(path, "anycpu.dll"),
-                    specific = Path.Combine(path, $"{RuntimeInformation.ProcessArchitecture}.dll");
+            string anycpu = Path.Join(path, "anycpu.dll"),
+                    specific = Path.Join(path, $"{RuntimeInformation.ProcessArchitecture}.dll");
 
             if (File.Exists(specific))
                 LoadAssembly(specific, id);
@@ -218,7 +219,7 @@ namespace OpenPuppet.SDK
                 var t = asm.DefinedTypes.Single(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract && t.IsAnsiClass);
                 plugin.Plugin = (IPlugin)Activator.CreateInstance(t.AsType())!;
                 plugin.State = PluginState.Loaded;
-                plugin.Plugin.OnInitialized();
+                plugin.Plugin.OnInitialized(SDK.Services);
                 /*asm.DefinedTypes.Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass).ToList().ForEach(t =>
                 {
                     var p = (IPlugin)Activator.CreateInstance(t.AsType())!;
@@ -244,7 +245,7 @@ namespace OpenPuppet.SDK
             if (!Directory.Exists(path))
                 throw new ArgumentException($"\"{path}\" does not exist");
 
-            string meta = Path.Combine(path, "meta.inf");
+            string meta = Path.Join(path, "meta.inf");
             if (!File.Exists(meta))
                 throw new ArgumentException($"No metadata present in \"{path}\" (\"{meta}\" does not exist)");
 
@@ -313,7 +314,7 @@ namespace OpenPuppet.SDK
         static string GetPluginPath(string name)
         {
             if (PluginPath == null) return null!;
-            return Path.Combine(PluginPath, SafePluginName(name));
+            return Path.Join(PluginPath, SafePluginName(name));
         }
 
         static string GetPluginPath(PluginMetadata metadata)
@@ -329,7 +330,7 @@ namespace OpenPuppet.SDK
 
                 foreach (var item in Directory.GetDirectories(PluginPath))
                 {
-                    string meta = Path.Combine(item, "meta.inf");
+                    string meta = Path.Join(item, "meta.inf");
                     if (!File.Exists(meta))
                         throw new ArgumentException($"No metadata present in \"{item}\" (\"{meta}\" does not exist)");
 
@@ -421,7 +422,7 @@ namespace OpenPuppet.SDK
             Plugin method definitions
         */
 
-        void IDisposable.Dispose() { }
+        //void IDisposable.Dispose() { }
 
         /// <summary>
         /// OnInitialized is called when the plugin is loaded.
@@ -432,7 +433,11 @@ namespace OpenPuppet.SDK
         /// - Registering dialogs<br />
         /// - Registering context menu items
         /// </summary>
-        abstract void OnInitialized();
+        /// <param name="services">
+        /// The IServiceCollection, all services provided by this plugin
+        /// must be registered through this.
+        /// </param>
+        abstract void OnInitialized(IServiceCollection services);
 
         /// <summary>
         /// OnShutdown is called when the plugin is unloaded.

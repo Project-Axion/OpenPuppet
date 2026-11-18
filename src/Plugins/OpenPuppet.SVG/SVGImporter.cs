@@ -13,7 +13,7 @@ namespace OpenPuppet.SVG
 {
     public static class SVGImporter
     {
-        static Dictionary<string, Func<XElement, RectangleF, ColoredVectorComponent[]>> Importers = new() 
+        static readonly Dictionary<string, Func<XElement, RectangleF, ColoredVectorComponent[]>> Importers = new()
         {
             {"rect",RectImporter},
             {"circle",CircleImporter},
@@ -57,9 +57,9 @@ namespace OpenPuppet.SVG
             {
                 var name = item.Name.LocalName.ToLowerInvariant();
 
-                if (Importers.ContainsKey(name))
+                if (Importers.TryGetValue(name, out var val))
                 {
-                    var imported = Importers[name](item, viewbox);
+                    var imported = val(item, viewbox);
                     Components.AddRange(imported);
                 }
             }
@@ -67,11 +67,11 @@ namespace OpenPuppet.SVG
             return new(Components);
         }
 
-        static ColoredVectorComponent[] RectImporter(XElement element,RectangleF Viewbox)
+        static ColoredVectorComponent[] RectImporter(XElement element, RectangleF Viewbox)
         {
             var biggest = Math.Max(Viewbox.Width, Viewbox.Height);
 
-            var x = (float.Parse(element.AttributeOrDefault("x","0").Value) - Viewbox.X) / biggest;
+            var x = (float.Parse(element.AttributeOrDefault("x", "0").Value) - Viewbox.X) / biggest;
             var y = (float.Parse(element.AttributeOrDefault("y", "0").Value) - Viewbox.Y) / biggest;
             var w = float.Parse(element.AttributeOrDefault("width", "0").Value) / biggest;
             var h = float.Parse(element.AttributeOrDefault("height", "0").Value) / biggest;
@@ -86,7 +86,7 @@ namespace OpenPuppet.SVG
             {
                 var color4 = SixLabors.ImageSharp.Color.Parse(fill.Value).ToPixel<Rgba32>().ToVector4();
 
-                components.Add(new(component,new VectorSolidColorSampler(color4)));
+                components.Add(new(component, new VectorSolidColorSampler(color4)));
             }
 
             var stroke = element.Attribute("stroke");
@@ -98,7 +98,7 @@ namespace OpenPuppet.SVG
 
                 components.Add(
                     new(
-                        new SolidifyComponent(component, strokew / 2, strokew / 2), 
+                        new SolidifyComponent(component, strokew / 2, strokew / 2),
                         new VectorSolidColorSampler(color4)
                     )
                 );
@@ -157,7 +157,7 @@ namespace OpenPuppet.SVG
 
             List<ColoredVectorComponent> components = new();
 
-            IVectorASTComponent component = new EllipseComponent(new(x, y), new(rx,ry));
+            IVectorASTComponent component = new EllipseComponent(new(x, y), new(rx, ry));
 
             var fill = element.Attribute("fill");
 
@@ -186,7 +186,7 @@ namespace OpenPuppet.SVG
             return components.ToArray();
         }
 
-        static XAttribute AttributeOrDefault(this XElement element, string attr,string defaultValue = "") =>
+        static XAttribute AttributeOrDefault(this XElement element, string attr, string defaultValue = "") =>
             element.Attribute(attr) ?? new XAttribute(attr, defaultValue);
     }
 }

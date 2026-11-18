@@ -9,7 +9,7 @@ namespace OpenPuppet.SDK
 {
     public static class ContextMenu
     {
-        public static ContextMenuList Root { get; } = new();
+        public static ContextMenuList Root { get; } = new() { Name = string.Empty, DisplayName = string.Empty };
 
         static void ProcessItem(string path, Action onClick, ContextMenuList currentNode, string? name, bool enabled)
         {
@@ -103,6 +103,9 @@ namespace OpenPuppet.SDK
             }
             else
             {
+                //foreach (var node in currentNode.Nodes.Where(p => p.Name == parts[0] && p is ContextMenuList))
+                //    ProcessR(string.Join('.', parts.Skip(1)), node as ContextMenuList, name);
+
                 foreach (var node in currentNode.Nodes)
                     if (node.Name == parts[0] && node is ContextMenuList li)
                         ProcessR(string.Join('.', parts.Skip(1)), li, name);
@@ -119,6 +122,9 @@ namespace OpenPuppet.SDK
             }
             else
             {
+                //foreach (var node in currentNode.Nodes.Where(p => p.Name == parts[0] && p is ContextMenuList))
+                //    ProcessRm(string.Join('.', parts.Skip(1)), node as ContextMenuList);
+
                 foreach (var node in currentNode.Nodes)
                     if (node.Name == parts[0] && node is ContextMenuList li)
                         ProcessRm(string.Join('.', parts.Skip(1)), li);
@@ -156,31 +162,31 @@ namespace OpenPuppet.SDK
 
     public class ContextMenuList : IContextMenuNode
     {
-        public string Name { get; set; }
-        public string DisplayName { get; set; }
+        public required string Name { get; set; }
+        public required string DisplayName { get; set; }
         public bool Enabled { get; set; } = true;
         public List<IContextMenuNode> Nodes { get; set; } = new();
     }
 
     public class ContextMenuItem : IContextMenuNode
     {
-        public string Name { get; set; }
-        public string DisplayName { get; set; }
+        public required string Name { get; set; }
+        public required string DisplayName { get; set; }
         public bool Enabled { get; set; } = true;
-        public Action OnClick { get; set; }
+        public required Action OnClick { get; set; }
     }
 
     public class ContextDummyItem : IContextMenuNode
     {
-        public string Name { get; set; }
-        public string DisplayName { get; set; }
+        public required string Name { get; set; }
+        public required string DisplayName { get; set; }
         public bool Enabled { get; set; } = true;
     }
 
     public class ContextMenuSeparatorItem : IContextMenuNode
     {
-        public string Name { get; set; }
-        public string DisplayName { get; set; }
+        public required string Name { get; set; }
+        public required string DisplayName { get; set; }
         public bool Enabled { get; set; } = true;
     }
 }
