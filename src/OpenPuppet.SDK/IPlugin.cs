@@ -422,7 +422,7 @@ namespace OpenPuppet.SDK
             Plugin method definitions
         */
 
-        void IDisposable.Dispose() { }
+        //void IDisposable.Dispose() { }
 
         /// <summary>
         /// OnInitialized is called when the plugin is loaded.
